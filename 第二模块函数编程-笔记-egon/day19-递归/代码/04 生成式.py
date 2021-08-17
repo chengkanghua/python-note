@@ -14,7 +14,7 @@ l = ['alex_dsb', 'lxx_dsb', 'wxx_dsb', "xxq_dsb", 'egon']
 
 # new_l=[name for name in l if name.endswith('dsb')]
 # new_l=[name for name in l]
-
+#
 # print(new_l)
 
 # 把所有小写字母全变成大写
@@ -46,7 +46,7 @@ l = ['alex_dsb', 'lxx_dsb', 'wxx_dsb', "xxq_dsb", 'egon']
 # 此刻g内部一个值也没有
 
 # print(g,type(g))
-
+#
 # print(g)
 # print(next(g))
 # print(next(g))

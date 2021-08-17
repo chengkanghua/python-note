@@ -29,7 +29,7 @@
 # 的sys.path都是参照执行文件的sys.path
 import sys
 sys.path.append('/aaaaaaaaaaaaaaaaaaaaaaaaaa')
-# print(sys.path)
+print(sys.path)
 
 sys.path.append(r'/Users/linhaifeng/PycharmProjects/s14/day21/aa')
 
