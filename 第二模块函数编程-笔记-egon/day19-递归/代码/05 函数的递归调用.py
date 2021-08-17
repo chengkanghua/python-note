@@ -81,14 +81,14 @@
 # 四：递归的应用
 l=[1,2,[3,[4,[5,[6,[7,[8,[9,10,11,[12,[13,]]]]]]]]]]
 
-def f1(list1):
-    for x in list1:
-        if type(x) is list:
-            # 如果是列表，应该再循环、再判断,即重新运行本身的代码
-            f1(x)
-        else:
-            print(x)
-
-f1(l)
+# def f1(list1):
+#     for x in list1:
+#         if type(x) is list:
+#             # 如果是列表，应该再循环、再判断,即重新运行本身的代码
+#             f1(x)
+#         else:
+#             print(x)
+#
+# f1(l)
 
 

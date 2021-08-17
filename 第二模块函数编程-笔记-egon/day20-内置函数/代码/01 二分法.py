@@ -12,12 +12,12 @@
 #      如何做更高效？？？
 
 
-nums=[-3,4,7,10,13,21,43,77,89]
-find_num=10
-
-nums=[-3,4,13,10,-2,7,89]
-nums.sort()
-print(nums)
+# nums=[-3,4,7,10,13,21,43,77,89]
+# find_num=10
+#
+# nums=[-3,4,13,10,-2,7,89]
+# nums.sort()
+# print(nums)
 
 # 方案一：整体遍历效率太低
 # for num in nums:
@@ -39,27 +39,28 @@ print(nums)
 #     else:
 #         print('find it')
 
-# nums=[-3,4,7,10,13,21,43,77,89]
-# find_num=8
-# def binary_search(find_num,l):
-#     print(l)
-#     if len(l) == 0:
-#         print('找的值不存在')
-#         return
-#     mid_index=len(l) // 2
-#
-#     if find_num > l[mid_index]:
-#         # 接下来的查找应该是在列表的右半部分
-#         l=l[mid_index+1:]
-#         binary_search(find_num,l)
-#     elif find_num < l[mid_index]:
-#         # 接下来的查找应该是在列表的左半部分
-#         l=l[:mid_index]
-#         binary_search(find_num,l)
-#     else:
-#         print('find it')
-#
-# binary_search(find_num,nums)
+
+nums=[-3,4,7,10,13,21,43,77,89]
+find_num=8
+def binary_search(find_num,l):
+    print(l)
+    if len(l) == 0:
+        print('找的值不存在')
+        return
+    mid_index=len(l) // 2
+
+    if find_num > l[mid_index]:
+        # 接下来的查找应该是在列表的右半部分
+        l=l[mid_index+1:]
+        binary_search(find_num,l)
+    elif find_num < l[mid_index]:
+        # 接下来的查找应该是在列表的左半部分
+        l=l[:mid_index]
+        binary_search(find_num,l)
+    else:
+        print('find it')
+
+binary_search(find_num,nums)
 
 
 
