@@ -488,7 +488,7 @@ print(phone_list)
   import re
   
   text = "你2b好wupeiqi,阿斯顿发awupeiqasd 阿士大夫a能接受的wffbbupqaceiqiff"
-  data_list = re.findall("[abc]", text)
+  data_list = re.findall("[abcd]", text)
   print(data_list) # ['b', 'a', 'a', 'a', 'b', 'b', 'c']
   ```
 
@@ -496,7 +496,7 @@ print(phone_list)
   import re
   
   text = "你2b好wupeiqi,阿斯顿发awupeiqasd 阿士大夫a能接受的wffbbupqcceiqiff"
-  data_list = re.findall("q[abc]", text)
+  data_list = re.findall("q[abcd]", text)
   print(data_list) # ['qa', 'qc']
   ```
 
@@ -506,7 +506,7 @@ print(phone_list)
   import re
   
   text = "你wffbbupceiqiff"
-  data_list = re.findall("[^abc]", text)
+  data_list = re.findall("[^abcd]", text)
   print(data_list)  # ['你', 'w', 'f', 'f', 'u', 'p', 'e', 'i', 'q', 'i', 'f', 'f']
   ```
 
@@ -719,7 +719,7 @@ print(phone_list)
    import re
    
    text = "dsf130429191912015219k13042919591219521Xkk"
-   data_list = re.findall("\d{17}[\dX]", text) # [abc]
+   data_list = re.findall("\d{17}[\dX]", text) # [abcd]
    print(data_list) # ['130429191912015219', '13042919591219521X']
    ```
 

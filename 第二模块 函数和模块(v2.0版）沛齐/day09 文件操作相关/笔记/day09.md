@@ -339,7 +339,7 @@ file_object.close()
 >
 >   ```python
 >   import requests
->   
+>     
 >   res = requests.get(url="网址")
 >   print(res)
 >   ```
@@ -776,7 +776,7 @@ with open("xxxx.txt", mode='rb') as f1, open("xxxx.txt", mode='rb') as f2:
 
    ```python
    import requests
-
+   
    res = requests.get(
        url="https://f.video.weibocdn.com/000pTZJLgx07IQgaH7HW010412066BJV0E030.mp4?label=mp4_720p&template=1280x720.25.0&trans_finger=1f0da16358befad33323e3a1b7f95fc9&media_id=4583105541898354&tp=8x8A3El:YTkl0eM8&us=0&ori=1&bf=2&ot=h&ps=3lckmu&uid=3ZoTIp&ab=3915-g1,966-g1,3370-g1,3601-g0,3601-g0,3601-g0,1493-g0,1192-g0,1191-g0,1258-g0&Expires=1608204895&ssig=NdYpDIEXSS&KID=unistore,video",
        headers={
@@ -812,7 +812,34 @@ with open("xxxx.txt", mode='rb') as f1, open("xxxx.txt", mode='rb') as f2:
 
 3. 日志分析升级，计算所有用户的访问次数。
 
-4. 筛选出股票 当前价大于 20 的所有股票数据。
+```python
+#计算某用户`223.73.89.192`访问次数
+user_list = []
+ip = '223.73.89.192'
+with open('access.log',mode='r',encoding='utf-8') as f:
+    for line in f:
+        li1 =line.split()
+        user_list.append(li1[0])
+
+print(user_list)
+print(user_list.count(ip))
+
+# 计算所有用户的访问次数
+user_dict = {}
+with open('access.log',mode='r',encoding='utf-8') as f:
+    for line in f:
+        user_ip =line.split()[0]
+        if user_ip not in user_dict:
+            user_dict[user_ip] = 1
+        if user_ip in user_dict:
+            user_dict[user_ip] +=1
+print(user_dict)
+
+```
+
+
+
+1. 筛选出股票 当前价大于 20 的所有股票数据。
 
    ```
    股票代码,股票名称,当前价,涨跌额,涨跌幅,年初至今,成交量,成交额,换手率,市盈率(TTM),股息率,市值
@@ -828,7 +855,19 @@ with open("xxxx.txt", mode='rb') as f1, open("xxxx.txt", mode='rb') as f2:
    SZ300831,派瑞股份,12.27,+1.12,+10.04%,+208.29%,25.38万,311.41万,0.32%,60.59,-,39.26亿
    ```
 
-5. 根据要求修改文件的内容，原文件内容如下：`ha.conf`
+   ```python
+   with open('info.txt',mode='r',encoding='utf-8') as f:
+       f.readline()
+       for line in f:
+           price = line.split(',')[2]
+           # print(float(price))
+           if float(price) > 20:
+               print(line,end='')
+   ```
+
+   
+
+2. 根据要求修改文件的内容，原文件内容如下：`ha.conf`
 
    ```
    global       
@@ -864,6 +903,16 @@ with open("xxxx.txt", mode='rb') as f1, open("xxxx.txt", mode='rb') as f2:
    ```
 
    请将文件中的 `luffycity`修改为 `pythonav` 。
+
+```python
+import shutil
+with open('files/ha.conf',mode='r',encoding='utf-8') as f,open('files/ha.conf.swap',mode='w',encoding='utf-8') as f2:
+    for line in f:
+        new_line =line.replace('luffycity','pythonav')
+        f2.write(new_line)
+
+shutil.move('files/ha.conf.swap','files/ha.conf')
+```
 
 
 
@@ -1285,6 +1334,8 @@ content = """
     </country>
 </data>
 """
+
+root = ET.XML(content)
 
 root = ET.XML(content)
 
@@ -2163,6 +2214,51 @@ shutil.move("/Users/wupeiqi/PycharmProjects/CodeRepository/files","/Users/wupeiq
    - 用户注册时，新注册用户要写入文件csv文件中，输入Q或q则退出。
    - 用户登录时，逐行读取csv文件中的用户信息并进行校验。
    - 提示：文件路径须使用os模块构造的绝对路径的方式。
+
+   ```python
+   import os
+   # 定位文件
+   base_dir= os.path.dirname(os.path.abspath(__file__))
+   db_file_path = os.path.join(base_dir, 'files/db.csv')
+   print(db_file_path)
+   # 用户注册
+   while True:
+       choice = input('进入注册系统Y/y, 退出 N/n：')
+       if choice.upper() not in {'Y', 'N'}:
+           print('输入错误重新输入')
+       if choice.upper() == 'N':
+           break
+   
+       with open(db_file_path,mode='a',encoding='utf-8') as f:
+           while True:
+               username = input('欢迎注册，请输入用户名， Q|q退出：')
+               if username.upper() == 'Q':
+                   break
+               password = input('请输入用户密码：')
+               f.write(f'{username},{password}\n')
+               f.flush()
+       break
+   
+   #用户登录
+   print('欢迎登陆系统')
+   username = input('请输入用户名：Q/q退出: ')
+   password = input('请输入密码： ')
+   
+   if not os.path.exists(db_file_path):
+       print('db文件存在')
+   else:
+       with open(db_file_path,mode='r',encoding='utf-8') as f_read:
+           for line in f_read:
+               uname,pwd = line.strip().split(',')
+               if uname == username and pwd == password:
+                   print('登陆成功')
+                   break
+           else:
+               print('用户或密码错误')
+   
+   ```
+
+   
 
 2. 补充代码：实现去网上获取指定地区的天气信息，并写入到Excel中。
 

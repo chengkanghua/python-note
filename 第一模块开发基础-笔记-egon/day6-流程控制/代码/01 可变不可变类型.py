@@ -17,7 +17,7 @@
 # print(id(x))
 
 # 2.3 str是不可变类型
-# x="abc"
+# x="abcd"
 # print(id(x))
 # x='gggg'
 # print(id(x))
