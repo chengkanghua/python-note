@@ -189,7 +189,7 @@ msg='hello egon hahaha'
 
 #4.3.5、is数字系列
 #4.3.6、is其他
-# print('abc'.islower())
+# print('abcd'.islower())
 # print('ABC'.isupper())
 # print('Hello World'.istitle())
 # print('123123aadsf'.isalnum()) # 字符串由字母或数字组成结果为True

@@ -78,7 +78,7 @@ l = [111, 'egon', 'hello', 'a', 'b', 'c', 'd', [1, 2, 3]]
 
 # extend实现了上述代码
 # l.extend(new_l)
-# l.extend('abc')
+# l.extend('abcd')
 # print(l)
 
 
@@ -151,8 +151,8 @@ l = [1, 'aaa', 'bbb','aaa','aaa']
 # print('abz'>'abcdefg')
 
 # 了解：列表也可以比大小,原理同字符串一样,但是对应位置的元素必须是同种类型
-# l1=[1,'abc','zaa']
-# l2=[1,'abc','zb']
+# l1=[1,'abcd','zaa']
+# l2=[1,'abcd','zb']
 #
 # print(l1 < l2)
 
