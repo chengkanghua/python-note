@@ -691,11 +691,59 @@ print(data) # 1009
    - 参数，字符串。
    - 返回值，字符串中 a 出现的次数。
 
+   ```python
+   def func(str: str):
+       return str.count('a')
+   
+   str1 = 'aabbbaacacc'
+   v1=func(str1)
+   print(v1)
+   
+   ```
+
+   
+
 2. 写函数，判断用户传入的一个值（字符串或列表或元组任意）长度是否大于5，并返回真假。
+
+   ```python
+   def judge_length(li):
+       if len(li) > 5:
+           return True
+       else:
+           return False
+   
+   li2 = [1,2,3]
+   v1 = judge_length(li2)
+   print(v1)
+   ```
 
 3. 写函数，接收两个数字参数，返回比较大的那个数字（等于时返回两个中的任意一个都可以）。
 
+   ```python
+   def compare(x,y):
+       return x if x >y else y
+   
+   v1 = compare(3,3)
+   print(v1)
+   ```
+
 4. 写函数，函数接收四个参数分别是：姓名，性别，年龄，学历，然后将这四个值通过"*"拼接起来并追加到一个student_msg.txt文件中。
+
+   ```python
+   import os
+   # 定位文件位置
+   base_dir = os.path.dirname(os.path.abspath(__file__))
+   db_file_path = os.path.join(base_dir,'files/student_msg.txt')
+   # 函数定义
+   def func(name,sex,age,education):
+       content = '*'.join([name,sex,age,education])
+       content = content + '\n'
+       print(content)
+       with open(db_file_path,mode='a',encoding='utf-8') as f:
+           f.write(content)
+   
+   func('程康华','男',"18","博士后")
+   ```
 
 5. 补充代码，实现如下功能：
 
@@ -709,6 +757,25 @@ print(data) # 1009
    
    result = select_content("files/xxx.txt","股票")
    # 补充代码【位置2】
+   
+   ----------------------------------------------------------------分割线
+   import os
+   def select_content(file_path,key):
+       # 补充代码【位置1】
+       if not os.path.exists(file_path):
+           return None
+       data_list = []
+       with open(file_path,mode='r',encoding='utf-8') as f:
+           for line in f:
+               if key in line:
+                   data_list.append(key)
+       return data_list
+   result = select_content("files/xxx.txt","股票")
+   # 补充代码【位置2】
+   if result == None:
+       print('文件不存在')
+   else:
+       print(result)
    ```
 
 6. 补充代码，实现敏感词替换的功能。
@@ -721,6 +788,19 @@ print(data) # 1009
    text = input("请输入内容：")
    result = change_string(text)
    print(result)
+   
+   -----------------------------------------------------分割线
+   def change_string(origin):
+       # 补充代码，将字符串origin中中的敏感词替换为 **，最后将替换好的值返回。
+       data_list = ["苍老师", "波多老师", "大桥"]
+       for word in data_list:
+           origin= origin.replace(word, "**")
+       return origin
+   
+   text = input("请输入内容：")
+   result = change_string(text)
+   print(result)
+   
    ```
 
 7. 基于函数实现用户认证，要求：
@@ -766,6 +846,45 @@ print(data) # 1009
 - 登录京东：用户名& 密码。
 
 
+
+```python
+from openpyxl import load_workbook
+import hashlib
+
+def get_user_dict():
+    wb = load_workbook('files/user.xlsx')
+    sheet = wb.worksheets[0]
+    user_dict = {}
+    for row in sheet.rows:
+        # print(row[1].value,row[2].value)
+        user_dict[row[1].value] = row[2].value
+    return user_dict
+
+def encrypt(origin):
+    origin_bytes = origin.encode('utf-8')
+    md5_object = hashlib.md5()
+    md5_object.update(origin_bytes)
+    return md5_object.hexdigest()
+
+def login(uname,pwd):
+    user_list = get_user_dict()
+    # print(user_list)
+    if not uname in user_list:
+        print('用户不存在')
+        return False
+    if user_list[uname] == pwd:
+        print('登陆成功')
+        return True
+    else:
+        print("密码错误")
+        return False
+
+uname = input('please username: ')
+pwd = input('please password: ')
+pwd = encrypt(pwd)
+login(uname,pwd)
+
+```
 
 
 

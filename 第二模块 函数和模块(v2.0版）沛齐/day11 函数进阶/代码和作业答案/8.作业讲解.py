@@ -115,7 +115,6 @@ print(v2)  # ('北京-上海', 'city-深圳*count-99')
 """
 import requests
 
-
 def write_file(**kwargs):
     data_list = []
 
@@ -351,7 +350,7 @@ f2()  # 武沛齐  19
 """
 
 # 21.资源下载器 v1版本【重点讲】
-"""
+'''
 import requests
 
 SELECTED_IMAGE_SET = set()  # 已下载图片ID（序号）
@@ -512,10 +511,11 @@ while True:
         continue
     # 进入专区
     func()
-"""
+'''
+
 
 # 21.资源下载器 v2版本
-"""
+
 import requests
 
 DB = {
@@ -631,4 +631,3 @@ while True:
     # 进入专区（area_dict选择的专区信息）
     handler(area_dict)
 
-"""

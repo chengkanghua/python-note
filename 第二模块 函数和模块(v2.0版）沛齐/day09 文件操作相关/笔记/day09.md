@@ -1758,6 +1758,8 @@ pip install openpyxl
   
   # 创建excel且默认会创建一个sheet（名称为Sheet）
   wb = workbook.Workbook()
+  # 创建一个sheet 名称weater
+  wb.create_sheet('weater')
   
   sheet = wb.worksheets[0] # 或 sheet = wb["Sheet"]
   
@@ -2271,10 +2273,44 @@ shutil.move("/Users/wupeiqi/PycharmProjects/CodeRepository/files","/Users/wupeiq
            break
        url = "http://ws.webxml.com.cn//WebServices/WeatherWebService.asmx/getWeatherbyCityName?theCityName={}".format(city)
        res = requests.get(url=url)
-       print（res.text）
+       print(res.content)
    
        # 1.提取XML格式中的数据
        # 2.为每个城市创建一个sheet，并将获取的xml格式中的数据写入到excel中。 
+       
+   #答案
+   import os
+   import requests
+   from xml.etree import cElementTree as ET
+   from openpyxl import workbook
+   
+   #  文件定位
+   base_dir = os.path.dirname(os.path.abspath(__file__))
+   file_path = os.path.join(base_dir,'files/p1.xlsx')
+   print(file_path)
+   # 创建excel
+   wb = workbook.Workbook()
+   del wb['Sheet']
+   
+   while True:
+       city = input("请输入城市（Q/q退出）：")
+       if city.upper() == "Q":
+           break
+       url = "http://ws.webxml.com.cn//WebServices/WeatherWebService.asmx/getWeatherbyCityName?theCityName={}".format(city)
+       res = requests.get(url=url)
+       # print(res.text)
+   
+       # 1.提取XML格式中的数据
+       root = ET.XML(res.text)
+       # 2.为每个城市创建一个sheet，并将获取的xml格式中的数据写入到excel中。
+       sheet = wb.create_sheet(city)
+       # sheet = wb[city]
+       for index_row,val in enumerate(root,1):
+           # print(index,val.text)
+           sheet.cell(index_row,1).value = val.text
+           # cell = sheet.cell(index_row,1)
+           # cell.value = val.text
+   wb.save(file_path)
    ```
 
 3. 读取ini文件内容，按照规则写入到Excel中。
@@ -2307,6 +2343,64 @@ shutil.move("/Users/wupeiqi/PycharmProjects/CodeRepository/files","/Users/wupeiq
      - 内容均居中。
      - 边框。	
 
+   ```python
+   import os
+   import configparser
+   from openpyxl import workbook
+   
+   config = configparser.ConfigParser()
+   from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
+   
+   # 文件位置
+   base_dir = os.path.dirname(os.path.abspath(__file__))
+   ini_file = os.path.join(base_dir, 'files/mysql.ini')
+   excel_file = os.path.join(base_dir, 'files/p1.xlsx')
+   # 读取ini 文件
+   config.read(ini_file, encoding='utf-8')
+   result = config.sections()
+   # print(config.items('mysqld'))
+   
+   # excel创建
+   wb = workbook.Workbook()
+   del wb['Sheet']
+   
+   # 边框和居中（表头和内容都需要）
+   side = Side(style="thin", color="000000")
+   border = Border(top=side, bottom=side, left=side, right=side)
+   align = Alignment(horizontal='center', vertical='center')
+   def cell_style(x,y,text):
+       # 设置值
+       sheet.cell(x, y).value = text
+       # 居中
+       sheet.cell(x, y).alignment = align
+       # 背景色
+       sheet.cell(x, y).fill = PatternFill("solid", fgColor="6495ED")
+       # 字体颜色
+       sheet.cell(x, y).font = Font(name="微软雅黑", color="FFFFFF")
+       # 设置边框
+       sheet.cell(x, y).border = border
+   # excel写入
+   for section in result:
+   
+       # print(item)
+       sheet = wb.create_sheet(section)
+       for i, val in enumerate(config.items(section), 2):
+           # print(i, val)
+           cell_style(1,1,'键')
+           cell_style(1,2,'值')
+           sheet.cell(i, 1).alignment = align
+           sheet.cell(i, 1).border = border
+           sheet.cell(i, 1).value = val[0]
+           sheet.cell(i, 2).alignment = align
+           sheet.cell(i, 2).border = border
+           sheet.cell(i, 2).value = val[1]
+   
+   wb.save(excel_file)
+   
+   ```
+
+   
+
 4. 补充代码，实现如下功能。
 
    ```python
@@ -2324,7 +2418,31 @@ shutil.move("/Users/wupeiqi/PycharmProjects/CodeRepository/files","/Users/wupeiq
 
    
 
+```python
+import requests
+import os
+import shutil
 
+# 1.下载文件
+file_url = 'https://files.cnblogs.com/files/wupeiqi/HtmlStore.zip'
+res = requests.get(url=file_url)
+# print(res.content)
+
+# 2.将下载的文件保存到当前执行脚本同级目录下 /files/package/ 目录下（且文件名为HtmlStore.zip）
+base_path = os.path.dirname(os.path.abspath(__file__))
+download_path = os.path.join(base_path,'files/package')
+if not os.path.exists(download_path):
+    os.makedirs(download_path)
+
+filename = file_url.split('/')[-1]
+file_path = os.path.join(download_path,filename)
+with open(file_path,mode='wb') as f_write:
+    f_write.write(res.content)
+
+# 3.在将下载下来的文件解压到 /files/html/ 目录下
+extract_path = os.path.join(base_path,'files/html')
+shutil.unpack_archive(filename=file_path,extract_dir=extract_path,format='zip')
+```
 
 
 
