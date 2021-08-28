@@ -314,20 +314,20 @@ def func():
 
     print(444)
 
-
 data = func()
-
-n1 = data.send(None)
+n1 = data.send(None)  #第一次传必须是None 执行到 yield 1，把1赋值给了n1 暂定了， 还没赋值给v1
 print(n1)
 
-n2 = data.send(666)
-print(n2)
+n2 = data.send(666)  # v1 = 666   print(v1)  print(222)  2返回给n2
+print(n2)            # 2
 
 n3 = data.send(777)
 print(n3)
 
 n4 = data.send(888)
 print(n4)
+
+# send 是把值传给 yield 前面的变量
 ```
 
 
@@ -599,6 +599,7 @@ Python内部为我们提供了很多方便的内置函数，在此整理出来36
         '1-4 编程语言.mp4',
         '1-11 环境搭建说明.mp4'
     ]
+    
     result = sorted(data_list, key=lambda x: int(x.split(' ')[0].split("-")[-1]) )
     print(result)
     ```
@@ -735,24 +736,20 @@ for i in range(300):
    def func():
        print(123)
    
-   
    data_list = [func for i in range(10)]
-   
-   print(data_list)
+   print(data_list) # [func * 10]
    ```
-
+   
 5. 看代码写结果
 
    ```python
    def func(num):
        return num + 100
    
-   
    data_list = [func(i) for i in range(10)]
-   
-   print(data_list)
+   print(data_list) # [100,101,102,103,104,105,106,107,108,109]
    ```
-
+   
 6. 看代码写结果（执行出错，通过他可以让你更好的理解执行过程）
 
    ```python
@@ -768,9 +765,9 @@ for i in range(300):
 7. 看代码写结果（新浪微博面试题）
 
    ```python
-   data_list = [lambda x: x + i for i in range(10)]  # [函数,函数,函数]   i=9
+   data_list = [lambda x: x + i for i in range(10)]  # [函数,函数,函数]   i=9  定义时候不执行函数体内容
    
-   v1 = data_list[0](100)
+   v1 = data_list[0](100) #运行时候i=9 结果109
    v2 = data_list[3](100)
    print(v1, v2)  # 109 109
    ```
@@ -823,13 +820,13 @@ for i in range(300):
 
    ```python
    def num():
-       return (lambda x: i * x for i in range(4))
+       return (lambda x: i * x for i in range(4)) # 元组 不会立即执行内部循环去生成数据，而是得到一个生成器。
    
    
    # 1. num()并获取返回值  生成器对象
    # 2. for循环返回值
    # 3. 返回值的每个元素(2)
-   result = [m(2) for m in num()]  # [0,2,4,6 ]
+   result = [m(2) for m in num()]  # [0,2,4,6 ] 循环一次生成一次
    print(result)
    ```
 
@@ -855,27 +852,27 @@ for i in range(300):
 
 1. 看代码写结果
 
-   ```
+   ```python
    v = [ lambda :x  for x in range(10)] 
-   print(v)
-   print(v[0])
-   print(v[0]())
+   print(v)      # [function * 9]
+   print(v[0])   # [function]
+   print(v[0]()) # 9
    ```
 
 2. 看代码写结果
 
    ```
    v = [i for i in range(10,0,-1) if i > 5]
-   print(v)
+   print(v)  # [10, 9, 8, 7, 6]
    ```
 
 3. 看代码写结果
 
    ```python
-   data = [lambda x:x*i for i in range(10)]
-   print(data)
-   print(data[0](2))
-   print(data[0](2) == data[8](2))
+   data = [lambda x: x*i for i in range(10)]
+   print(data) # [function * 10 ] i = 9
+   print(data[0](2)) # 18
+   print(data[0](2) == data[8](2)) # True
    ```
 
 4. 请用列表推导式实现，踢出列表中的字符串，最终生成一个新的列表保存。
@@ -886,6 +883,12 @@ for i in range(300):
    new_data_list = [ ... ] # 请在[]中补充代码实现。
    
    # 提示：可以用type判断类型
+   ----------------------------------------
+   data_list = [11,22,33,"alex",455,'eirc']
+   
+   new_data_list = [ x for x in data_list if type(x) == int ] 
+   print(new_data_list)
+   
    ```
 
 5. 请用列表推导式实现，对data_list中的每个元素判断，如果是字符串类型，则计算长度作为元素放在新列表的元素中；如果是整型，则让其值+100 作为元素放在新的列表的元素中。
@@ -896,6 +899,10 @@ for i in range(300):
    new_data_list = [ ... ] # 请在[]中补充代码实现。
    
    # 提示：可以基于三元运算实现
+   ---------------------------------------------
+   data_list = [11,22,33,"alex",455,'eirc']
+   new_data_list = [ len(i) if type(i) == str else i+100  for i in data_list] 
+   print(new_data_list)
    ```
 
 6. 请使用字典推导式实现，将如果列表构造成指定格式字典.
@@ -915,6 +922,9 @@ for i in range(300):
        3:(3,'老女',73)
    }
    """
+   --------------------------
+   new_dict = { i[0]:(i) for i in data_list }
+   print(new_dict)
    ```
 
 7. 有4个人玩扑克牌比大小，请对比字典中每个人的牌的大小，并输入优胜者的姓名（值大的胜利，不必考虑A）。
@@ -926,6 +936,16 @@ for i in range(300):
        'eric':["黑桃",3],
        'killy':["梅花",12],
    }
+   ------------------------------------------------
+   winner = sorted(player.items(), key=lambda x: x[1][-1], reverse=True)[0][0]
+   print(winner)
+   
+   data = sorted(player.items(), key=lambda x: x[1][1])[-1][0]
+   print(data)
+   
+   new_dict = max(player.items(),key= lambda x: x[1][-1])[0] # 自己写的
+   print(new_dict)
+   
    ```
 
 8. 尽量多的列举你记得的内置函数？【能记住多少就写多少，不强制去背，在此尽权利写即可，这种公共后续用的多了就自然而然就记住了】
@@ -945,16 +965,33 @@ for i in range(300):
      def fib(max_count):
          pass
      
-     
      count = input("请输入要生成斐波那契数列的个数：")
      count = int(count)
      fib_generator = fib(count)
      for num in fib_generator:
          print(num) 
-     ```
-
+     ------------------------------------------------------
+     def fib(max_count):
+         first = 1
+         second = 0
+         count = 0
+         while count < max_count:
+             next_value = first + second  # 下一个数= 第一个加第二个数
+             first = second   # 第二个数进 第一个数
+             second = next_value # 下一个数进 给第二个数
+             yield next_value #2
+             count += 1  #计数
      
-
+     
+     limit_count = input("请输入要生成斐波那契数列的个数：")
+     limit_count = int(limit_count)
+     fib_generator = fib(limit_count)
+     for num in fib_generator:
+         print(num)
+     
+     ```
+     
+     
    
 
 

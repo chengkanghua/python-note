@@ -48,3 +48,38 @@ else:
             print('error：username or password wroing')
 '''
 
+# 补充代码：实现去网上获取指定地区的天气信息，并写入到Excel中。
+'''
+import os
+import requests
+from xml.etree import cElementTree as ET
+from openpyxl import workbook
+
+#  文件定位
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir,'files/p1.xlsx')
+print(file_path)
+# 创建excel
+wb = workbook.Workbook()
+del wb['Sheet']
+
+while True:
+    city = input("请输入城市（Q/q退出）：")
+    if city.upper() == "Q":
+        break
+    url = "http://ws.webxml.com.cn//WebServices/WeatherWebService.asmx/getWeatherbyCityName?theCityName={}".format(city)
+    res = requests.get(url=url)
+    # print(res.text)
+
+    # 1.提取XML格式中的数据
+    root = ET.XML(res.text)
+    # 2.为每个城市创建一个sheet，并将获取的xml格式中的数据写入到excel中。
+    sheet = wb.create_sheet(city)
+    # sheet = wb[city]
+    for index_row,val in enumerate(root,1):
+        # print(index,val.text)
+        sheet.cell(index_row,1).value = val.text
+        # cell = sheet.cell(index_row,1)
+        # cell.value = val.text
+wb.save(file_path)
+'''

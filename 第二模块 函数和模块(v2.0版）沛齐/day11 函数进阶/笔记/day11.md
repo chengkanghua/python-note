@@ -90,7 +90,7 @@ Python参数的这一特性有两个好处：
   v1 = [11,22,33]
   func(v1)
   
-  print(v1) # [11,22,33,666]
+  print(v1) # [11,22,33,999]
   ```
 
   ```python
@@ -307,7 +307,7 @@ def func(a1,a2=18):
   # a2 -> 1010101010
   # v1 -> 1010101010
   v1 = func(10)
-  
+  print(v1) #[1,2,10]
   
   # a1=20
   # a2 -> 1010101010
@@ -428,9 +428,34 @@ v4 = "我是{name},年龄：{age}。".format(**{"name":"武沛齐","age":18})
        f.write(res.content)
    ```
 
+```python
+import requests
+import os
+# # 定位文件位置
+base_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(base_dir,'files/oo.csv')
+mp4_path = os.path.join(base_dir,'files')
+# 下载
+def download(title,url):
+    # 下载文件
+    res = requests.get(
+        url=url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 FS"
+        }
+    )
+    with open('{}{}.mp4'.format(mp4_path,title), mode='wb') as f_w:
+        f_w.write(res.content)
 
+#读取文件
+with open(file_path,mode='r',encoding='utf-8') as f_r:
+    for line in f_r:
+        row_list = line.strip().split(',')
+        print(row_list)
+        # uname =os.path.join(mp4_path,'{}.mp4'.format(uname))
+        download(*row_list)
 
-
+```
 
 ## 2. 函数和函数名
 
@@ -1288,7 +1313,7 @@ upload()
    ```python
    def func(k,v,info={}):
        info[k] = v
-   	return info
+       return info
    
    v1 = func(1,2)
    print(v1)
@@ -1305,7 +1330,7 @@ upload()
    ```python
    def func(k,v,info={}):
        info[k] = v
-   	return info
+   		return info
    
    v1 = func(1,2)
    v2 = func(4,5,{})
@@ -1433,6 +1458,50 @@ upload()
    # 补充代码
    ```
 
+   ```python
+   #自写答案
+   import requests
+   import os
+   
+   base_dir = os.path.dirname(os.path.abspath(__file__))
+   
+   def write_file(**kwargs):
+       """将天气信息拼接起来，并写入到文件
+       格式要求：
+       	1. 每个城市的天气占一行
+       	2. 每行的格式为：city-北京,cityid-101010100,temp-18...
+       """
+       # 补充代码
+       line = []
+       for key,val in kwargs.items():
+           line.append('{}-{}'.format(key,val))
+       line=','.join(line)
+       with open('{}/files/weather.txt'.format(base_dir),mode='a',encoding='utf-8') as f_w:
+           f_w.write('{}\n'.format(line))
+   
+   def get_weather(code):
+       """ 获取天气信息 """
+       url = "http://www.weather.com.cn/data/ks/{}.html".format(code)
+       res = requests.get(url=url)
+       res.encoding = "utf-8"
+       weather_dict = res.json()
+       return weather_dict
+   
+   
+   city_list = [
+       {'code': "101020100", 'title': "上海"},
+       {'code': "101010100", 'title': "北京"},
+   ]
+   
+   # 补充代码
+   
+   for line in city_list:
+       weather_dict = get_weather(line.get('code'))['weatherinfo']
+       print(weather_dict)
+       write_file(**weather_dict)
+   
+   ```
+
    
 
 10. 看代码写结果
@@ -1442,7 +1511,7 @@ upload()
         return 1,2,3
     
     val = func()
-    print( type(val) == tuple )
+    print( type(val) == tuple )     #
     print( type(val) == list )
     ```
 
@@ -1450,11 +1519,11 @@ upload()
 
     ```python
     def func(users,name):
-    	users.append(name)
+        users.append(name)
         print(users)
     
     result = func(['武沛齐','李杰'],'alex')
-    print(result)
+    print(result) 
     ```
 
 12. 看代码写结果
@@ -1502,14 +1571,13 @@ upload()
 15. 分析代码，写结果：
 
     ```python
-    def func(handler,**kwargs):
+    def func(handler, **kwargs):
         extra = {
-            "code":123,
-            "name":"武沛齐"
+            "code": 123,
+            "name": "武沛齐"
         }
         kwargs.update(extra)
         return handler(**kwargs)
-        
     
     def something(**kwargs):
         return len(kwargs)
@@ -1518,14 +1586,14 @@ upload()
         key_list = []
         for key in kwargs.keys():
             key_list.append(key)
-    	return key_list
+        return key_list
     
     
-    v1 = func(something,k1=123,k2=456)
-    print(v1)
+    v1 = func(something, k1=123, k2=456)
+    print(v1)  # 4
     
-    v2 = func(killer,**{"name":"武沛齐","age":18})
-    print(v2)
+    v2 = func(killer, **{"name": "武沛齐", "age": 18})
+    print(v2) # ['name', 'age', 'code']
     ```
 
 16. 两个结果输出的分别是什么？并简述其原因。
@@ -1701,7 +1769,261 @@ upload()
 
       
 
+```pyton
+# v1.0 版本答案
+import os
+import requests
 
+# 已下载的资料存入
+SELECT_IMAGE = set()
+SELECT_VIDEO = set()
+SELECT_NBA = set()
+
+# base_path
+base_path = os.path.dirname(os.path.abspath(__file__))
+
+
+def download(file_path, url):
+    res = requests.get(
+        url=url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
+        }
+    )
+    with open(file_path, mode="wb") as f:
+        f.write(res.content)
+
+
+def image_down():
+    ''' 可供用户下载的图片如下'''
+    image_dict = {
+        "1": ("吉他男神", "https://hbimg.huabanimg.com/51d46dc32abe7ac7f83b94c67bb88cacc46869954f478-aP4Q3V"),
+        "2": ("漫画美女", "https://hbimg.huabanimg.com/703fdb063bdc37b11033ef794f9b3a7adfa01fd21a6d1-wTFbnO"),
+        "3": ("游戏地图", "https://hbimg.huabanimg.com/b438d8c61ed2abf50ca94e00f257ca7a223e3b364b471-xrzoQd"),
+        "4": ("alex媳妇", "https://hbimg.huabanimg.com/4edba1ed6a71797f52355aa1de5af961b85bf824cb71-px1nZz"),
+    }
+    print('进入图片专区 请选择')
+    while True:
+        text_list = []
+        for num, item in image_dict.items():
+            if not num in SELECT_IMAGE:
+                text_list.append('{}:{} '.format(num, item[0]))
+        if text_list:
+            text_content = ','.join(text_list)
+        else:
+            print('都下载完了， 无下载选项')
+            break
+        print(text_content)
+        select_num = input('请输入选择号码 Q/q退出：')
+        if select_num.upper() == 'Q':
+            return
+        if select_num in SELECT_IMAGE:
+            print('已下载过， 重新选择')
+            continue
+        group = image_dict.get(select_num)
+        if not group:
+            print('序号不存在， 重新选择')
+
+        file_path = '{}/files/{}.png'.format(base_path, image_dict[select_num][0])
+        url = image_dict[select_num][1]
+        download(file_path, url)
+        SELECT_IMAGE.add(select_num)
+
+
+def video_down():
+    # 可供用户下载的短视频如下
+    video_dict = {
+        "1": {"title": "东北F4模仿秀",
+              'url': "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog"},
+        "2": {"title": "卡特扣篮",
+              'url': "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g"},
+        "3": {"title": "罗斯mvp",
+              'url': "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg"}
+    }
+    print('欢迎短视频专区：')
+    while True:
+        text_list = []
+        for num,item in video_dict.items():
+            if not num in SELECT_VIDEO:
+                text_list.append('{}:{}'.format(num, item['title']))
+        if not text_list:
+            print('已经下载完，')
+            break
+        text_content = ','.join(text_list)
+        print(text_content)
+        select_num = input('请选择号码 ！Q/q退出：')
+        if select_num.upper() == 'Q':
+            return
+        if select_num in SELECT_VIDEO:
+            print('已经下载过，重新选择')
+            continue
+        group = video_dict.get(select_num)
+        if not group:
+            print('不存在的序号， 重新选择')
+            continue
+
+        file_path = os.path.join(base_path,f'files/{group["title"]}.mp4')
+        print(file_path)
+        url = group['url']
+        download(file_path, url)
+        SELECT_VIDEO.add(select_num)
+
+
+def nba_down():
+    # 可供用户下载的NBA视频如下
+    nba_dict = {
+        "1": {"title": "威少奇才首秀三双",
+              "url": "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300fc20000bvi413nedtlt5abaa8tg&ratio=720p&line=0"},
+        "2": {"title": "塔图姆三分准绝杀",
+              "url": "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0d00fb60000bvi0ba63vni5gqts0uag&ratio=720p&line=0"}
+    }
+    print('欢迎进入nba专区')
+    while True:
+        text_list = []
+        for num, item in nba_dict.items():
+            if not num in SELECT_NBA:
+                text_list.append(f'{num}:{item["title"]}')
+        if not text_list:
+            print('都下载完， ')
+            break
+        text_content = ','.join(text_list)
+        print(text_content)
+        select_num = input('请选择： Q/q 退出')
+        if select_num.upper() == 'Q':
+            return
+        if select_num in SELECT_NBA:
+            print('已下载过， 请重新选择：')
+            continue
+        group = nba_dict.get(select_num)
+        if not group:
+            print('不存在的序号，重新选择: ')
+            continue
+        file_path = os.path.join(base_path, 'files/{}.mp4'.format(group["title"]))
+        url = group['url']
+        download(file_path, url)
+        SELECT_NBA.add(select_num)
+
+print('欢迎进入xxx系统')
+menu_dict = {
+    '1': image_down,
+    '2': video_down,
+    '3': nba_down
+}
+while True:
+    print('1：图片专区，2：小视频专区，3：nba专区')
+    choice = input('请选择进入的专区： Q/q退出')
+    if choice.upper() == "Q":
+        break
+    func = menu_dict.get(choice)
+    if not func:
+        print('选择专区不存在，重新选择')
+        continue
+    # 进入专区
+    func()
+
+```
+
+
+
+```python
+#v2.0版本
+import os
+import requests
+
+DB = {
+    "1":{
+        "area":"花瓣网图片专区",
+        "total_dict" : {
+            "1":("吉他男神","https://hbimg.huabanimg.com/51d46dc32abe7ac7f83b94c67bb88cacc46869954f478-aP4Q3V"),
+            "2":("漫画美女","https://hbimg.huabanimg.com/703fdb063bdc37b11033ef794f9b3a7adfa01fd21a6d1-wTFbnO"),
+            "3":("游戏地图","https://hbimg.huabanimg.com/b438d8c61ed2abf50ca94e00f257ca7a223e3b364b471-xrzoQd"),
+            "4":("alex媳妇","https://hbimg.huabanimg.com/4edba1ed6a71797f52355aa1de5af961b85bf824cb71-px1nZz"),
+                        },
+        "ext":'png',
+        "selected":set()
+    },
+    "2":{
+        "area":"抖音短视频",
+        "total_dict": {
+            "1":{"title":"东北F4模仿秀",'url':"https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog"},
+            "2":{"title":"卡特扣篮",'url':"https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g"},
+            "3":{"title":"罗斯mvp",'url':"https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg"},
+                    },
+        "ext":'mp4',
+        "selected":set()
+
+    },
+    "3":{
+        "area":"NBA视频",
+        "total_dict":{
+            "1":{"title":"威少奇才首秀三双","url":"https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300fc20000bvi413nedtlt5abaa8tg&ratio=720p&line=0"},
+            "2":{"title":"塔图姆三分准绝杀","url":"https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0d00fb60000bvi0ba63vni5gqts0uag&ratio=720p&line=0"}
+                },
+        "ext":"mp4",
+        "selected":set()
+    }
+}
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+# 下载方法
+def download(file_path,url):
+    res=requests.get(
+        url=url,
+        headers={
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 FS"
+        }
+    )
+    with open(file_path,mode='wb') as f:
+        f.write(res.content)
+
+def handler(area_dict):
+    print(f'欢迎进入{area_dict["area"]}')
+    # 打印可下载项目列表
+    while True:
+        text_list = []
+        for num,item in area_dict['total_dict'].items():
+            if num in area_dict['selected']:
+                continue
+            if type(item) == tuple:
+                data = f'{num}:{item[0]}'
+            else:
+                data = f'{num}:{item["title"]}'
+            text_list.append(data)
+        if not text_list:
+            print("无下载选项")
+            return
+        text_content = ','.join(text_list)
+        print(text_content)
+        choice = input('请选择下载： Q/q退出')
+        if choice.upper() == 'Q':
+            return
+        if not choice in area_dict["total_dict"]:
+            print('不存在的选项，请重新选择')
+            continue
+        # 提取文件名，下载地址 下载文件
+        if type(area_dict['total_dict'][choice]) ==tuple:
+            file_name = area_dict['total_dict'][choice][0]+'.png'
+            url = area_dict['total_dict'][choice][1]
+        if type(area_dict['total_dict'][choice]) == dict:
+            file_name = area_dict['total_dict'][choice]["title"]+'.mp4'
+            url = area_dict['total_dict'][choice]['url']
+        file_path = os.path.join(base_dir,f'files/{file_name}')
+        download(file_path,url)
+        area_dict['selected'].add(choice)
+
+
+print("欢迎进入xxx系统")
+while True:
+    print("1: 豆瓣图片专区，2：短视频专区，3：NBA视频专区")
+    choice = input("请选择 Q/q 退出：")
+    if choice.upper() == 'Q':
+        break
+    if not choice in DB:
+        print("不存在序号， 请重新选择")
+        continue
+    area_dict = DB.get(choice)
+    handler(area_dict) #进入对应专区
+```
 
 
 

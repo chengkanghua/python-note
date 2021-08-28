@@ -111,7 +111,7 @@ def handler():
     print("昌平吴彦祖")
     def inner():
         print("朝阳大妈")
-	inner()
+		inner()
     func()
     print("海淀网友")
 
@@ -234,14 +234,12 @@ print(code)
 
 ```python
 name = "武沛齐"
-
 def run():
     name = "alex"
     def inner():
-        print(name)
-	inner()
-    
-run()
+        print(name)  #alex
+    inner()
+run() 
 ```
 
 ![image-20201229131739455](assets/image-20201229131739455.png)
@@ -254,18 +252,17 @@ run()
 
 ```python
 name = "武沛齐"
-
 def run():
     name = "alex"
     def inner():
         print(name)
-	return inner
-    
-v1 = run()
-v1()
+    return inner
 
-v2 = run()
-v2()
+v1 = run()  
+v1()    # alex
+
+v2 = run()  
+v2()  # alex
 ```
 
 ![image-20201229132237241](assets/image-20201229132237241.png)
@@ -276,20 +273,19 @@ v2()
 
 ```python
 name = "武沛齐"
-
 def run():
     name = "alex"
+
     def inner():
         print(name)
-	return [inner,inner,inner]
-    
+    return [inner, inner, inner]
 func_list = run()
-func_list[2]()
-func_list[1]()
+func_list[2]()  # alex
+func_list[1]()  # alex
 
 funcs = run()
-funcs[2]()
-funcs[1]()
+funcs[2]()  # alex
+funcs[1]()  # alex
 ```
 
 ![image-20201229132648896](assets/image-20201229132648896.png)
@@ -314,58 +310,53 @@ funcs[1]()
 
    ```python
    name = '武沛齐'
-   
    def func():
        def inner():
            print(name)
        res = inner()
        return res
-   
    v = func()
    print(v)
    
    # 武沛齐
    # None
    ```
-
+   
 2. 分析代码，写结果
 
    ```python
    name = '武沛齐'
-   
    def func():
        def inner():
            print(name)
            return "alex"
        res = inner()
-   	return res
-   
+       return res
    v = func()
    print(v)
    
    # 武沛齐
    # alex
    ```
-
+   
 3. 分析代码，写结果
 
    ```python
-   name = 'root'
-   
+   nname = 'root'
    def func():
        def inner():
            print(name)
            return 'admin'
        return inner
    
-   v = func()
-   result = v()
+   v = func()    #返回函数内部inner函数， 不会执行里面的函数。
+   result = v()  #运行inner()
    print(result)
    
    # root
    # admin
    ```
-
+   
 4. 分析代码，写结果
 
    ```python
@@ -375,16 +366,13 @@ funcs[1]()
            print(name)
            return '路飞'
        return inner
-   
-   v11 = func()
-   data = v11()
-   print(data)
-   
-   
-   v2 = func()()
-   print(v2)
+   v11 = func()  #返回inner函数
+   data = v11()  # 武沛齐
+   print(data)   # 路飞 
+   v2 = func()() # inner() 武沛齐
+   print(v2)     # 路飞
    ```
-
+   
 5. 分析代码，写结果
 
    ```python
@@ -394,12 +382,11 @@ funcs[1]()
            print(name)
            return 'luffy'
        return inner
+   v1 = func('武沛齐')() # 武沛齐 返回luffy
+   print(v1)  #luffy
    
-   v1 = func('武沛齐')()
-   print(v1)
-   
-   v2 = func('alex')()
-   print(v2)
+   v2 = func('alex')()  # alex  返回luffy
+   print(v2)    # luffy
    ```
 
    ![image-20201229140559322](assets/image-20201229140559322.png)
@@ -410,15 +397,17 @@ funcs[1]()
 
    ```python
    def func(name):
+       #neme ='1111'
        def inner():
            print(name)
            return 'luffy'
        return inner
+   v1 = func('武沛齐')  # inner
+   v2 = func('alex')  # inner
+   print(v1)   # function
+   v1()     # 武佩奇
+   v2()     # alex
    
-   v1 = func('武沛齐')
-   v2 = func('alex')
-   v1()
-   v2()
    ```
 
    ![image-20201229165929911](assets/image-20201229165929911.png)
@@ -435,16 +424,12 @@ funcs[1]()
            print(name)
            return 'root'
        return inner
+   v1 = func()()  # 打印武佩奇  return root
+   v2 = func('alex')()   # 打印 alex  return root
+   print(v1,v2)   # root  root
    
-   v1 = func()()
-   v2 = func('alex')()
-   print(v1,v2)
-   
-   # 武沛齐
-   # alex
-   # root root
    ```
-
+   
    ![image-20201229171258454](assets/image-20201229171258454.png)
 
 
@@ -530,9 +515,7 @@ funcs[1]()
   ```python
   """ 基于多线程去下载视频 """
   from concurrent.futures.thread import ThreadPoolExecutor
-  
   import requests
-  
   
   def download_video(url):
       res = requests.get(
@@ -543,7 +526,6 @@ funcs[1]()
       )
       return res.content
   
-  
   def outer(file_name):
       def write_file(response):
           content = response.result()
@@ -552,21 +534,19 @@ funcs[1]()
   
       return write_file
   
-  
-  POOL = ThreadPoolExecutor(10)
-  
+  POOL = ThreadPoolExecutor(10)  # # 创建一个容纳数量为5的线程池
   video_dict = [
       ("东北F4模仿秀.mp4", "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog"),
       ("卡特扣篮.mp4", "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f3e0000bv52fpn5t6p007e34q1g"),
       ("罗斯mvp.mp4", "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f240000buuer5aa4tij4gv6ajqg")
   ]
   for item in video_dict:
-      future = POOL.submit(download_video, url=item[1])
-      future.add_done_callback(outer(item[0]))
+      future = POOL.submit(download_video, url=item[1])   #通过submit提交执行的函数到线程池中
+      future.add_done_callback(outer(item[0]))  # future.add_done_callback(write_file) -->write_file(future)
   
   POOL.shutdown()
   ```
-
+  
   ![image-20201229185549102](assets/image-20201229185549102.png)
 
 
@@ -1051,12 +1031,33 @@ def auth(func):
    def base(a1,a2):
        return a1 + a2 + '傻缺'
    
-   
    def foo(a1,a2,a3,a4):
        return a1 + a2 + a3 + a4 + '傻蛋'
+     
+   ------------------------------------------
+   # 答案
+   def other(origin):
+       def inner(*args,**kwargs):
+           res = origin(*args,**kwargs)
+           print('after')
+           return res
+       return inner
+   @other
+   def func(a1):
+       return a1 + "傻叉"
+   @other
+   def base(a1,a2):
+       return a1 + a2 + '傻缺'
+   @other
+   def foo(a1,a2,a3,a4):
+       return a1 + a2 + a3 + a4 + '傻蛋'
+   
+   func('alex')
+   base('xiaoming','xiaoli')
+   foo('zs','lisi','ww','mm')
    ```
 
-2. 请为以下所有函数编写一个装饰器，添加上装饰器后可以实现：将被装饰的函数执行5次，讲每次执行函数的结果按照顺序放到列表中，最终返回列表。
+2. 请为以下所有函数编写一个装饰器，添加上装饰器后可以实现：将被装饰的函数执行5次，将每次执行函数的结果按照顺序放到列表中，最终返回列表。
 
    ```python
    import random 
@@ -1067,6 +1068,23 @@ def auth(func):
    
    result = func() # 内部自动执行5次，并将每次执行的结果追加到列表最终返回给result
    print(result) 
+   -------------------------------
+   import random 
+   def other(origin):
+       count = []
+       def inner():
+           for i in range(5):
+               res = origin()
+               count.append(res)
+           return count
+       return inner
+   @other
+   def func():
+       return random.randint(1,4)
+   
+   result = func() # 内部自动执行5次，并将每次执行的结果追加到列表最终返回给result
+   print(result)
+   
    ```
 
 3. 请为以下函数编写一个装饰器，添加上装饰器后可以实现： 检查文件所在路径（文件件）是否存在，如果不存在自动创建文件夹（保证写入文件不报错）。
@@ -1078,6 +1096,25 @@ def auth(func):
        file_obj.close()
    
    write_user_info('/usr/bin/xxx/xxx.png')
+   --------------------------------------------------------
+   import os
+   def other(origin):
+       def inner(path):
+           base_name = os.path.dirname(path)
+           print(base_name)
+           if not os.path.exists(base_name):
+               os.mkdir(base_name)
+           origin(path)
+       return inner
+   
+   # 请为以下函数编写一个装饰器，添加上装饰器后可以实现： 检查文件所在路径（文件件）是否存在，如果不存在自动创建文件夹（保证写入文件不报错）。
+   @other
+   def write_user_info(path):
+       file_obj = open(path, mode='w', encoding='utf-8')
+       file_obj.write("武沛齐")
+       file_obj.close()
+       
+   write_user_info('/Users/kanghua/PycharmProjects/python-note/study/files2/aa.txt')
    ```
 
 4. 分析代码写结果：
@@ -1085,55 +1122,41 @@ def auth(func):
    ```python
    def get_data():
        scores = []
-   
        def inner(val):
            scores.append(val)
            print(scores)
-   
        return inner
-   
-   
    func = get_data()
-   
-   func(10)
-   func(20)
-   func(30)
+   func(10)  #[10]
+   func(20)  #[10,20]
+   func(30)  #[10,20,30]
    ```
 
 5. 看代码写结果
 
    ```python
    name = "武沛齐"
-   
-   
    def foo():
        print(name)
-   
-   
    def func():
        name = "root"
        foo()
    
+   func() #武沛齐
    
-   func()
    ```
 
 6. 看代码写结果
 
    ```python
    name = "武沛齐"
-   
-   
    def func():
        name = "root"
-   
        def foo():
            print(name)
-   
        foo()
    
-   
-   func()
+   func() #root
    ```
 
 7. 看代码写结果
@@ -1142,16 +1165,13 @@ def auth(func):
    def func(val):
        def inner(a1, a2):
            return a1 + a2 + val
-   
        return inner
    
-   
    data_list = []
-   
    for i in range(10):
        data_list.append(  func(i)   )
    
-   print(data_list)
+   print(data_list) #[inner,inner,inner,inner,inner,inner,inner,inner,inner]
    ```
 
 8. 看代码写结果
@@ -1160,20 +1180,17 @@ def auth(func):
    def func(val):
        def inner(a1, a2):
            return a1 + a2 + val
-   
        return inner
    
-   
    data_list = []
-   
    for i in range(10):
        data_list.append(func(i))
    
    v1 = data_list[0](11,22)
    v2 = data_list[2](33,11)
    
-   print(v1)
-   print(v2)
+   print(v1) # 33
+   print(v2) # 46
    ```
 
    
