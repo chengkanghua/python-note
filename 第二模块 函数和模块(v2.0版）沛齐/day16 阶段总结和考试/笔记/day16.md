@@ -18,18 +18,13 @@
 
 ```python     
 name = 'root'
-
-
 def outer():
     name = "武沛齐"
-
     def inner():
-        global name
-        name = 123
-
+        global name #声明调用全局name变量
+        name = 123  #全局的name修改成123
     inner()
     print(name)
-
 
 outer()
 print(name)
@@ -41,73 +36,54 @@ print(name)
 
 ```python
 name = 'root'
-
-
 def outer():
     name = "武沛齐"
-
     def inner():
-        nonlocal name
+        nonlocal name  #nonlocal关键字用来在函数或其它作用域中使用外层（非全局）变量
         name = 123
-
     inner()
     print(name)
 
-
 outer()
 print(name)
 ```
 
 ```python
 name = 'root'
-
-
 def outer():
     name = 'alex'
-
     def func():
         name = "武沛齐"
-
         def inner():
             nonlocal name
             name = 123
-
         inner()
-        print(name)
-
+        print(name)   #123
     func()
-    print(name)
-
+    print(name)  #alex
 
 outer()
-print(name)
+print(name) #root
 
 ```
 
 ```python
 name = 'root'
-
-
 def outer():
     name = 'alex'
-
     def func():
         nonlocal name
         name = "武沛齐"
-
         def inner():
             nonlocal name
             name = 123
-
         inner()
-        print(name)
-
+        print(name)  #123
     func()
-    print(name)
-
+    print(name) #123
 
 outer()
-print(name)
+print(name) #root
 ```
 
 
@@ -122,15 +98,13 @@ def foo():
     yield 2
     yield 2
 
-
 def func():
     yield 1
     yield 1
     yield 1
-    yield from foo()
+    yield from foo() #这是运行foo() 222
     yield 1
     yield 1
-
 
 for item in func():
     print(item)
