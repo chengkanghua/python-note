@@ -77,8 +77,6 @@ print(message)
 
 导入，其实就是将模块或包加载的内存中，以后再去内存中去拿就行。
 
-
-
 关于导如时的路径：
 
 >  在Python内部默认设置了一些路径，导入模块或包时，都会按照指定顺序逐一去特定的路径查找。
@@ -121,14 +119,6 @@ import xxxxx  # 导入路径A下的一个xxxxx.py文件
 2. 项目执行文件一般都在项目根目录，如果执行文件嵌套的内存目录，就需要自己手动在sys.path中添加路径。
    ![image-20210103163446464](assets/image-20210103163446464.png)
 3. pycharm中默认会将项目目录加入到sys.path中
-
-
-
-
-
-
-
-
 
 关于导入的方式：
 
@@ -636,7 +626,8 @@ for path, folder_list, file_list in data:
 
 ```python
 import shutil
-
+import os
+base_path = os.path.dirname(os.path.abspath(__file__))
 # 1. 删除文件夹
 """
 path = os.path.join(base_path, 'xx')
@@ -732,6 +723,12 @@ def run():
 
 if __name__ == '__main__':
     run()
+-----------------------------------------------------------------------
+kanghuadeMacBook-Pro:python-note kanghua$ python3.9 /Users/kanghua/PycharmProjects/python-note/study/test.py aa bb cc
+['/Users/kanghua/PycharmProjects/python-note/study/test.py', 'aa', 'bb', 'cc']
+下载图片 aa
+下载图片 bb
+下载图片 cc
 ```
 
 ### 3.4 random
@@ -777,7 +774,7 @@ print(result)
 ```python
 import hashlib
 
-hash_object = hashlib.md5("iajfsdunjaksdjfasdfasdf".encode('utf-8'))
+hash_object = hashlib.md5("iajfsdunjaksdjfasdfasdf".encode('utf-8')) #加盐
 hash_object.update("武沛齐".encode('utf-8'))
 result = hash_object.hexdigest()
 print(result)
@@ -846,7 +843,21 @@ print(result)
 
 1. 自己去网上搜索如何基于Python计算mp4视频的时长，最终实现用代码统计某个文件夹下所有mp4的时长。
 
+```python
+import os
+from moviepy.editor import VideoFileClip
+data = os.walk('/Users/kanghua/Downloads/')
+total_seconds = 0.0
+for path,floder,file_name in data:
+    for file in file_name:
+        file_abspath = path + file
+        if file_abspath.endswith('.mp4'):
+            clip = VideoFileClip(file_abspath)  # 创建 from moviepy.editor import VideoFileClip 对象
+            total_seconds += clip.duration  # 获取时长返回的单位是秒
 
+print(total_seconds)
+
+```
 
 
 

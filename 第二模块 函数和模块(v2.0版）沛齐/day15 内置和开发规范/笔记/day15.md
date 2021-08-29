@@ -534,7 +534,7 @@ print(phone_list)
   import re
   
   text = "alexraotrootadmin"
-  data_list = re.findall("r.+o", text) # 贪婪匹配
+  data_list = re.findall("r.+o", text) # 贪婪匹配   +表示前面字符一次或一次以上   .任意字符  
   print(data_list) # ['raotroo']
   ```
 
@@ -542,7 +542,7 @@ print(phone_list)
   import re
   
   text = "alexraotrootadmin"
-  data_list = re.findall("r.+?o", text) # 非贪婪匹配
+  data_list = re.findall("r.+?o", text) # 非贪婪匹配   ？ 前面字符0次或1次
   print(data_list) # ['rao']
   ```
 
@@ -813,20 +813,20 @@ print(phone_list)
    )
    bs_object = BeautifulSoup(res.text, "html.parser")
    comment_object_list = bs_object.find_all("p", attrs={"class": "reply-content"})
+   email_list = []
    for comment_object in comment_object_list:
        text = comment_object.text
-       print(text)
+       # print(text)
        # 请继续补充代码，提取text中的邮箱地址
+       str1 = re.findall('\w+@\w+\.\w{3}',text,re.ASCII)
+       if str1:
+           email_list.extend(str1)
+   print(email_list)
+   
    
    ```
-
    
-
-
-
-
-
-
+   
 
 ##### 4. 起始和结束
 
@@ -1002,8 +1002,6 @@ python中提供了re模块，可以处理正则表达式并对文本进行处理
   ```
 
   
-
-
 
 ### 小结
 
@@ -1201,9 +1199,162 @@ killer
         print("\n下载完成")
         ```
 
-        
+```python
+#自己写的答案
+from datetime import datetime, timezone, timedelta
+import requests
+import os
+import re
 
-      
+# 定位下载目录
+base_dir = os.path.dirname(os.path.abspath(__file__))
+download_path = os.path.join(base_dir, 'files')
+# print(download_path)
+if not os.path.exists(download_path):
+    os.makedirs(download_path)
+
+# DB 数据
+DB_dict = {}
+with open(f'{base_dir}/video.csv', mode='rt', encoding='utf-8') as f:
+    for line in f:
+        line = re.findall('(\d{7}),(.*),(http.*\.mp4)', line)
+        if line:
+            DB_dict.update({line[0][0]: {'title': line[0][1], 'url': line[0][2]}})
+
+# 分页显示方法
+def limit_new(number: int):
+    '''
+    number:接受分页号码
+    '''
+    stop_num = number * 10
+    # print(stop_num)
+    start_num = stop_num - 10
+    # print(start_num)
+    page_dict = {}
+    for i, k in enumerate(DB_dict):
+        for j in range(start_num, stop_num):
+            if i == j:
+                # print(DB_dict[k])
+                page_dict[i] = DB_dict[k]
+    if not page_dict:
+        return limit_new(1)
+    return page_dict
+# 搜索方法
+def search_str(str_word: str):
+    '''
+    str_word :关键字
+    '''
+    info_dict = {}
+    if str_word.startswith('id='):
+        str_word = str_word.strip().split('=')[1]
+        for k,v in DB_dict.items():
+            if str_word == k:
+                info_dict[k]=v
+        return info_dict
+    elif str_word.startswith('key='):
+        str_word = str_word.strip().split('=')[1]
+        print(str_word)
+        for k,v in DB_dict.items():
+            if re.search(str_word, v['title']):
+                info_dict[k] = v
+        return info_dict
+    else:
+        return 2
+# 下载方法
+def download_movie(file_path, url):
+    '''
+    file_path: 文件绝对路径
+    url： 下载地址
+    '''
+    res = requests.get(
+        url=url
+    )
+    # 视频总大小（字节）
+    file_size = int(res.headers['Content-Length'])
+
+    download_size = 0
+    with open(file_path, mode='wb') as file_object:
+        # 分块读取下载的视频文件（最多一次读128字节），并逐一写入到文件中。 len(chunk)表示实际读取到每块的视频文件大小。
+        for chunk in res.iter_content(128):
+            download_size += len(chunk)
+            file_object.write(chunk)
+            file_object.flush()
+            message = "\r视频总大小为：{}字节，已下载{}字节。".format(file_size, download_size)
+            print(message, end='')
+        print()
+        file_object.close()
+    res.close()
+    return True
+
+# main
+
+while True:
+    print('欢迎进入牛xxx短视频资讯平台系统\n 1: 分页看新闻  2：搜索专区  3：下载专区')
+    select_num = input("请选择对应专区：Q/q退出 ")
+    if select_num.upper() == 'Q':
+        break
+    elif select_num == '1':  #分页看新闻
+        while True:
+            page = input('请输入页码（每页显示10条）Q/q退出：')
+            if page.upper() == 'Q':
+                break
+            if not page.isdigit():
+                print('输入数字，傻x ：')
+                continue
+            page = int(page)
+            data=limit_new(page)
+            for k, v in data.items():
+                print(k, v)
+    elif select_num == '2': #搜索专区
+        while True:
+            str_word = input('两种搜索 id=数字，key=关键字，Q/q退出： ')
+            if str_word.upper() == 'Q':
+                break
+            info = search_str(str_word)
+            if info == 2:
+                print('输入方式不对，换个姿势再来 傻x')
+                continue
+            if not info:
+                print('sorry not find')
+                continue
+            for k,v in info.items():
+                print(k,v)
+    elif select_num == '3': #下载专区
+        while True:
+            id = input('请输入需要下载视频的id号码：Q/q退出：')
+            file_path=''
+            url =''
+            # 查找对应的视频
+            for k,v in DB_dict.items():
+                if k == id:
+                    file_path = os.path.join(download_path,'{}{}.mp4'.format(k,datetime.now().strftime("%Y-%m-%d-%H-%M-%S")))
+                    url = v.get("url")
+            #找到再下载，未找到提示
+            if file_path and url:
+                download_movie(file_path=file_path,url=url)
+                continue
+            else:
+                print('sorry not find, please replace:')
+                continue
+    else:
+        print('error ： input woring，please one more time')
+        continue
+-----------------------------------------------------------------导师作业点评
+你的结果显示还真是粗暴了，直接就字典了.......
+
+我这里给你分享一份其他作业示例：https://www.cnblogs.com/Neeo/articles/9929745.html
+
+
+另外，如下图，当你在下载过程中，你是不是发现卡一段时间之后，然后就提示100%下载成功了？！这是因为程序卡在了如下图红框内这一行了，原因是这样的，这一行代码会将视频文件完全下载到系统的缓存中，在下载完整个视频之前，程序不会往下走，这就是卡的现象，当视频下载完了之后，程序往下之后，打开文件，for循环写入，这个过程太快了，给人的现象就是卡顿~~~下载完成的现象。
+
+怎么解决呢？你在那一行代码加一个stream参数
+
+res = requests.get(url=video_url, stream=True)。
+
+这个stream参数适用于下载音视频文件，即"告诉"服务器，本次请求是流式传输，即我每次下载一点，不要一下子都给我。
+
+关于requests模块的细节，参考：https://www.cnblogs.com/Neeo/articles/11511087.html#requestsget
+```
 
 ## 附赠
 
@@ -1216,6 +1367,7 @@ killer
 运行此脚本需要预先安装：
     pip install request
     pip install beautifulsoup4
+    pip install lxml
 
 """
 import requests
