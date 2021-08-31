@@ -100,7 +100,7 @@ def other(func):
     # functools.wraps()
     def inner(*args,**kwargs):
         start_time = time.time()
-        st = func()
+        st = func(*args,**kwargs)
         stop_time = time.time()
         print('函数执行花费时间秒:{}'.format(stop_time-start_time))
         return st
@@ -186,11 +186,5 @@ with open('d.txt',mode='w') as f_w:
 # json.dump(d2,file_object)
 # file_object.close()
 
-
-
 # 使用列表解析式(生成式)和range得到这样一个列表[1,4,9,16,25,36,49]
-
-# 使用列表解析式(生成式)和range得到这样一个列表[1,4,9,16,25,36,49]
-
-# print([i ** 2 for i in range(1, 8)])
-
+# print([i ** 2 for i in range(1,8)])
