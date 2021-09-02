@@ -996,7 +996,9 @@ print(data)
 
 2. 面向对象中的self指的是什么?
 
-3. 以下代码体现 向对象的什么特性?
+- self是一个参数， 在通过 对象.方法时， 这个参数会被python自动传递， （值为当前调用方法的对象）
+
+1. 以下代码体现 向对象的什么特性?
 
    ```python
    class Person(object):
@@ -1011,7 +1013,7 @@ print(data)
    封装- 数据封装
    ```
 
-4. 以下代码体现 向对象的 么特点?
+2. 以下代码体现 向对象的 么特点?
 
    ```python
    class Message(object):
@@ -1040,7 +1042,7 @@ print(data)
    封装 相同的方法封装类中
    ```
 
-5. 看代码写结果
+3. 看代码写结果
 
    ```python
    class Foo:
@@ -1052,7 +1054,7 @@ print(data)
    print(result) # None
    ```
 
-6. 看代码写结果
+4. 看代码写结果
 
    ```python
    class Base1:
@@ -1082,7 +1084,7 @@ print(data)
    obj.f0()  #foo.f0   base1.f3  base1.f1
    ```
 
-7. 看代码写结果:
+5. 看代码写结果:
 
    ```python
    class Base:
@@ -1105,7 +1107,7 @@ print(data)
    obj.f2() # foo.f2  foo.f1  base.f3
    ```
 
-8. 补充代码实现
+6. 补充代码实现
 
    ```python
    user_list = []
@@ -1131,27 +1133,28 @@ print(data)
        def show(self):
            print(self.user,self.email)
    
-   user_list = []
-   while True:
-       user = input("请输入用户名:")
-       pwd = input("请输入密码:")
-       email = input("请输入邮箱:")
-       if not user and pwd :
-           print('输入类型不对， 重新输入')
-           continue
-       if not re.search('\w+@\w+\.(com|cn|edu)',email):
-           print('邮箱格式不对， 重新输入')
-           continue
-       user = UserInfo(user,pwd,email)
-       user_list.append(user)
-       if len(user_list) >= 3:
-           break
-   for i in user_list:
-       i.show()
+   def run():
+       user_list = []
+       while True:
+           user = input("请输入用户名:")
+           pwd = input("请输入密码:")
+           email = input("请输入邮箱:")
+           if not re.match('\w+@\w+\.\w+',email):
+               print('邮箱格式不对， 重新输入')
+               continue
+           # user_object = UserInfo(user,pwd,email)
+           user_list.append(UserInfo(user,pwd,email))
+           if len(user_list) >= 3:
+               break
+       for i in user_list:
+           i.show()
+   
+   if __name__ == "__main__":
+       run()
    
    ```
 
-9. 补充代码:实现 户注册和登录。
+7. 补充代码:实现 户注册和登录。
 
    ```python
    class User:
@@ -1211,22 +1214,16 @@ class Account:
         while True:
             print('welcome login ')
             username = input('please username: Q/q quit')
-            password = input('please password: ')
             if username.upper() == 'Q':
                 break
+            password = input('please password: ')
             for i in self.user_list:
                 if username == i.name and password== i.pwd:
                     print('登陆成功')
-                    break
+                    return 
             else:
                 print('账号或密码错误，请重试')
                 continue
-            # if username == self.user_list[username].name and password == self.user_list[username].pwd:
-            #     print('登陆成功')
-            #     break
-            # else:
-            #     print("账号或者密码错误，请重试")
-            #     continue
     def register(self):
         """
         用户注册，每注册一个用户就创建一个user对象，然后添加到self.user_list中，表示注册成功。
@@ -1235,42 +1232,39 @@ class Account:
         while True:
             print('welcome register')
             username = input('username:  Q/q quit ')
-            password = input('password: ')
             if username.upper() == 'Q':
                 break
-            if username in self.user_list:
-                print('用户已注册，重试：')
-            username = User(username,password)
-            self.user_list.append(username)
+            password = input('password: ')
+            user_object = User(username,password)
+            self.user_list.append(user_object)
             print('注册成功')
             break
     def showinfo(self):
-        # print(self.user_list)
         for i in self.user_list:
             print(i.name,i.pwd)
-
-        # print(self.user_list[aa].name,self.user_list[aa].pwd)
-        # print(type(self.user_list[aa].name),type(self.user_list[aa].pwd))
     def run(self):
         """
         主程序
         :return:
         """
+        method_dict = {
+            '1':{'title':'登陆','method':self.login},
+            '2':{'title':'注册','method':self.register},
+            '3':{'title':'显示','method':self.showinfo}
+        }
+        message = '\n'.join(['{}:{}'.format(k,v['title']) for k,v in method_dict.items()])
         while True:
-            print('welcome xxx system')
-            print('1: login  2：register 3:showinfo')
-            num = input('select num：Q/q quit')
-            if num.upper() == 'Q':
+            print(message)
+            select_num = input('请选择功能： Q/q退出 》')
+            if select_num.upper() == 'Q':
                 break
-            if not num in {'1','2','3'}:
-                print('error: not know ')
+            info = method_dict.get(select_num)['method']
+            if not info:
+                print('选择错误， 请重新选择。')
                 continue
-            if num == '1':
-                self.login()
-            if num == '2':
-                self.register()
-            if num == '3':
-                self.showinfo()
+            info()
+
+
 if __name__ == '__main__':
     obj = Account()
     obj.run()

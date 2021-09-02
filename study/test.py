@@ -14,22 +14,16 @@ class Account:
         while True:
             print('welcome login ')
             username = input('please username: Q/q quit')
-            password = input('please password: ')
             if username.upper() == 'Q':
                 break
+            password = input('please password: ')
             for i in self.user_list:
                 if username == i.name and password== i.pwd:
                     print('登陆成功')
-                    break
+                    return
             else:
                 print('账号或密码错误，请重试')
                 continue
-            # if username == self.user_list[username].name and password == self.user_list[username].pwd:
-            #     print('登陆成功')
-            #     break
-            # else:
-            #     print("账号或者密码错误，请重试")
-            #     continue
     def register(self):
         """
         用户注册，每注册一个用户就创建一个user对象，然后添加到self.user_list中，表示注册成功。
@@ -38,42 +32,39 @@ class Account:
         while True:
             print('welcome register')
             username = input('username:  Q/q quit ')
-            password = input('password: ')
             if username.upper() == 'Q':
                 break
-            if username in self.user_list:
-                print('用户已注册，重试：')
-            username = User(username,password)
-            self.user_list.append(username)
+            password = input('password: ')
+            user_object = User(username,password)
+            self.user_list.append(user_object)
             print('注册成功')
             break
     def showinfo(self):
-        # print(self.user_list)
         for i in self.user_list:
             print(i.name,i.pwd)
-
-        # print(self.user_list[aa].name,self.user_list[aa].pwd)
-        # print(type(self.user_list[aa].name),type(self.user_list[aa].pwd))
     def run(self):
         """
         主程序
         :return:
         """
+        method_dict = {
+            '1':{'title':'登陆','method':self.login},
+            '2':{'title':'注册','method':self.register},
+            '3':{'title':'显示','method':self.showinfo}
+        }
+        message = '\n'.join(['{}:{}'.format(k,v['title']) for k,v in method_dict.items()])
         while True:
-            print('welcome xxx system')
-            print('1: login  2：register 3:showinfo')
-            num = input('select num：Q/q quit')
-            if num.upper() == 'Q':
+            print(message)
+            select_num = input('请选择功能： Q/q退出 》')
+            if select_num.upper() == 'Q':
                 break
-            if not num in {'1','2','3'}:
-                print('error: not know ')
+            info = method_dict.get(select_num)['method']
+            if not info:
+                print('选择错误， 请重新选择。')
                 continue
-            if num == '1':
-                self.login()
-            if num == '2':
-                self.register()
-            if num == '3':
-                self.showinfo()
+            info()
+
+
 if __name__ == '__main__':
     obj = Account()
     obj.run()
