@@ -553,87 +553,69 @@ Fortunately, there's a lookup rule that's better. It's a bit difficult to explai
   class Top(object):
       def message(self, num):
           print("Top.message", num)
-          
   class Base(Top):
       pass
-  
   class Foo(Base):
-  
       def message(self, num):
           print("Foo.message", num)
-          super().message(num + 100)
-  
+          super().message(num + 100)  #super，按照mro继承关系向上找成员。
   
   obj = Foo()
   obj.message(1)
-  
   >>> Foo.message 1
   >>> Top.message 101
   ```
-
+  
   ```python
   class Base(object):
-  
       def message(self, num):
           print("Base.message", num)
-          super().message(1000)
-  
-  
+          super().message(1000)  #按c3查找模型
   class Bar(object):
-  
       def message(self, num):
           print("Bar.message", num)
-  
-  
-  class Foo(Base, Bar):
+  class Foo(Base, Bar):  
       pass
   
-  
   obj = Foo()
-  obj.message(1)
+  obj.message(1)  #先找Base类里方法
   
   >>> Base.message 1
   >>> Bar.message 1000
   ```
-
   
-
+  
+  
   **应用场景**
-
+  
   假设有一个类，他原来已实现了某些功能，但我们想在他的基础上再扩展点功能，重新写一遍？比较麻烦，此时可以用super。
-
+  
   ```python
   info = dict() # {}
   info['name'] = "武沛齐"
   info["age"] = 18
   
   value = info.get("age")
-  
   print(value)
-  ```
-
-  ```python
-  class MyDict(dict):
-  
+  -----------------------------------------------------
+  class MyDict(dict): #继承dict 字典类型
       def get(self, k):
           print("自定义功能")
           return super().get(k)
-  
   
   info = MyDict()
   info['name'] = "武沛齐" # __setitem__
   info["age"] = 18       # __setitem__
   print(info)
   
-  value = info.get("age")
-  
+  value = info.get("age") #调用自定义功能
   print(value)
   ```
 
   ![image-20210131150707551](assets/image-20210131150707551.png)
-
   
-
+  
+  
 - type，获取一个对象的类型。
 
   ```python
@@ -664,77 +646,61 @@ Fortunately, there's a lookup rule that's better. It's a bit difficult to explai
   ```python
   class Top(object):
       pass
-  
-  
   class Base(Top):
       pass
-  
-  
   class Foo(Base):
       pass
   
-  
   v1 = Foo()
-  
   print( isinstance(v1, Foo) )   # True，对象v1是Foo类的实例
   print( isinstance(v1, Base) )  # True，对象v1的Base子类的实例。
   print( isinstance(v1, Top) )   # True，对象v1的Top子类的实例。
   ```
-
+  
   ```python
   class Animal(object):
       def run(self):
           pass
-  
   class Dog(Animal):
       pass
-  
   class Cat(Animal):
       pass
   
-  data_list = [
-      "alex",
-      Dog(),
-      Cat(),
-  	"root"
-  ]
-  
+  data_list = ["alex",Dog(),Cat(),"root"]
   for item in data_list:
       if type(item) == Cat:
           item.run()
+          print("cat")
       elif type(item) == Dog:
           item.run()
+          print('Dog')
       else:
           pass
-      
+  
   for item in data_list:
       if isinstance(item, Animal):
           item.run()
+          print('1')
       else:
           pass
   ```
-
   
-
+  
+  
 - issubclass，判断类是否是某个类的子孙类。
 
   ```python
   class Top(object):
       pass
-  
-  
   class Base(Top):
       pass
-  
-  
   class Foo(Base):
       pass
-  
   
   print(issubclass(Foo, Base))  # True
   print(issubclass(Foo, Top))   # True
   ```
-
+  
   
 
 
@@ -1040,7 +1006,6 @@ except Exception as e:
 class MyException(Exception):
     title = "请求错误"
 
-
 try:
     raise MyException()
 except MyException as e:
@@ -1065,7 +1030,7 @@ except Exception as e:
   def send_email(email,content):
       if not re.match("\w+@live.com",email):
           raise EmailValidError()
-  	if len(content) == 0 :
+  		if len(content) == 0 :
           raise ContentRequiredError()
   	# 发送邮件代码...
       # ...
@@ -1079,12 +1044,12 @@ except Exception as e:
       # ...
       
   	try:
-          send_email(...)
-      except EmailValidError as e:
-          pass
-      except ContentRequiredError as e:
-          pass
-      except Exception as e:
+        send_email(...)
+    except EmailValidError as e:
+        pass
+    except ContentRequiredError as e:
+        pass
+    except Exception as e:
           print("发送失败")
   
   execute()
@@ -1172,29 +1137,25 @@ func()
        def __init__(self, num):
            self.num = num
            self.counter = -1
-   
        def __iter__(self):
            return self
-   
        def __next__(self):
            self.counter += 1
            if self.counter == self.num:
                raise StopIteration()
            return self.counter
    
-       
    obj = IterRange(20)
-   
    while True:
        try:
-       	ele = next(obj)
-   	except StopIteration as e:
+           ele = next(obj)
+       except StopIteration as e:
            print("数据获取完毕")
            break
        print(ele)
-       
+   
    ```
-
+   
 2. 补充代码实现捕获程序中的错误。
 
    ```python
@@ -1202,37 +1163,30 @@ func()
        def __init__(self, num):
            self.num = num
            self.counter = -1
-   
        def __iter__(self):
            return self
-   
        def __next__(self):
            self.counter += 1
            if self.counter == self.num:
                raise StopIteration()
            return self.counter
-   
-   
    class Xrange(object):
        def __init__(self, max_num):
            self.max_num = max_num
-   
        def __iter__(self):
            return IterRange(self.max_num)
    
-   
    data_object = Xrange(100)
    obj_iter = data_object.__iter__()
-   
    while True:
        try:
-       	ele = next(obj_iter)
-   	except StopIteration as e:
+           ele = next(obj_iter)
+       except StopIteration as e:
            print("数据获取完毕")
            break
        print(ele)
    ```
-
+   
 3. 补充代码实现捕获程序中的错误。
 
    ```python
@@ -1240,12 +1194,12 @@ func()
        yield 1
        yield 2
        yield 3
-       
+   
    gen = func()
    while True:
        try:
-       	ele = next(gen)
-   	except StopIteration as e:
+           ele = next(gen)
+       except StopIteration as e:
            print("数据获取完毕")
            break
        print(ele)
@@ -1328,24 +1282,20 @@ func()
            return "错误"
        finally:
            print("END")
-   
        print("结束")
-   
-   
-   res = run(lambda: 123) 
+   res = run(lambda: 123)  # 123 END 成功
    print(res)
-   ```
-
-   ```python
    >>> 123
    >>> END
    >>> 成功
    ```
 
+   
+   
    ```python
    def func():
        print(666)
-       return "成功"
+    return "成功"
    
    def run(handler):
        try:
@@ -1356,20 +1306,18 @@ func()
            return "错误"
        finally:
            print("END")
-   
        print("结束")
    
-   
-   res = run(lambda: 123) 
+   res = run(lambda: 123) # 123 666 END 成功
    print(res)
    ```
-
+   
    ```python
    >>> 123
    >>> 666
    >>> END
    >>> 成功
-   ```
+```
 
 
 
@@ -1379,7 +1327,6 @@ func()
 
 ```python
 class Person(object):
-    
     def __init__(self,name,wx):
         self.name = name
         self.wx = wx
@@ -1396,7 +1343,7 @@ user_object.name
 user_object.wx
 user_object.show()
 
-# 对象.成员 的格式无设置数据
+# 对象.成员 的格式设置数据
 user_object.name = "吴培期"
 ```
 
@@ -1537,7 +1484,7 @@ import re
 v1 = re.match("\w+","dfjksdufjksd")
 print(v1)
 
-func = getattr(re,"match")
+func = getattr(re,"match")  #获取re对象的 match方法
 v2 = func("\w+","dfjksdufjksd")
 print(v2)
 ```
@@ -1651,8 +1598,20 @@ print(cls)
 
 1. super的作用？
 
+   ```python
+   根据类继承向上查找成员
+   ```
+
+   
+
 2. 看图分析类A的继承关系
    ![image-20210202180951900](assets/image-20210202180951900.png)
+
+   ```
+   a b c m d f j g h
+   ```
+
+   
 
 3. 看代码写结果
 
@@ -1661,28 +1620,23 @@ print(cls)
        def __init__(self, name, age):
            self.name = name
            self.age = age
-   
        @property
        def message(self):
            return "{}-{}".format(self.name, self.age)
-   
-   
    class Bar(Foo):
        def __init__(self, email, *args, **kwargs):
            super().__init__(*args, **kwargs)
            self.email = email
-   
        def total(self):
            data = "{}-{}-{}".format(self.name, self.age, self.email)
            return data
    
-   
    obj1 = Foo("武沛齐", 20)
-   print(obj1.message)
+   print(obj1.message)  # 武沛齐-20
    
    obj2 = Bar("xx@live.com", "root", 100)
-   print(obj2.message)
-   obj2.total()
+   print(obj2.message) # root-100
+   obj2.total() # 返回值没有打印 无任何输出
    ```
 
 4. 看代码写结果
@@ -1691,59 +1645,69 @@ print(cls)
    class Foo(object):
        def __call__(self, *args, **kwargs):
            return 666
-       
    data_list = [
        "武沛齐",
        dict,
-   	lambda :123,
+       lambda: 123,
        True,
        Foo,
        Foo()
    ]
-   
    for item in data_list:
        if callable(item):
            val = item()
            print(val)
-   	else:
+       else:
            print(item)
+   # 武沛齐
+   # {}
+   # 123
+   # True
+   # Foo object
+   # 666
+   
    ```
 
 5. 如何主动触发一个异常？
 
+   ```python
+   raise 异常类(...)
+   ```
+
+   
+
 6. 反射的作用？
+
+   ```
+   以字符串的形式去对象中操作成员
+   ```
+
+   
 
 7. 看代码写结果
 
    ```python
    class Person(object):
        title = "北京"
-   
        def __init__(self, name, wx):
            self.name = name
            self.wx = wx
-   
        def show(self):
            message = "姓名{}，微信：{}".format(self.name, self.wx)
            return message
-   
        @property
        def message(self):
            return 666
-   
        @staticmethod
        def something():
            return 999
-   
-   
    obj = Person("武沛齐", "wupeiqi666")
    
-   print(getattr(obj, 'wx'))
-   print(getattr(obj, 'message'))
-   print(getattr(obj, 'show')()) 
-   print(getattr(obj, 'something')())
+   print(getattr(obj, 'wx')) #wupeiqi666
+   print(getattr(obj, 'message')) # 666
+   print(getattr(obj, 'show')()) # 姓名武沛齐，微信：wupeiqi666
+   print(getattr(obj, 'something')()) #999
    ```
-
 
 
 
