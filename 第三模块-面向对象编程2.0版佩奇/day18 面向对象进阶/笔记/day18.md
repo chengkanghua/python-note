@@ -1,4 +1,4 @@
-# day18 面向对象进阶
+# `day18 面向对象进阶
 
 ![image-20210127104158850](assets/image-20210127104158850.png)
 
@@ -280,6 +280,15 @@ obj.download_dou_yin()
 
 在类中 @classmethod 和 @staticmethod 的作用？
 
+```phthon
+https://blog.csdn.net/handsomekang/article/details/9615239
+
+在类中方法使用 @classmethod @staticmethod 装饰之后就是 类方法，静态方法，
+从它们的使用上来看,
+@staticmethod 不需要表示自身对象的self和自身类的cls参数，就跟使用函数一样。
+@classmethod也不需要self参数，但第一个参数需要是表示自身类的cls参数。
+```
+
 
 
 ### 1.3 属性
@@ -364,11 +373,11 @@ class Pagination:
             return
         self.current_page = current_page
 
-    @property
+    @property      #属性
     def start(self):
         return (self.current_page - 1) * self.per_page_num
 
-    @property
+    @property     #属性
     def end(self):
         return self.current_page * self.per_page_num
 
@@ -380,7 +389,7 @@ while True:
     page = input("请输入页码：")
 
     pg_object = Pagination(page, 20)
-    page_data_list = user_list[ pg_object.start : pg_object.end ]
+    page_data_list = user_list[ pg_object.start : pg_object.end ]  # 调用时候不用加（）
     
     for item in page_data_list:
         print(item)
@@ -606,26 +615,18 @@ Python中成员的修饰符就是指的是：公有、私有。
 
 ```python
 class Foo(object):
-
     def __init__(self, name, age):
         self.__name = name
         self.age = age
-
     def get_data(self):
         return self.__name
-
     def get_age(self):
         return self.age
-
-
 obj = Foo("武沛齐", 123)
-
-
 # 公有成员
 print(obj.age)
-v1 = self.get_age()
+v1 = obj.get_age()
 print(v1)
-
 # 私有成员
 # print(obj.__name) # 错误，由于是私有成员，只能在类中进行使用。
 v2 = obj.get_data()
@@ -638,21 +639,16 @@ print(v2)
 
 ```python
 class Foo(object):
-
     def get_age(self):
         print("公有的get_age")
-
     def __get_data(self):
         print("私有的__get_data方法")
-
     def proxy(self):
         print("公有的proxy")
         self.__get_data()
 
-
 obj = Foo()
 obj.get_age()
-
 obj.proxy()
 ```
 
@@ -662,22 +658,17 @@ obj.proxy()
 
 ```python
 class Foo(object):
-
     @property
     def __name(self):
         print("公有的get_age")
-
     @property
     def proxy(self):
         print("公有的proxy")
         self.__name
         return 1
-
-
 obj = Foo()
 v1 = obj.proxy
 print(v1)
-
 ```
 
 
@@ -686,21 +677,14 @@ print(v1)
 
 ```python
 class Base(object):
-
     def __data(self):
         print("base.__data")
-
     def num(self):
         print("base.num")
-
-
 class Foo(Base):
-
     def func(self):
         self.num()
         self.__data() # # 不允许执行父类中的私有方法
-
-
 obj = Foo()
 obj.func()
 
@@ -708,20 +692,14 @@ obj.func()
 
 ```python
 class Base(object):
-
     def __data(self):
         print("base.__data")
-
     def num(self):
         print("base.num")
-        self.__data()  # 不允许执行父类中的私有方法
-
-
+        self.__data()  # 方法在当前类中可以执行
 class Foo(Base):
-
     def func(self):
         self.num()
-
 
 obj = Foo()
 obj.func()
@@ -735,27 +713,24 @@ obj.func()
 
 ```python
 class Foo(object):
-
     def __init__(self):
         self.__num = 123
         self.age = 19
-
     def __msg(self):
         print(1234)
 
-
 obj = Foo()
 print(obj.age)
-print(obj._Foo__num)
-obj._Foo__msg()
+print(obj._Foo__num)  #特殊语法可以访问
+obj._Foo__msg()       #特殊语法可以访问
 ```
 
 
 
 成员是否可以作为独立的功能暴露给外部，让外部调用并使用。
 
-- 可以，公有。
-- 不可以，内部其他放的一个辅助，私有。
+- 公有成员 可以。 
+- 私有成员 不可以，内部其他放的一个辅助。
 
 
 
@@ -862,31 +837,24 @@ for obj in user_object_list:
 ```python
 class Student(object):
     """ 学生类 """
-
     def __init__(self, name, age, class_object):
         self.name = name
         self.age = age
         self.class_object = class_object
-
     def message(self):
         data = "我是一名{}班的学生，我叫:{},我今年{}岁".format(self.class_object.title, self.name, self.age)
         print(data)
 
-
 class Classes(object):
     """ 班级类 """
-
     def __init__(self, title, school_object):
         self.title = title
         self.school_object = school_object
 
-
 class School(object):
     """ 学校类 """
-
     def __init__(self, name):
         self.name = name
-
 
 s1 = School("北京校区")
 s2 = School("上海校区")
@@ -934,15 +902,13 @@ for obj in user_object_list:
       def __init__(self, name):
           print("第二步：初始化对象，在空对象中创建数据")
           self.name = name
-  
       def __new__(cls, *args, **kwargs):
           print("第一步：先创建空对象并返回")
           return object.__new__(cls)
   
-  
   obj = Foo("武沛齐")
   ```
-
+  
 - `__call__`
 
   ```python
@@ -950,25 +916,22 @@ for obj in user_object_list:
       def __call__(self, *args, **kwargs):
           print("执行call方法")
   
-  
   obj = Foo()
-  obj()
+  obj()  #执行 __call__方法
   ```
-
+  
 - `__str__`
 
   ```python
   class Foo(object):
-  
       def __str__(self):
           return "哈哈哈哈"
   
-  
   obj = Foo()
-  data = str(obj)
+  data = str(obj)  # 执行__str__
   print(data)
   ```
-
+  
 - `__dict__`
 
   ```python
@@ -977,48 +940,40 @@ for obj in user_object_list:
           self.name = name
           self.age = age
   
-  
   obj = Foo("武沛齐",19)
-  print(obj.__dict__)
+  print(obj.__dict__)  #{'name': '武沛齐', 'age': 19}
   ```
-
+  
 - `__getitem__`、`__setitem__`、`__delitem__`
 
   ```python
   class Foo(object):
-  
       def __getitem__(self, item):
           pass
-  
       def __setitem__(self, key, value):
           pass
-  
       def __delitem__(self, key):
           pass
   
-  
-  obj = Foo("武沛齐", 19)
+  obj = Foo()
   
   obj["x1"]
   obj['x2'] = 123
   del obj['x3']
   ```
-
+  
 - `__enter__`、`__exit__`
 
   ```python
   class Foo(object):
-  
       def __enter__(self):
           print("进入了")
           return 666
-  
       def __exit__(self, exc_type, exc_val, exc_tb):
           print("出去了")
   
-  
   obj = Foo()
-  with obj as data:
+  with obj as data:  #with 上下文管理 会自动执行， 开始 __enter___ 结束__exit__
       print(data)
   ```
 
@@ -1031,32 +986,37 @@ for obj in user_object_list:
 
   ```python
   class SqlHelper(object):
-  
       def __enter__(self):
           self.连接 = 连接数据库
           return 连接
   
       def __exit__(self, exc_type, exc_val, exc_tb):
           self.连接.关闭
-  
-          
-          
+   
   with SqlHelper() as 连接:
-      连接.操作..
-      
+      连接.操作..   
       
   with SqlHelper() as 连接:
       连接.操作...
   ```
 
   ```python
-  # 面试题（补充代码，实现如下功能）
-  
+  # 面试题（补充代码，实现如下功能） 
   class Context:
-      
       def do_something(self):
           print('内部执行')
   
+  with Context() as ctx:
+      print('内部执行')
+      ctx.do_something() #实现可执行 不报错
+  -----------------------------------------------
+  class Context:
+      def __enter__(self):
+          return self
+      def __exit__(self, exc_type, exc_val, exc_tb):
+          pass
+      def do_something(self):
+          print('内部执行')
   
   with Context() as ctx:
       print('内部执行')
@@ -1072,19 +1032,15 @@ for obj in user_object_list:
   class Foo(object):
       def __init__(self, name):
           self.name = name
-  
       def __add__(self, other):
           return "{}-{}".format(self.name, other.name)
-  
-  
   v1 = Foo("alex")
   v2 = Foo("sb")
-  
   # 对象+值，内部会去执行 对象.__add__方法，并将+后面的值当做参数传递过去。
   v3 = v1 + v2
-  print(v3)
+  print(v3)  #alex-sb
   ```
-
+  
 - `__iter__`
 
   - 迭代器
@@ -1100,10 +1056,8 @@ for obj in user_object_list:
     	class IT(object):
             def __init__(self):
                 self.counter = 0
-    
             def __iter__(self):
                 return self
-    
             def __next__(self):
                 self.counter += 1
                 if self.counter == 3:
@@ -1134,7 +1088,7 @@ for obj in user_object_list:
     迭代器对象支持通过next取值，如果取值结束则自动抛出StopIteration。
     for循环内部在循环时，先执行__iter__方法，获取一个迭代器对象，然后不断执行的next取值（有异常StopIteration则终止循环）。
     ```
-
+    
   - 生成器
 
     ```python
@@ -1162,16 +1116,15 @@ for obj in user_object_list:
     
     如果按照迭代器的规定来看，其实生成器类也是一种特殊的迭代器类（生成器也是一个中特殊的迭代器）。
     ```
-
+  
   - 可迭代对象
 
     ```python
     # 如果一个类中有__iter__方法且返回一个迭代器对象 ；则我们称以这个类创建的对象为可迭代对象。
     
-    class Foo(object):
-        
+    class Foo(object): 
         def __iter__(self):
-            return 迭代器对象(生成器对象)
+            return self迭代器对象(生成器对象)
         
     obj = Foo() # obj是 可迭代对象。
     
@@ -1179,79 +1132,63 @@ for obj in user_object_list:
     for item in obj:
         pass
     ```
-
+    
     ```python
     class IT(object):
         def __init__(self):
             self.counter = 0
-    
         def __iter__(self):
             return self
-    
         def __next__(self):
             self.counter += 1
             if self.counter == 3:
                 raise StopIteration()
             return self.counter
-    
-    
     class Foo(object):
         def __iter__(self):
             return IT()
-    
-    
     obj = Foo() # 可迭代对象
-    
-    
     for item in obj: # 循环可迭代对象时，内部先执行obj.__iter__并获取迭代器对象；不断地执行迭代器对象的next方法。
         print(item)
     ```
-
+    
     ```python
     # 基于可迭代对象&迭代器实现：自定义range
     class IterRange(object):
         def __init__(self, num):
             self.num = num
             self.counter = -1
-    
         def __iter__(self):
             return self
-    
         def __next__(self):
             self.counter += 1
             if self.counter == self.num:
                 raise StopIteration()
             return self.counter
-    
-    
     class Xrange(object):
         def __init__(self, max_num):
             self.max_num = max_num
-    
         def __iter__(self):
             return IterRange(self.max_num)
     
-    
     obj = Xrange(100)
-    
     for item in obj:
         print(item)
     ```
-
     
-
+    
+    
     ```python
     class Foo(object):
         def __iter__(self):
             yield 1
             yield 2
     
-    
     obj = Foo()
     for item in obj:
         print(item)
     ```
-
+    
     ```python
     # 基于可迭代对象&生成器 实现：自定义range
     
@@ -1270,15 +1207,15 @@ for obj in user_object_list:
     for item in obj:
         print(item)
     ```
-
+    
     常见的数据类型：
-
+    
     ```python
     v1 = list([11,22,33,44])
     
     v1是一个可迭代对象，因为在列表中声明了一个 __iter__ 方法并且返回一个迭代器对象。
     ```
-
+    
     ```python
     from collections.abc import Iterator, Iterable
     
@@ -1287,17 +1224,15 @@ for obj in user_object_list:
     v2 = v1.__iter__()
     print( isinstance(v2, Iterator) )  # True
     
-    
-    
     v1 = [11, 22, 33]
     print( isinstance(v1, Iterable) )  # True，判断依据是是否有 __iter__且返回迭代器对象。
     
     v2 = v1.__iter__()
     print( isinstance(v2, Iterable) )  # True，判断依据是是否有 __iter__且返回迭代器对象。
     ```
-
     
-
+    
+  
     
 
 ## 总结
@@ -1309,8 +1244,9 @@ for obj in user_object_list:
      - 类变量
 - 方法
       - 绑定方法
-      - 类方法
-      - 静态方法
+          - 类方法
+          - 静态方法
+  
    - 属性
 2. 成员修饰符
 3. 对象中的数据嵌套
@@ -1326,111 +1262,141 @@ for obj in user_object_list:
 
 1. 列举面向对象的成员并简述他们的特点。
 
+   ```
+   变量
+   	实例变量
+   	类变量
+   方法
+   	绑定方法
+   	类方法
+   	静态方法
+   属性
+   	基于方法和 property 装饰器实现
+   ```
+
+   
+
 2. @staticmethod 和 @classmethod的作用是什么？
+
+   ```phthon
+   在类中方法 使用 @staticmethod 装饰 静态方法
+   				使用 @classmethod 装饰  类方法
+   使用 类方法不用带self 参数， 需要带一个cls 参数，可以使用cls.方法名() 调用类中其他方法
+   		静态方法不用参数，和使用函数一样   
+   
+   ```
+
+   
 
 3. 面向对象中如何让成员变为私有。
 
-4.  `__new__`方法的作用？
+   ```
+   @property  装饰成员即可
+   ```
+
+   
+
+4. `__new__`方法的作用？
+
+   ```phthon
+   类实例化对象时候第一步 new 方法创建一个空对象并返回 第二步 init方法
+   ```
+
+   
 
 5. 简述你理解的：迭代器、生成器、可迭代对象。
+
+   ```
+   迭代器： 有 __iter__ 方法  ，执行之后返回一个 可迭代对象
+   生成器： 是一个特殊的迭代器 
+   可迭代对象： 有 	__next__	方法，可使用for 循环取值
+   ```
+
+   
 
 6. 看代码写结果
 
    ```python
    class Foo(object):
        a1 = 1
-       
-       def __init__(self,num):
+       def __init__(self, num):
            self.num = num
-           
        def show_data(self):
-           print(self.num+self.a1)
-       
+           print(self.num + self.a1)
    obj1 = Foo(666)
    obj2 = Foo(999)
-   
-   print(obj1.num)
-   print(obj1.a1)
+   print(obj1.num) #666
+   print(obj1.a1)  #1 
    
    obj1.num = 18
    obj1.a1 = 99
+   print(obj1.num) #18
+   print(obj1.a1)  #99
    
-   print(obj1.num)
-   print(obj1.a1)
-   
-   print(obj2.a1)
-   print(obj2.num)
-   print(obj2.num)
-   print(Foo.a1)
-   print(obj1.a1)
+   print(obj2.a1) #1
+   print(obj2.num)#999
+   print(obj2.num)#999
+   print(Foo.a1) #1
+   print(obj1.a1)#99
    ```
 
 7. 看代码写结果，注意返回值。
 
    ```python
    class Foo(object):
-       
        def f1(self):
            return 999
-       
        def f2(self):
            v = self.f1()
            print('f2')
            return v
-       
        def f3(self):
            print('f3')
            return self.f2()
-       
        def run(self):
            result = self.f3()
            print(result)
    
    obj = Foo()
-   v1 = obj.run()
-   print(v1)
+   v1 = obj.run() # f3 f2 999
+   # print(v1) #None
    ```
 
 8. 看代码写结果【如果有错误，则标注错误即可，并且假设程序报错可以继续执行】
 
    ```python
    class Foo(object):
-       
        def f1(self):
            print('f1')
-   
        @staticmethod
        def f2():
            print('f2')
-           
-   obj = Foo()
-   obj.f1()
-   obj.f2()
    
-   Foo.f1()
-   Foo.f2()
+   obj = Foo()
+   obj.f1() # f1
+   obj.f2() # f2
+   
+   Foo.f1() #  #error
+   Foo.f2() # f2
    ```
 
 9. 看代码写结果【如果有错误，则标注错误即可，并且假设程序报错可以继续执行】
 
    ```pthon
    class Foo(object):
-       
        def f1(self):
            print('f1')
            self.f2()
            self.f3()
-   
        @classmethod
        def f2(cls):
-             print('f2')
-   
+           print('f2')
        @staticmethod
        def f3():
-             print('f3')
+           print('f3')
    
    obj = Foo()
-   obj.f1()
+   obj.f1() # f1 f2 f3
    ```
 
 10. 看代码写结果【如果有错误，则标注错误即可，并且假设程序报错可以继续执行】
@@ -1440,11 +1406,9 @@ for obj in user_object_list:
         @classmethod
         def f2(cls):
               print('f2')
-    
         @staticmethod
         def f3():
               print('f3')
-    
     class Foo(Base):
         def f1(self):
             print('f1')
@@ -1452,7 +1416,7 @@ for obj in user_object_list:
             self.f3()
     
     obj = Foo()
-    obj.f1()
+    obj.f1() # f1 f2 f3
     ```
 
 11. 看代码写结果【如果有错误，则标注错误即可，并且假设程序报错可以继续执行】
@@ -1461,43 +1425,45 @@ for obj in user_object_list:
     class Foo(object):
         a1 = 1
         __a2 = 2
-        
-        def __init__(self,num):
+        def __init__(self, num):
             self.num = num
             self.__salary = 1000
-            
-         def show_data(self):
-             print(self.num+self.a1)
-        
+        def show_data(self):
+            print(self.num + self.a1)
+    
     obj = Foo(666)
     
-    print(obj.num)
-    print(obj.a1)
-    print(obj.__salary)
-    print(obj.__a2)
-    print(Foo.a1)
-    print(Foo.__a2)
-    obj.show_data()
+    print(obj.num)    #666
+    print(obj.a1)     #1
+    # print(obj.__salary) #私有成员只有类的内部能访问 
+    # print(obj.__a2)     #私有成员变量只有类的内部能访问
+    print(Foo.a1)     #1
+    # print(Foo.__a2)   # #私有成员变量只有类的内部能访问
+    obj.show_data()   #666+1  = 667
     ```
 
 12. 看代码写结果
 
     ```python
     class Foo(object):
-    
         def __init__(self, age):
             self.age = age
-    
+            self.name= 'aa'
         def display(self):
             print(self.age)
     
-    
     data_list = [Foo(8), Foo(9)]
-    # print(data_list[0].age)
-    # data_list[1].display()
+    # print(data_list[0].age) #8
+    # data_list[1].display()#9
     
     for item in data_list:
-        print(item.age, item.display()) 
+        print(item.age, item.display())
+    # 8
+    # 8 None
+    # 9
+    # 9 None
+    
+    # print(8,print('aa'))
     ```
 
 13. 看代码写结果
@@ -1506,20 +1472,19 @@ for obj in user_object_list:
     class Base(object):
         def __init__(self, a1):
             self.a1 = a1
-    
         def f2(self, arg):
             print(self.a1, arg)
-    
-    
     class Foo(Base):
         def f2(self, arg):
             print('666')
     
-    
     obj_list = [Base(1), Foo(2), Foo(3)]
-    
     for item in obj_list:
         item.f2(1)
+    
+    # 1 1
+    # 666
+    # 666
     ```
 
 14. 看代码写结果
@@ -1528,89 +1493,88 @@ for obj in user_object_list:
     class Foo(object):
         def __init__(self, num):
             self.num = num
-            
+    
     v1 = [Foo for i in range(10)]
     v2 = [Foo(5) for i in range(10)]
-    v3 = [Foo(i) for i in range(10)]
+    v3 = [Foo(i) for i in range(10)] 
     
-    print(v1)
-    print(v2)
-    print(v3)
+    print(v1) #[foo * 10]
+    print(v2) #[Foo(5) * 10]
+    print(v3) #[Foo(0-9) * 10]
+    
+    # a1=v1[0](1)
+    # print(a1.num) # 1
+    # a2 = v2[7]
+    # print(a2.num) #5
+    # print(v2[9].num) #5
+    # print(v3[9].num) #9
+    
     ```
 
 15. 看代码写结果
 
     ```python
     class StarkConfig(object):
-    
         def __init__(self, num):
             self.num = num
-    
         def changelist(self, request):
             print(self.num, request)
-    
     
     config_obj_list = [ StarkConfig(1),  StarkConfig(2),  StarkConfig(3) ]
     for item in config_obj_list:
         print(item.num)
+    
+    #1
+    #2
+    #3
     ```
 
 16. 看代码写结果
 
     ```python
     class StarkConfig(object):
-    
         def __init__(self, num):
             self.num = num
-    
         def changelist(self, request):
             print(self.num, request)
-    
     
     config_obj_list = [StarkConfig(1), StarkConfig(2), StarkConfig(3)]
     for item in config_obj_list:
         item.changelist(666)
+    #1 666
+    #2 666
+    #3 666
     ```
 
 17. 看代码写结果
 
     ```python
     class StarkConfig(object):
-    
         def __init__(self, num):
             self.num = num
-    
         def changelist(self, request):
             print(self.num, request)
-    
         def run(self):
             self.changelist(999)
-    
-    
     class RoleConfig(StarkConfig):
-    
         def changelist(self, request):
             print(666, self.num)
-    
-    
     class AdminSite(object):
         def __init__(self):
             self._registry = {}
-    
         def register(self, k, v):
             self._registry[k] = v
     
-    
     site = AdminSite()
-    
     site.register('武沛齐', StarkConfig(19))
     site.register('root', StarkConfig(20))
     site.register("admin", RoleConfig(33))
-    
-    print(len(site._registry))
-    
+    print(len(site._registry)) #3
     for k, row in site._registry.items():
         row.changelist(5)
+    #19 5
+    #20 5
+    #666 33
     
     ```
 
@@ -1624,18 +1588,17 @@ for obj in user_object_list:
             self()
         def __call__(self, *args, **kwargs):
             print(self.num)
-            
     class RoleConfig(StarkConfig):
         def __call__(self, *args, **kwargs):
             print(345)
         def __getitem__(self, item):
-            return self.num[item]
-        
+            return self.num[item] 
+    
     v1 = RoleConfig('alex')
     v2 = StarkConfig("wupeiqi")
+    print(v1[1])  #l    alex[1]
+    # print(v2[2]) 报错  #没有gititem方法
     
-    print(v1[1])
-    print(v2[2])
     ```
 
 19. 补全代码
@@ -1647,34 +1610,41 @@ for obj in user_object_list:
     
     with Context() as ctx:
         ctx.do_something()
+    ---------------------------------
+    class Context:
+        def __enter__(self):
+            return self
+        def do_something(self):
+            print(666)
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+    
+    with Context() as ctx:
+        ctx.do_something()
     ```
 
 20. 看代码写结果
 
     ```python
     class Department(object):
-        def __init__(self,title):
+        def __init__(self, title):
             self.title = title
-    
     class Person(object):
-        def __init__(self,name,age,depart):
+        def __init__(self, name, age, depart):
             self.name = name
-            self.age = age 
+            self.age = age
             self.depart = depart
-    	
         def message(self):
-            msg = "我是%s,年龄%s,属于%s" %(self.name,self.age,self.depart.title)
+            msg = "我是%s,年龄%s,属于%s" % (self.name, self.age, self.depart.title)
             print(msg)
-        
-        
     d1 = Department('人事部')
     d2 = Department('销售部')
     
-    p1 = Person('武沛齐',18,d1)
-    p2 = Person('alex',18,d1)
+    p1 = Person('武沛齐', 18, d1)
+    p2 = Person('alex', 18, d1)
     
-    p1.message()
-    p2.message()
+    p1.message() # 武沛齐 18 人事部
+    p2.message() # alex 18 人事部
     ```
 
 21. 分析代码关系，并写出正确的输出结果。
@@ -1684,24 +1654,20 @@ for obj in user_object_list:
         def __init__(self, title):
             self.title = title
             self.children = []
-    
         def add(self, node):
             self.children.append(node)
-    
         def __getitem__(self, item):
             return self.children[item]
     
-    
     root = Node("中国")
-    
     root.add(Node("河南省"))
     root.add(Node("河北省"))
     
-    print(root.title)
-    print(root[0])
-    print(root[0].title)
-    print(root[1])
-    print(root[1].title)
+    print(root.title) #中国
+    print(root[0])  #object
+    print(root[0].title) #河南省
+    print(root[1])  #object
+    print(root[1].title) #河北省
     ```
 
     
@@ -1713,13 +1679,10 @@ for obj in user_object_list:
         def __init__(self, title):
             self.title = title
             self.children = []
-    
         def add(self, node):
             self.children.append(node)
-    
         def __getitem__(self, item):
             return self.children[item]
-    
     
     root = Node("中国")
     
@@ -1739,12 +1702,12 @@ for obj in user_object_list:
     root[1][1].add(Node("雄安"))
     root[1][1].add(Node("望都"))
     
-    print(root.title)
-    print(root[0].title)
-    print(root[1].title)
-    print(root[1][0].title)
-    print(root[1][2].title)
-    print(root[1][1][0].title)
+    print(root.title) #中国
+    print(root[0].title) #河南省
+    print(root[1].title) #河北省
+    print(root[1][0].title) #石家庄
+    print(root[1][2].title) #廊坊
+    print(root[1][1][0].title) #雄安
     ```
 
     
