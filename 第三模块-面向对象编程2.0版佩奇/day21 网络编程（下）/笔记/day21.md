@@ -365,8 +365,8 @@ TCP示例如下：
 
 两台电脑在进行收发数据时，其实不是直接将数据传输给对方。
 
-- 对于发送者，执行 `sendall/send` 发送消息时，是将数据先发送至自己网卡的 写缓冲区 ，再由缓冲区将数据发送给到对方网卡的读缓冲区。
-- 对于接受者，执行 `recv` 接收消息时，是从自己网卡的读缓冲区获取数据。
+- 对于发送者，执行 `sendall/send` 发送消息时，是将数据先发送至自己网卡的 写缓冲区(write buffer) ，再由缓冲区将数据发送给到对方网卡的读缓冲区(read buffer)。
+- 对于接受者，执行 `recv` 接收消息时，是从自己网卡的读缓冲区(read buffer)获取数据。
 
 所以，如果发送者连续快速的发送了2条信息，接收者在读取时会认为这是1条信息，即：<span style='color:red;'>**2个数据包粘在了一起。**</span>例如：
 
@@ -408,89 +408,91 @@ sock.close()
 > - 接收数据，先读4个字节就可以知道自己这个数据包中的数据长度，再根据长度读取到数据。
 >
 > 对于头部需要一个数字并固定为4个字节，这个功能可以借助python的struct包来实现：
->
+
+
+
 > ```python
-> import struct
+>import struct
 > 
 > # ########### 数值转换为固定4个字节，四个字节的范围 -2147483648 <= number <= 2147483647  ###########
-> v1 = struct.pack('i', 199)
+>v1 = struct.pack('i', 199)
 > print(v1)  # b'\xc7\x00\x00\x00'
-> 
+>
 > for item in v1:
 >     print(item, bin(item))
->     
+> 
 > # ########### 4个字节转换为数字 ###########
 > v2 = struct.unpack('i', v1) # v1= b'\xc7\x00\x00\x00'
 > print(v2) # (199,)
 > ```
->
+> 
 > ![image-20210215090446549](assets/image-20210215090446549.png)
->
+>     
 > 示例代码：
->
+> 
 > - 服务端
->
->   ```python
+> 
+>  ```python
 >   import socket
->   import struct
->   
->   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+>  import struct
+> 
+>  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 >   sock.bind(('127.0.0.1', 8001))
->   sock.listen(5)
+>  sock.listen(5)
 >   conn, addr = sock.accept()
->   
+> 
 >   # 固定读取4字节
->   header1 = conn.recv(4)
+>     header1 = conn.recv(4)
 >   data_length1 = struct.unpack('i', header1)[0] # 数据字节长度 21
 >   has_recv_len = 0
 >   data1 = b""
 >   while True:
->       length = data_length1 - has_recv_len
+>         length = data_length1 - has_recv_len
 >       if length > 1024:
 >           lth = 1024
->   	else:
+>       else:
 >           lth = length
->   	chunk = conn.recv(lth) # 可能一次收不完，自己可以计算长度再次使用recv收取，指导收完为止。 1024*8 = 8196
+>       chunk = conn.recv(lth) # 可能一次收不完，自己可以计算长度再次使用recv收取，指导收完为止。 1024*8 = 8196
 >       data1 += chunk
 >       has_recv_len += len(chunk)
 >       if has_recv_len == data_length1:
 >           break
 >   print(data1.decode('utf-8'))
->   
+> 
 >   # 固定读取4字节
 >   header2 = conn.recv(4)
 >   data_length2 = struct.unpack('i', header2)[0] # 数据字节长度
->   data2 = conn.recv(data_length2) # 长度
+>   data2 = conn.recv(data_length2) # 取长度
 >   print(data2.decode('utf-8'))
->   
->   conn.close()
+> 
+>     conn.close()
 >   sock.close()
 >   ```
->
+> 
 > - 客户端
->
->   ```python
+> 
+>     ```python
 >   import socket
 >   import struct
 >   
->   client = socket.socket()
+>  client = socket.socket()
 >   client.connect(('127.0.0.1', 8001))
->   
+>  
 >   # 第一条数据
 >   data1 = 'alex正在吃'.encode('utf-8')
 >   
->   header1 = struct.pack('i', len(data1))
+>       header1 = struct.pack('i', len(data1))
 >   
->   client.sendall(header1)
->   client.sendall(data1)
+>   client.sendall(header1) #发送数据长度
+>       client.sendall(data1)   #发送数据
 >   
 >   # 第二条数据
->   data2 = '翔'.encode('utf-8')
+>       data2 = '翔'.encode('utf-8')
 >   header2 = struct.pack('i', len(data2))
->   client.sendall(header2)
+>       client.sendall(header2)
 >   client.sendall(data2)
 >   
->   client.close()
+>       client.close()
 >   ```
 
 
@@ -505,94 +507,90 @@ sock.close()
   import socket
   import struct
   
-  
-  def recv_data(conn, chunk_size=1024):
+  # 从网卡的read buffer获取数据
+  def recv_data(conn, chunk_size=1024):         #参数 连接对象，数据块大小
       # 获取头部信息：数据长度
-      has_read_size = 0
+      has_read_size = 0                          #已经读取的数据大小
       bytes_list = []
-      while has_read_size < 4:
-          chunk = conn.recv(4 - has_read_size)
-          has_read_size += len(chunk)
+      while has_read_size < 4:                   #保证获取头部4个字节数据
+          chunk = conn.recv(4 - has_read_size)   #固定取4个字节，少多少取多少
+          has_read_size += len(chunk)            #得到已经取得的数据大小
           bytes_list.append(chunk)
-      header = b"".join(bytes_list)
-      data_length = struct.unpack('i', header)[0]
+      header = b"".join(bytes_list)              #获取的数据拼接起来
+      data_length = struct.unpack('i', header)[0] #数据解包 取得数据长度
   
       # 获取数据
       data_list = []
       has_read_data_size = 0
-      while has_read_data_size < data_length:
+      while has_read_data_size < data_length:   #刚好取得数据大小
           size = chunk_size if (data_length - has_read_data_size) > chunk_size else data_length - has_read_data_size
-          chunk = conn.recv(size)
-          data_list.append(chunk)
-          has_read_data_size += len(chunk)
+          chunk = conn.recv(size)  #取数据
+          data_list.append(chunk)  #放入数据列表里
+          has_read_data_size += len(chunk)  #已经取得数据大小
   
-      data = b"".join(data_list)
-  
+      data = b"".join(data_list)     #拼接起来
       return data
-  
-  
-  def recv_file(conn, save_file_name, chunk_size=1024):
-      save_file_path = os.path.join('files', save_file_name)
+  #从网卡的read buffer 获取文件
+  def recv_file(conn, save_file_name, chunk_size=1024):    #参数 连接对象，数据块大小
+      save_file_path = os.path.join('files', save_file_name)  #文件路径
       # 获取头部信息：数据长度
-      has_read_size = 0
+      has_read_size = 0                         #已读取大小
       bytes_list = []
       while has_read_size < 4:
           chunk = conn.recv(4 - has_read_size)
           bytes_list.append(chunk)
           has_read_size += len(chunk)
       header = b"".join(bytes_list)
-      data_length = struct.unpack('i', header)[0]
+      data_length = struct.unpack('i', header)[0]  #解包获取数据长度
   
       # 获取数据
-      file_object = open(save_file_path, mode='wb')
+      file_object = open(save_file_path, mode='wb')  #文件写对象
       has_read_data_size = 0
       while has_read_data_size < data_length:
           size = chunk_size if (data_length - has_read_data_size) > chunk_size else data_length - has_read_data_size
-          chunk = conn.recv(size)
-          file_object.write(chunk)
-          file_object.flush()
-          has_read_data_size += len(chunk)
+          chunk = conn.recv(size)   #取数据
+          file_object.write(chunk)  #写入
+          file_object.flush()       #刷进硬盘
+          has_read_data_size += len(chunk)  #已经读取大小。
       file_object.close()
   
   
   def run():
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      # IP可复用
+      # IP可复用  #ip 端口重复用
       sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   
-      sock.bind(('127.0.0.1', 8001))
-      sock.listen(5)
+      sock.bind(('127.0.0.1', 8001))  # 开通服务 端口
+      sock.listen(5)                  #可监听5个客户端
       while True:
-          conn, addr = sock.accept()
-  
+          conn, addr = sock.accept()     #接收对象 conn
           while True:
               # 获取消息类型
-              message_type = recv_data(conn).decode('utf-8')
+              message_type = recv_data(conn).decode('utf-8')   #调用接收数据方法
               if message_type == 'close':  # 四次挥手，空内容。
                   print("关闭连接")
                   break
               # 文件：{'msg_type':'file', 'file_name':"xxxx.xx" }
               # 消息：{'msg_type':'msg'}
-              message_type_info = json.loads(message_type)
+              message_type_info = json.loads(message_type)  #反序列化
               if message_type_info['msg_type'] == 'msg':
-                  data = recv_data(conn)
-                  print("接收到消息：", data.decode('utf-8'))
+                  data = recv_data(conn)        #调用接收数据方法
+                  print("接收到消息：", data.decode('utf-8'))  
               else:
                   file_name = message_type_info['file_name']
                   print("接收到文件，要保存到：", file_name)
-                  recv_file(conn, file_name)
+                  recv_file(conn, file_name)    #调用接收文件方法
   
           conn.close()
       sock.close()
-  
   
   if __name__ == '__main__':
       run()
   
   ```
-
   
-
+  
+  
 - 客户端
 
   ```python
@@ -600,21 +598,19 @@ sock.close()
   import json
   import socket
   import struct
+  #发送数据方法
+  def send_data(conn, content):   #参数 连接对象，内容
+      data = content.encode('utf-8')   #编码
+      header = struct.pack('i', len(data))  #结构化数据大小 得到4字节
+      conn.sendall(header)                  #发送文件头 标记文件大小
+      conn.sendall(data)                    #发送内容
+  #发送文件方法
+  def send_file(conn, file_path):  #参数 连接对象，文件路径
+      file_size = os.stat(file_path).st_size    #获取文件大小
+      header = struct.pack('i', file_size)      #结构化数据文件大小
+      conn.sendall(header)                      #发送文件头 标记文件大小
   
-  
-  def send_data(conn, content):
-      data = content.encode('utf-8')
-      header = struct.pack('i', len(data))
-      conn.sendall(header)
-      conn.sendall(data)
-  
-  
-  def send_file(conn, file_path):
-      file_size = os.stat(file_path).st_size
-      header = struct.pack('i', file_size)
-      conn.sendall(header)
-  
-      has_send_size = 0
+      has_send_size = 0                         #已经发送文件大小
       file_object = open(file_path, mode='rb')
       while has_send_size < file_size:
           chunk = file_object.read(2048)
@@ -622,11 +618,9 @@ sock.close()
           has_send_size += len(chunk)
       file_object.close()
   
-  
   def run():
       client = socket.socket()
       client.connect(('127.0.0.1', 8001))
-  
       while True:
           """
           请发送消息，格式为：
@@ -635,42 +629,35 @@ sock.close()
           """
           content = input(">>>")  # msg or file
           if content.upper() == 'Q':
-              send_data(client, "close")
+              send_data(client, "close")  #调用发送数据方法
               break
-          input_text_list = content.split('|')
+          input_text_list = content.split('|')  #切分内容
           if len(input_text_list) != 2:
               print("格式错误，请重新输入")
               continue
-  
-          message_type, info = input_text_list
-  
+          message_type, info = input_text_list  # 文件类型，文件或消息
           # 发消息
           if message_type == 'msg':
-  
               # 发消息类型
-              send_data(client, json.dumps({"msg_type": "msg"}))
-  
+              send_data(client, json.dumps({"msg_type": "msg"}))  #调用发送数据方法，发送消息内容
               # 发内容
               send_data(client, info)
-  
           # 发文件
           else:
-              file_name = info.rsplit(os.sep, maxsplit=1)[-1]
-  
+              file_name = info.rsplit(os.sep, maxsplit=1)[-1]     #os.sep 获得路径分隔符/  从右边切割1次， 取最后的文件名
               # 发消息类型
-              send_data(client, json.dumps({"msg_type": "file", 'file_name': file_name}))
-  
+              send_data(client, json.dumps({"msg_type": "file", 'file_name': file_name})) #发送文件夹类型 文件名
               # 发内容
               send_file(client, info)
   
       client.close()
   
-  
   if __name__ == '__main__':
       run()
   
+  
   ```
-
+  
   
 
 ## 4. 阻塞和非阻塞

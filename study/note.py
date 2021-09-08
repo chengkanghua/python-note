@@ -51,11 +51,10 @@ Foo.f1(obj)  #类调用绑定方法需要吧对象作为参数
 '''
 
 
-
-
-
-
-
+# import socket
+# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# client = socket.socket()
+# #这两个对象创建一个加了参数， 一个没有，什么区别，没加参数的默认是什么
 
 
 
