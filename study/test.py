@@ -1,20 +1,18 @@
-class Person(object):
-    title = "北京"
-    def __init__(self, name, wx):
-        self.name = name
-        self.wx = wx
-    def show(self):
-        message = "姓名{}，微信：{}".format(self.name, self.wx)
-        return message
-    @property
-    def message(self):
-        return 666
-    @staticmethod
-    def something():
-        return 999
-obj = Person("武沛齐", "wupeiqi666")
+import struct
+import os
+# ########### 数值转换为固定4个字节，四个字节的范围 -2147483648 <= number <= 2147483647  ###########
+v1 = struct.pack('i', 199)
+# print(v1)  # b'\xc7\x00\x00\x00'
+# print(type(v1))
+# for item in v1:
+#     print(item)
 
-print(getattr(obj, 'wx')) #wupeiqi666
-print(getattr(obj, 'message')) # 666
-print(getattr(obj, 'show')()) # 姓名武沛齐，微信：wupeiqi666
-print(getattr(obj, 'something')()) #999
+# # ########### 4个字节转换为数字 ###########
+# v2 = struct.unpack('i', v1)  # v1= b'\xc7\x00\x00\x00'
+# print(v2)  # (199,)
+
+# v2 = struct.unpack('i',v1)
+# print(v2[0])
+
+
+print(os.sep)
