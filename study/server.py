@@ -1,48 +1,24 @@
 import socket
 import select
-import uuid
-import os
-import selectors
 
-client_list = []  # socket对象列表
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setblocking(False)
+server.bind(("127.0.0.1", 8001))
+server.listen(5)
 
-for i in range(5):   # 5个对socket对象 非阻塞
-    client = socket.socket()
-    client.setblocking(False)
-
-    try:
-        # 连接百度，虽然有异常BlockingIOError，但向还是正常发送连接的请求
-        client.connect(('47.98.134.86', 80))
-    except BlockingIOError as e:
-        pass
-
-    client_list.append(client)
-
-recv_list = []  # 放已连接成功，且已经把下载图片的请求发过去的socket
+inputs = [server]
 while True:
-    # w = [第一个socket对象,]
-    # r = [socket对象,]
-    r, w, e = select.select(recv_list, client_list, [], 0.1)
-    for sock in w:
-        # 连接成功，发送数据
-        # 下载图片的请求
-        sock.sendall(b"GET /nginx-logo.png HTTP/1.1\r\nHost:47.98.134.86\r\n\r\n")
-        recv_list.append(sock)
-        client_list.remove(sock)
-
+    r, w, e = select.select(inputs, [], [], 0.1)
     for sock in r:
-        # 数据发送成功后，接收的返回值（图片）并写入到本地文件中
-        data = sock.recv(8196)
-        content = data.split(b'\r\n\r\n')[-1]
-        random_file_name = "{}.png".format(str(uuid.uuid4()))  # 通过随机数来生成UUID. 使用的是伪随机数有一定的重复概率.
-        with open(os.path.join("images", random_file_name), mode='wb') as f:
-            f.write(content)
-        recv_list.remove(sock)
-
-    if not recv_list and not client_list:
-        break
-
-"""
-优点：
-	1. 可以伪造除并发的现象。
-"""
+        if sock == server:
+            conn, addr = sock.accept()
+            print('一个新的链接')
+            inputs.append(conn)
+        else:
+            data = sock.recv(1024)
+            if data:
+                print('收到消息: ', data.decode())
+                sock.sendall('张开'.encode())
+            else:
+                print('关闭链接')
+                inputs.remove(sock)
