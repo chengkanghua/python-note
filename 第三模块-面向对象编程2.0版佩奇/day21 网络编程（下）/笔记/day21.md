@@ -557,7 +557,7 @@ sock.close()
   
   def run():
       sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      # IP可复用  #ip 端口重复用
+      # IP可复用  #ip重复用
       sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   
       sock.bind(('127.0.0.1', 8001))  # 开通服务 端口
@@ -669,10 +669,11 @@ sock.close()
 import socket
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1) #重复使用上次关闭的ip地址时候不会报错
 sock.bind(('127.0.0.1', 8001))
 sock.listen(5)
 
-# 阻塞
+# 阻塞 (一直卡在这里等待客户端连接)
 conn, addr = sock.accept()
 
 # 阻塞
@@ -681,7 +682,6 @@ print(client_data.decode('utf-8'))
 
 conn.close()
 sock.close()
-
 
 # ################### socket客户端（发送者） ###################
 import socket
@@ -705,7 +705,7 @@ client.close()
 import socket
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 sock.setblocking(False) # 加上就变为了非阻塞
 
 sock.bind(('127.0.0.1', 8001))
@@ -762,6 +762,7 @@ import select
 import socket
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 server.setblocking(False)  # 加上就变为了非阻塞
 server.bind(('127.0.0.1', 8001))
 server.listen(5)
@@ -776,7 +777,7 @@ while True:
     # r = [server,]
     # r = [第一个客户端连接conn，第二个客户端连接conn]
     # r = [第二个客户端连接conn,]
-    r, w, e = select.select(inputs, [], [], 0.05)
+    r, w, e = select.select(inputs, [], [], 0.05)   #最多花0.05秒时间监测 inputs列表对象时候有连接发来
     for sock in r:
         # server
         if sock == server:
@@ -788,7 +789,7 @@ while True:
         else:
             data = sock.recv(1024)
             if data:
-                print("收到消息：", data)
+                print("收到消息：", data.decode("utf-8"))
             else:
                 print("关闭连接")
                 inputs.remove(sock)
@@ -847,7 +848,7 @@ import os
 
 client_list = []  # socket对象列表
 
-for i in range(5):
+for i in range(5):   # 5个对socket对象 非阻塞
     client = socket.socket()
     client.setblocking(False)
 
@@ -875,14 +876,14 @@ while True:
         # 数据发送成功后，接收的返回值（图片）并写入到本地文件中
         data = sock.recv(8196)
         content = data.split(b'\r\n\r\n')[-1]
-        random_file_name = "{}.png".format(str(uuid.uuid4()))
+        random_file_name = "{}.png".format(str(uuid.uuid4()))  # 通过随机数来生成UUID. 使用的是伪随机数有一定的重复概率.
         with open(os.path.join("images", random_file_name), mode='wb') as f:
             f.write(content)
         recv_list.remove(sock)
 
     if not recv_list and not client_list:
         break
-        
+
 """
 优点：
 	1. 可以伪造除并发的现象。
@@ -1017,6 +1018,53 @@ epoll同样只告知那些就绪的文件描述符，而且当我们调用epoll_
 
 
 
+
+扩展 selectors 模块
+
+### **selectors模块**
+
+selectors 已经把epoll、select封装好了，默认用epoll，如果机器上不支持epoll，比如window是不支持epoll，就用select。
+
+```python
+#服务端
+import selectors
+import socket
+
+sel = selectors.DefaultSelector()
+
+def accept(sock, mask):
+    conn, addr = sock.accept()  # 开始连接
+    print('accepted', conn, 'from', addr)
+    conn.setblocking(False)  # 连接设为非阻塞模式
+    sel.register(conn, selectors.EVENT_READ, read)  # 把conn注册到sel对象里
+    # 新连接回调read函数
+
+def read(conn, mask):
+    data = conn.recv(1024)  # 接收数据
+    if data:
+        print('echoing', repr(data), 'to', conn)
+        conn.send(data)  # Hope it won't block
+    else:
+        print('closing', conn)
+        sel.unregister(conn)  # 取消注册
+        conn.close()
+
+sock = socket.socket()
+sock.bind(('localhost', 9000))
+sock.listen(100)
+sock.setblocking(False)
+sel.register(sock, selectors.EVENT_READ, accept)  # 注册事件
+#      sock注册过来                   新连接调用这个函数
+
+while True:
+    events = sel.select()  # 有可能调用epoll，也有可能调用select，看系统支持
+    # 默认是阻塞，有活动连接，就返回活动的列表
+    for key, mask in events:
+        callback = key.data  # 掉accept函数
+        callback(key.fileobj, mask)  # key.fileobj = 文件句柄 （相当于上个例子中检测的自己）
+        
+#https://blog.csdn.net/fgf00/article/details/52793739
+```
 
 
 
