@@ -1,5 +1,6 @@
 import struct
 import os
+import uuid
 # ########### 数值转换为固定4个字节，四个字节的范围 -2147483648 <= number <= 2147483647  ###########
 v1 = struct.pack('i', 199)
 # print(v1)  # b'\xc7\x00\x00\x00'
@@ -15,4 +16,9 @@ v1 = struct.pack('i', 199)
 # print(v2[0])
 
 
-print(os.sep)
+# content = data.split(b'\r\n\r\n')[-1]
+# random_file_name = "{}.png".format(str(uuid.uuid4()))
+
+print(b'\r\n\r\n')
+
+print(uuid.uuid4())
