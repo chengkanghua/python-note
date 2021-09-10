@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="db0f88cf-4e29-4b86-95f2-68cd0b9d89b1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/pan.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/settings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db/users.xlsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/handlers/pan.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/select_server.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/server.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/req.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/.idea/pan_client.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/client.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/config/settings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/src/handler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../pan_client/utils/req.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/.idea/pan.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/.idea/pan_client.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan_client/files/aa.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client.py" beforeDir="false" afterPath="$PROJECT_DIR$/../client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../content.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../d.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../files2/aa.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../info.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../note.py" beforeDir="false" afterPath="$PROJECT_DIR$/../note.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../t1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/笔记/day21.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/笔记/day21.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/db/users.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/db/users.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/src/handlers/pan.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/src/handlers/pan.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/src/select_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/src/select_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/src/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/src/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/前戏/1.设计思路.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day21 网络编程（下）/第三模块 网盘系统（参考代码）/pan/前戏/1.设计思路.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day23 并发编程（下）/笔记/day23.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../第三模块-面向对象编程2.0版佩奇/day23 并发编程（下）/笔记/day23.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第二模块-函数和模块v2.0版沛齐/day12 函数高级/笔记/day12.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../第二模块-函数和模块v2.0版沛齐/day12 函数高级/笔记/day12.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../第二模块-函数和模块v2.0版沛齐/day14 模块和内置模块/笔记/day14.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../第二模块-函数和模块v2.0版沛齐/day14 模块和内置模块/笔记/day14.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectId" id="1xwKSWPAnbCLOqk0O19szEgXV8a" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager" selected="Python.pan">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pan" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pan" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pan" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/handlers" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/handlers/pan.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="settings" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pan" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/config" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/config/settings.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.pan" />
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.settings" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="db0f88cf-4e29-4b86-95f2-68cd0b9d89b1" name="Changes" comment="" />
+      <created>1631260710996</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1631260710996</updated>
+    </task>
+    <servers />
+  </component>
+</project>

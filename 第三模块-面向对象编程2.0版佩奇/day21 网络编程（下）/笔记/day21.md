@@ -412,26 +412,26 @@ sock.close()
 
 
 > ```python
->import struct
+> import struct
 > 
 > # ########### 数值转换为固定4个字节，四个字节的范围 -2147483648 <= number <= 2147483647  ###########
->v1 = struct.pack('i', 199)
+> v1 = struct.pack('i', 199)
 > print(v1)  # b'\xc7\x00\x00\x00'
->
+> 
 > for item in v1:
->     print(item, bin(item))
+>  print(item, bin(item))
 > 
 > # ########### 4个字节转换为数字 ###########
 > v2 = struct.unpack('i', v1) # v1= b'\xc7\x00\x00\x00'
 > print(v2) # (199,)
 > ```
-> 
+>
 > ![image-20210215090446549](assets/image-20210215090446549.png)
->     
+>
 > 示例代码：
-> 
+>
 > - 服务端
-> 
+>
 >  ```python
 >   import socket
 >  import struct
@@ -467,32 +467,33 @@ sock.close()
 > 
 >     conn.close()
 >   sock.close()
->   ```
-> 
+>  ```
+>
 > - 客户端
-> 
+>
 >     ```python
 >   import socket
 >   import struct
->   
+>
 >  client = socket.socket()
 >   client.connect(('127.0.0.1', 8001))
->  
+>
 >   # 第一条数据
 >   data1 = 'alex正在吃'.encode('utf-8')
->   
+>
 >       header1 = struct.pack('i', len(data1))
->   
+>
 >   client.sendall(header1) #发送数据长度
 >       client.sendall(data1)   #发送数据
->   
+>
 >   # 第二条数据
 >       data2 = '翔'.encode('utf-8')
 >   header2 = struct.pack('i', len(data2))
 >       client.sendall(header2)
 >   client.sendall(data2)
->   
+>
 >       client.close()
+>
 >   ```
 
 

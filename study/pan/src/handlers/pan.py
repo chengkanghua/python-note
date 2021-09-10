@@ -1,19 +1,12 @@
-import re
-import os
-import json
-import time
-import datetime
-
+import re,os,json,time,datetime
 from openpyxl import load_workbook
 
-from utils import req         #工具箱
-from config import settings   #配置文件
+from utils import req
+from config import settings
 
 
 class PanHandler(object):
-
-    def __init__(self, conn):
-        # 客户端的socket连接
+    def __init__(self,conn):
         self.conn = conn
         self.username = None
 
