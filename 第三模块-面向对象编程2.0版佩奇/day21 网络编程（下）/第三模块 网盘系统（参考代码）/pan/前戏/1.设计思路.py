@@ -1,8 +1,7 @@
-class PanHandler(object):
-    """ 业务功能代码 """
+""" 业务功能代码 """
 
-    def execute(self):
-        pass
+def execute(self):
+    pass
 
 
 class Server(object):

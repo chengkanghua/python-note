@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
 
 
-关于在Python中基于multiprocessiong模块操作的进程：
+关于在Python中基于multiprocessing模块操作的进程：
 
 Depending on the platform, [`multiprocessing`](https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing) supports three ways to start a process. These *start methods* are
 

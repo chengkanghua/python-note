@@ -1114,7 +1114,7 @@ def auth(func):
        file_obj.write("武沛齐")
        file_obj.close()
        
-   write_user_info('/Users/kanghua/PycharmProjects/python-note/study/files2/aa.txt')
+   write_user_info('/Users/kanghua/PycharmProjects/python-note/study/pan/aa.txt')
    ```
 
 4. 分析代码写结果：
