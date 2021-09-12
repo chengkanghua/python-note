@@ -85,12 +85,10 @@ On Unix using the *spawn* or *forkserver* start methods will also start a *resou
   ```python
   import multiprocessing
   import time
-  
-  """
+  '''
   def task():
       print(name)
       name.append(123)
-  
   
   if __name__ == '__main__':
       multiprocessing.set_start_method("fork")  # fork、spawn、forkserver
@@ -100,12 +98,12 @@ On Unix using the *spawn* or *forkserver* start methods will also start a *resou
       p1.start()
   
       time.sleep(2)
-      print(name)  # []
-  """
-  """
-  def task():
-      print(name) # [123]
+      print(name)  # [] 子进程操作没改变主进程变量数据
   
+  '''
+  '''
+  def task():
+      print(name) # [123]  fork模式拷贝了主进程运行前的所有资源
   
   if __name__ == '__main__':
       multiprocessing.set_start_method("fork")  # fork、spawn、forkserver
@@ -114,23 +112,25 @@ On Unix using the *spawn* or *forkserver* start methods will also start a *resou
   
       p1 = multiprocessing.Process(target=task)
       p1.start()
-  """
+  '''
   
   """
   def task():
-      print(name)  # []
+      print(name)  # [] 
   
   
   if __name__ == '__main__':
       multiprocessing.set_start_method("fork")  # fork、spawn、forkserver
       name = []
-      
+  
       p1 = multiprocessing.Process(target=task)
       p1.start()
   
       name.append(123)
-      
+  
+  
   """
+  
   
   ```
 
@@ -139,15 +139,13 @@ On Unix using the *spawn* or *forkserver* start methods will also start a *resou
   ```python
   import multiprocessing
   
-  
   def task():
-      print(name)
-      print(file_object)
-  
+      print(name) #[]
+      print(file_object) #<_io.TextIOWrapper name='x1.txt' mode='a+' encoding='utf-8'>
   
   if __name__ == '__main__':
       multiprocessing.set_start_method("fork")  # fork、spawn、forkserver
-      
+  
       name = []
       file_object = open('x1.txt', mode='a+', encoding='utf-8')
   
@@ -155,7 +153,7 @@ On Unix using the *spawn* or *forkserver* start methods will also start a *resou
       p1.start()
   
   ```
-
+  
   
 
 案例：
@@ -163,44 +161,52 @@ On Unix using the *spawn* or *forkserver* start methods will also start a *resou
 ```python
 import multiprocessing
 
-
 def task():
     print(name)
     file_object.write("alex\n")
-    file_object.flush()
-
+    file_object.flush()  # 武沛齐 alex
 
 if __name__ == '__main__':
     multiprocessing.set_start_method("fork")
-    
+
     name = []
     file_object = open('x1.txt', mode='a+', encoding='utf-8')
-    file_object.write("武沛齐\n")
+    file_object.write("武沛齐\n")  #当前主进程 在内存中没有flush进硬盘
 
-    p1 = multiprocessing.Process(target=task)
-    p1.start()
+    p1 = multiprocessing.Process(target=task)  #task方法放进子进程，同时拷贝主进程所有资源进子进程
+    p1.start() # 子进程运行
+
+# 子进程结束后 刷进文件  武沛齐 alex
+# 主进程待子进程结束后， 主进程的 file_object 结束了写入一个 武沛齐
+'''
+武沛齐
+alex
+武沛齐
+'''
 ```
 
 ```python
 import multiprocessing
 
-
 def task():
     print(name)
     file_object.write("alex\n")
     file_object.flush()
 
-
 if __name__ == '__main__':
     multiprocessing.set_start_method("fork")
-    
+
     name = []
     file_object = open('x1.txt', mode='a+', encoding='utf-8')
     file_object.write("武沛齐\n")
     file_object.flush()
 
-    p1 = multiprocessing.Process(target=task)
+    p1 = multiprocessing.Process(target=task)   # 是拷贝了文件对象进子进程，但是内存中是没值的。因为已经flush进硬盘里了
     p1.start()
+"""
+武沛齐
+alex
+"""
 ```
 
 ```python
@@ -232,7 +238,7 @@ if __name__ == '__main__':
     # print(lock)
     # lock.acquire() # 申请锁
     # print(lock)
-    # lock.release()
+    # lock.release() #释放锁
     # print(lock)
     # lock.acquire()  # 申请锁
     # print(lock)
@@ -254,22 +260,21 @@ if __name__ == '__main__':
   ```python
   import time
   from multiprocessing import Process
-  
+  import multiprocessing
   
   def task(arg):
       time.sleep(2)
       print("执行中...")
   
-  
   if __name__ == '__main__':
       multiprocessing.set_start_method("spawn")
       p = Process(target=task, args=('xxx',))
       p.start()
-      p.join()
+      p.join()  #等待子进程运行结束再往下运行
   
       print("继续执行...")
   ```
-
+  
 - `p.daemon = 布尔值`，守护进程（必须放在start之前）
 
   - `p.daemon =True`，设置为守护进程，主进程执行完毕后，子进程也自动关闭。
@@ -278,7 +283,7 @@ if __name__ == '__main__':
   ```python
   import time
   from multiprocessing import Process
-  
+  import multiprocessing
   
   def task(arg):
       time.sleep(2)
@@ -288,10 +293,11 @@ if __name__ == '__main__':
   if __name__ == '__main__':
       multiprocessing.set_start_method("spawn")
       p = Process(target=task, args=('xxx',))
-      p.daemon = True
+      p.daemon = True     #主进程结束  子进程也结束。
       p.start()
   
       print("继续执行...")
+  
   
   ```
 
@@ -312,7 +318,7 @@ if __name__ == '__main__':
       for i in range(10):
           t = threading.Thread(target=func)
           t.start()
-      print(os.getpid(), os.getppid())
+      print(os.getpid(), os.getppid())  #ppid 父进程id
       print("线程个数", len(threading.enumerate()))
       time.sleep(2)
       print("当前进程的名称：", multiprocessing.current_process().name)
@@ -334,11 +340,9 @@ if __name__ == '__main__':
   ```python
   import multiprocessing
   
-  
-  class MyProcess(multiprocessing.Process):
+  class MyProcess(multiprocessing.Process):  #继承
       def run(self):
           print('执行此进程', self._args)
-  
   
   if __name__ == '__main__':
       multiprocessing.set_start_method("spawn")
@@ -346,8 +350,9 @@ if __name__ == '__main__':
       p.start()
       print("继续执行...")
   
+  
   ```
-
+  
 - CPU个数，程序一般创建多少个进程？（利用CPU多核优势）。
 
   ```python
@@ -374,10 +379,8 @@ if __name__ == '__main__':
 ```python
 import multiprocessing
 
-
 def task(data):
     data.append(666)
-
 
 if __name__ == '__main__':
     data_list = []
@@ -410,17 +413,15 @@ Data can be stored in a shared memory map using [`Value`](https://docs.python.or
 ```python
 from multiprocessing import Process, Value, Array
 
-
 def func(n, m1, m2):
     n.value = 888
     m1.value = 'a'.encode('utf-8')
     m2.value = "武"
 
-
 if __name__ == '__main__':
-    num = Value('i', 666)
-    v1 = Value('c')
-    v2 = Value('u')
+    num = Value('i', 666)  # i 表示创建的是 int类型
+    v1 = Value('c')        # c char类型
+    v2 = Value('u')				 # u 一个字符 也可以是中文字符
 
     p = Process(target=func, args=(num, v1, v2))
     p.start()
@@ -434,19 +435,17 @@ if __name__ == '__main__':
 ```python
 from multiprocessing import Process, Value, Array
 
-
 def f(data_array):
     data_array[0] = 666
 
-
 if __name__ == '__main__':
-    arr = Array('i', [11, 22, 33, 44]) # 数组：元素类型必须是int; 只能是这么几个数据。
+    arr = Array('i', [11, 22, 33, 44]) # 数组：i表示元素类型必须是int; 也限定了就这4个数据。
 
     p = Process(target=f, args=(arr,))
     p.start()
     p.join()
 
-    print(arr[:])
+    print(arr[:])  #[666, 22, 33, 44]
 ```
 
 **Server process**
@@ -464,15 +463,15 @@ def f(d, l):
 
 if __name__ == '__main__':
     with Manager() as manager:
-        d = manager.dict()
-        l = manager.list()
+        d = manager.dict()  #创建了 特殊的字典， 实现子进程资源共享
+        l = manager.list()  #创建了 特殊的列表   实现子进程资源共享
 
         p = Process(target=f, args=(d, l))
         p.start()
         p.join()
 
-        print(d)
-        print(l)
+        print(d)  #{1: '1', '2': 2, 0.25: None}
+        print(l)  #[666]
 ```
 
 
@@ -493,22 +492,23 @@ import multiprocessing
 
 def task(q):
     for i in range(10):
-        q.put(i)
+        q.put(i)   #放入队列里  主线程那用get获取
 
 
 if __name__ == '__main__':
-    queue = multiprocessing.Queue()
-    
+    queue = multiprocessing.Queue()  #创建队列 对象   队列特点 先进先出
+
     p = multiprocessing.Process(target=task, args=(queue,))
     p.start()
     p.join()
 
     print("主进程")
+    print(queue.get())  #从队列里取数据
     print(queue.get())
     print(queue.get())
     print(queue.get())
     print(queue.get())
-    print(queue.get())
+
 ```
 
 **Pipes**
@@ -524,21 +524,21 @@ import multiprocessing
 
 def task(conn):
     time.sleep(1)
-    conn.send([111, 22, 33, 44])
-    data = conn.recv() # 阻塞
+    conn.send([111, 22, 33, 44]) #将数据发给 Parent_conn
+    data = conn.recv() # 阻塞  接收 parent_conn 发来的数据
     print("子进程接收:", data)
     time.sleep(2)
 
 
 if __name__ == '__main__':
-    parent_conn, child_conn = multiprocessing.Pipe()
+    parent_conn, child_conn = multiprocessing.Pipe()  # Pipe 两个管道。 
 
-    p = multiprocessing.Process(target=task, args=(child_conn,))
+    p = multiprocessing.Process(target=task, args=(child_conn,))  #创建一个进程 ，放进函数task 将child_conn管道放进
     p.start()
 
-    info = parent_conn.recv() # 阻塞
-    print("主进程接收：", info)
-    parent_conn.send(666)
+    info = parent_conn.recv() # 阻塞  等待child_conn 发数据过来
+    print("主进程接收：", info)  
+    parent_conn.send(666)   #发送数据给child_conn
 ```
 
 
@@ -570,7 +570,7 @@ if __name__ == '__main__':
         p.start()
 
     time.sleep(3)
-    print(num.value)
+    print(num.value) # 每次结果不一样
 ```
 
 ```python
@@ -590,7 +590,7 @@ if __name__ == '__main__':
             p = Process(target=f, args=(d,))
             p.start()
         time.sleep(3)
-        print(d)
+        print(d) #每次结果不一样
 ```
 
 ```python
@@ -615,6 +615,8 @@ if __name__ == '__main__':
     for i in range(20):
         p = multiprocessing.Process(target=task)
         p.start()
+        
+#20次才减一次，
 ```
 
 
@@ -628,7 +630,7 @@ import multiprocessing
 
 def task(lock):
     print("开始")
-    lock.acquire()
+    lock.acquire()  #进程锁上
     # 假设文件中保存的内容就是一个值：10
     with open('f1.txt', mode='r', encoding='utf-8') as f:
         current_num = int(f.read())
@@ -639,19 +641,19 @@ def task(lock):
 
     with open('f1.txt', mode='w', encoding='utf-8') as f:
         f.write(str(current_num))
-    lock.release()
+    lock.release() #释放锁
 
 
 if __name__ == '__main__':
-    multiprocessing.set_start_method("spawn")
-    
-    lock = multiprocessing.RLock() # 进程锁
-    
+    multiprocessing.set_start_method("spawn")  #设置进程对象启动方式
+
+    lock = multiprocessing.RLock()  # 进程锁
+
     for i in range(10):
         p = multiprocessing.Process(target=task, args=(lock,))
         p.start()
 
-    # spawn模式，需要特殊处理。
+    # spawn模式，需要特殊处理。 没有这句运行会报错
     time.sleep(7)
 
 
@@ -745,15 +747,13 @@ if __name__ == '__main__':
     pool = ProcessPoolExecutor(4)
     for i in range(10):
         pool.submit(task, i)
-	print(1)
-	print(2)
-
+    print(1)
+    print(2)
 ```
 
 ```python
 import time
 from concurrent.futures import ProcessPoolExecutor
-
 
 def task(num):
     print("执行", num)
@@ -761,11 +761,10 @@ def task(num):
 
 
 if __name__ == '__main__':
-
     pool = ProcessPoolExecutor(4)
     for i in range(10):
         pool.submit(task, i)
-	# 等待进程池中的任务都执行完毕后，再继续往后执行。
+    # 等待进程池中的任务都执行完毕后，再继续往后执行。
     pool.shutdown(True)
     print(1)
 
@@ -792,7 +791,7 @@ def done(res):
 if __name__ == '__main__':
 
     pool = ProcessPoolExecutor(4)
-    for i in range(50):
+    for i in range(10):
         fur = pool.submit(task, i)
         fur.add_done_callback(done) # done的调用由主进程处理（与线程池不同）
         
@@ -1006,20 +1005,22 @@ func2()
   from greenlet import greenlet
   
   def func1():
-      print(1)        # 第1步：输出 1
-      gr2.switch()    # 第3步：切换到 func2 函数
-      print(2)        # 第6步：输出 2
-      gr2.switch()    # 第7步：切换到 func2 函数，从上一次执行的位置继续向后执行
-      
+      print(1)  # 第1步：输出 1
+      gr2.switch()  # 第3步：切换到 func2 函数
+      print(2)  # 第6步：输出 2
+      gr2.switch()  # 第7步：切换到 func2 函数，从上一次执行的位置继续向后执行
+  
+  
   def func2():
-      print(3)        # 第4步：输出 3
-      gr1.switch()    # 第5步：切换到 func1 函数，从上一次执行的位置继续向后执行
-      print(4)        # 第8步：输出 4
-      
+      print(3)  # 第4步：输出 3
+      gr1.switch()  # 第5步：切换到 func1 函数，从上一次执行的位置继续向后执行
+      print(4)  # 第8步：输出 4
+  
+  
   gr1 = greenlet(func1)
   gr2 = greenlet(func2)
   
-  gr1.switch() # 第1步：去执行 func1 函数
+  gr1.switch()  # 第1步：去执行 func1 函数
   ```
 
 - yield

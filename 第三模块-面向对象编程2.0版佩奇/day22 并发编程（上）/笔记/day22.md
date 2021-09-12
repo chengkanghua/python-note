@@ -329,7 +329,7 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
 
   ```python
   import threading
-  
+  import time
   loop = 10000000
   number = 0
   
@@ -338,10 +338,11 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
       for i in range(count):
           number += 1
   
-  t = threading.Thread(target=_add,args=(loop,))
-  t.start()
+  t = threading.Thread(target=_add,args=(loop,))  #放进子线程
+  t.start()       #当前线程准备就绪（等待CPU调度，具体时间是由CPU来决定）。
   
-  print(number)
+  # time.sleep(1) #这里是等待1秒种子线程运行，之后再输出结果。
+  print(number)  #这里打印的结果不一定是最后的结果，因为子线程调度时间，运行有没有结束都不一定。
   ```
 
 - `t.join()`，等待当前线程的任务执行完毕后再向下继续执行。
@@ -389,7 +390,7 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   t2.start()
   t2.join()  # t2线程执行完毕,才继续往后走
   
-  print(number)
+  print(number) #0
   
   ```
 
@@ -399,18 +400,15 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   loop = 10000000
   number = 0
   
-  
   def _add(count):
       global number
       for i in range(count):
           number += 1
   
-  
   def _sub(count):
       global number
       for i in range(count):
           number -= 1
-  
   
   t1 = threading.Thread(target=_add, args=(loop,))
   t2 = threading.Thread(target=_sub, args=(loop,))
@@ -420,9 +418,9 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   t1.join()  # t1线程执行完毕,才继续往后走
   t2.join()  # t2线程执行完毕,才继续往后走
   
-  print(number)
+  print(number) # 结果每次不一样
   ```
-
+  
 - `t.setDaemon(布尔值)` ，守护线程（必须放在start之前）
 
   - `t.setDaemon(True)`，设置为守护线程，主线程执行完毕后，子线程也自动关闭。
@@ -440,7 +438,8 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   t.setDaemon(True) # True/False
   t.start()
   
-  print('END')
+  print('END') #没有等到子线程运行完就被关闭了，直接打印 END
+  
   ```
 
 - 线程名称的设置和获取
@@ -448,46 +447,40 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   ```python
   import threading
   
-  
   def task(arg):
       # 获取当前执行此代码的线程
       name = threading.current_thread().getName()
       print(name)
   
-  
   for i in range(10):
       t = threading.Thread(target=task, args=(11,))
-      t.setName('日魔-{}'.format(i))
+      t.setName('日魔-{}'.format(i))  #设置线程名称
       t.start()
   ```
-
+  
 - 自定义线程类，直接将线程需要做的事写到run方法中。
 
   ```python
   import threading
   
-  
-  class MyThread(threading.Thread):
+  class MyThread(threading.Thread): #继承Thread 类
       def run(self):
           print('执行此线程', self._args)
-  
   
   t = MyThread(args=(100,))
   t.start()
   ```
-
+  
   ```python
   import requests
   import threading
   
-  
-  class DouYinThread(threading.Thread):
+  class DouYinThread(threading.Thread): #继承 Thread 类
       def run(self):
           file_name, video_url = self._args
           res = requests.get(video_url)
           with open(file_name, mode='wb') as f:
               f.write(res.content)
-  
   
   url_list = [
       ("东北F4模仿秀.mp4", "https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300f570000bvbmace0gvch7lo53oog"),
@@ -497,9 +490,8 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   for item in url_list:
       t = DouYinThread(args=(item[0], item[1]))
       t.start()
-  
   ```
-
+  
   
 
 
@@ -539,7 +531,7 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   t1.join()  # t1线程执行完毕,才继续往后走
   t2.join()  # t2线程执行完毕,才继续往后走
   
-  print(number)
+  print(number)  #两个线程都在运行操作number 导致数据混乱，每次结果不一样
   ```
 
   ```python
@@ -575,7 +567,7 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   t1.join()  # t1线程执行完毕,才继续往后走
   t2.join()  # t2线程执行完毕,才继续往后走
   
-  print(number)
+  print(number)  #0
   
   ```
 
@@ -628,7 +620,6 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
   num = 0
   lock_object = threading.RLock()
   
-  
   def task():
       print("开始")
       with lock_object: # 基于上下文管理，内部自动执行 acquire 和 release
@@ -637,15 +628,12 @@ print("继续执行...") # 主线程执行完所有代码，不结束（等待�
               num += 1
       print(num)
   
-  
   for i in range(2):
       t = threading.Thread(target=task)
       t.start()
   ```
-
   
-
-
+  
 
 在开发的过程中要注意有些操作默认都是 线程安全的（内部集成了锁的机制），我们在使用的时无需再通过锁再处理，例如：
 
@@ -667,6 +655,9 @@ def task():
 for i in range(2):
     t = threading.Thread(target=task)
     t.start()
+    
+-------------------------------------------
+#列表操作的最终结果是2000000 ，可以不用加锁。  列表操作线程安全。
 ```
 
 ![image-20210225102151570](assets/image-20210225102151570.png)
@@ -689,24 +680,21 @@ for i in range(2):
   num = 0
   lock_object = threading.Lock()
   
-  
   def task():
       print("开始")
       lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
       global num
       for i in range(1000000):
           num += 1
-      lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了
-      
+      lock_object.release()  # 线程出去，并解开锁，其他线程就可以进入并执行了 
       print(num)
-  
   
   for i in range(2):
       t = threading.Thread(target=task)
       t.start()
   
   ```
-
+  
 - RLock，递归锁。
 
   ```python
@@ -791,11 +779,10 @@ import threading
 num = 0
 lock_object = threading.Lock()
 
-
 def task():
     print("开始")
     lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
-    lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。
+    lock_object.acquire()  # 第1个抵达的线程进入并上锁，其他线程就需要再此等待。  运行到这就卡住了，拿不到锁， 锁已经被上面一条命令拿住了。
     global num
     for i in range(1000000):
         num += 1
@@ -884,24 +871,18 @@ for url in url_list:
 ```python
 import time
 from concurrent.futures import ThreadPoolExecutor
-
 # pool = ThreadPoolExecutor(100)
 # pool.submit(函数名,参数1，参数2，参数...)
-
-
-def task(video_url,num):
+def task(video_url, num):
     print("开始执行任务", video_url)
     time.sleep(5)
-
 # 创建线程池，最多维护10个线程。
 pool = ThreadPoolExecutor(10)
-
 url_list = ["www.xxxx-{}.com".format(i) for i in range(300)]
-
 for url in url_list:
     # 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。
-    pool.submit(task, url,2)
-    
+    pool.submit(task, url, 2)
+
 print("END")
 ```
 
@@ -912,12 +893,9 @@ print("END")
 ```python
 import time
 from concurrent.futures import ThreadPoolExecutor
-
-
 def task(video_url):
     print("开始执行任务", video_url)
     time.sleep(5)
-
 
 # 创建线程池，最多维护10个线程。
 pool = ThreadPoolExecutor(10)
@@ -927,7 +905,7 @@ for url in url_list:
     # 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。
     pool.submit(task, url)
 
-print("执行中...")
+print("执行中...")   #第一个线程池之后执行， 第11行。
 pool.shutdown(True)  # 等待线程池中的任务执行完毕后，在继续执行
 print('继续往下走')
 ```
@@ -959,7 +937,7 @@ url_list = ["www.xxxx-{}.com".format(i) for i in range(15)]
 
 for url in url_list:
     # 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。
-    future = pool.submit(task, url)
+    future = pool.submit(task, url)  #返回值交给了future 同时future也是个对象。
     future.add_done_callback(done) # 是子主线程执行
     
 # 可以做分工，例如：task专门下载，done专门将下载的数据写入本地文件。
@@ -974,12 +952,10 @@ import time
 import random
 from concurrent.futures import ThreadPoolExecutor,Future
 
-
 def task(video_url):
     print("开始执行任务", video_url)
     time.sleep(2)
     return random.randint(0, 10)
-
 
 # 创建线程池，最多维护10个线程。
 pool = ThreadPoolExecutor(10)
@@ -1059,8 +1035,6 @@ for fu in future_list:
 import os
 import requests
 from concurrent.futures import ThreadPoolExecutor
-
-
 def download(file_name, image_url):
     res = requests.get(
         url=image_url,
@@ -1077,7 +1051,6 @@ def download(file_name, image_url):
     with open(file_path, mode='wb') as img_object:
         img_object.write(res.content)
 
-
 # 创建线程池，最多维护10个线程。
 pool = ThreadPoolExecutor(10)
 
@@ -1092,8 +1065,6 @@ with open("mv.csv", mode='r', encoding='utf-8') as file_object:
 import os
 import requests
 from concurrent.futures import ThreadPoolExecutor
-
-
 def download(image_url):
     res = requests.get(
         url=image_url,
@@ -1102,29 +1073,22 @@ def download(image_url):
         }
     )
     return res
-
-
 def outer(file_name):
     def save(response):
-        res = response.result()
+        res = response.result()  #取download返回值
         # 写入本地
         # # 检查images目录是否存在？不存在，则创建images目录
         if not os.path.exists("images"):
             # 创建images目录
             os.makedirs("images")
-
         file_path = os.path.join("images", file_name)
-
         # # 2.将图片的内容写入到文件
         with open(file_path, mode='wb') as img_object:
             img_object.write(res.content)
-
     return save
-
 
 # 创建线程池，最多维护10个线程。
 pool = ThreadPoolExecutor(10)
-
 with open("mv.csv", mode='r', encoding='utf-8') as file_object:
     for line in file_object:
         nid, name, url = line.split(",")
@@ -1132,12 +1096,6 @@ with open("mv.csv", mode='r', encoding='utf-8') as file_object:
         fur = pool.submit(download, url)
         fur.add_done_callback(outer(file_name))
 ```
-
-
-
-
-
-
 
 
 
@@ -1171,7 +1129,7 @@ print(obj1,obj2)
 
   ```python
   class Singleton:
-      instance = None
+      instance = None  #类变量
   
       def __init__(self, name):
           self.name = name
@@ -1180,7 +1138,7 @@ print(obj1,obj2)
           # 返回空对象
           if cls.instance:
               return cls.instance
-          cls.instance = object.__new__(cls)
+          cls.instance = object.__new__(cls) #创建空对象
           return cls.instance
   
   obj1 = Singleton('alex')
@@ -1305,9 +1263,56 @@ print(obj1,obj2)
 
 1. 简述进程和线程的区别以及应用场景。
 
+   ```
+   进程：计算机资源分配的最小单位
+   线程：cpu调度的最小单位
+   一个进程中可以有多个线程，同一个进程中的线程共享此进程的资源
+   
+   计算密集型 适合用多进程开发
+   io密集型  适合多线程开发
+   ```
+
+   
+
 2. 什么是GIL锁
 
+   ```
+   是cpyhton中独有的全局解释器锁，控制一个进程中同一时刻只有一个线程供cpu调度。
+   像 列表，字典等常见对象的线程安全得益于GIL锁
+   ```
+
+   
+
 3. 手写单例模式
+
+   ```
+   import threading
+   class Singleton:
+       instance = None
+       lock = threading.RLock()
+   
+       def __init__(self, name):
+           self.name = name
+   
+       def __new__(cls,*args,**kwargs):
+           if cls.instance:
+               return cls.instance
+           with cls.lock:
+               if cls.instance:
+                   return cls.instance
+               cls.instance = object.__new__(cls)
+           return cls.instance
+   
+   def task():
+       obj = Singleton('alex')
+       print(obj)
+   
+   for i in range(10):
+       t = threading.Thread(target=task)
+       t.start()
+   ```
+
+   
 
 4. 程序从flag a执行到falg b的时间大致是多少秒？
 
@@ -1318,9 +1323,11 @@ print(obj1,obj2)
    	time.sleep(60)
    # flag a
    t = threading.Thread(target=_wait)
-   t.setDaemon(False)
+   t.setDaemon(False)   #默认模式 非守护进程     主进程要结束时候要等子进程运行完
    t.start()
    # flag b
+   
+   # 60秒
    ```
 
 5. 程序从flag a执行到falg b的时间大致是多少秒？
@@ -1332,9 +1339,11 @@ print(obj1,obj2)
    	time.sleep(60)
    # flag a
    t = threading.Thread(target=_wait)
-   t.setDaemon(True)
+   t.setDaemon(True)    #守护进程模式， 主进程结束跟着也结束
    t.start()
    # flag b
+   
+   # 0秒内
    ```
 
 6. 程序从flag a执行到falg b的时间大致是多少秒？
@@ -1347,8 +1356,9 @@ print(obj1,obj2)
    # flag a
    t = threading.Thread(target=_wait)
    t.start()
-   t.join()
+   t.join()    #等待子线程结束后才开始运行下面代码
    # flag b
+   # 60秒
    ```
 
 7. 读程序，请确认执行到最后number是否一定为0
@@ -1368,9 +1378,10 @@ print(obj1,obj2)
    ta = threading.Thread(target=_add,args=(loop,))
    ts = threading.Thread(target=_sub,args=(loop,))
    ta.start()
-   ta.join()
+   ta.join()  #等待子程序运行完再进程下一个子进程
    ts.start()
    ts.join()
+   print(number)#0
    ```
 
 8. 读程序，请确认执行到最后number是否一定为0
@@ -1394,7 +1405,8 @@ print(obj1,obj2)
    ta.start()
    ts.start()
    ta.join()
-   ts.join()
+   ts.join() 
+   # 不一定
    ```
 
 9. data.txt 文件中共有 10000 条数据，请为每 100行 数据创建一个线程，并在线程中把当前100条数据的num列相加并打印。
@@ -1410,6 +1422,61 @@ print(obj1,obj2)
    ```
 
    
+
+```
+#随机生成10000条数据
+import random
+with open(file="data.txt",mode='w',encoding='utf-8') as f:
+    f.write('subscription_id,erotic,num\n')
+    for i in range(10000):
+        f.write('FFFFFFSDSVFG5RTFGDDFF,5,{}\n'.format(random.randint(1,100)))
+
+#-data.txt 文件中共有 10000 条数据，请为每 100行 数据创建一个线程，并在线程中把当前100条数据的num列相加并打印。
+# 方法一
+import threading
+
+file_object =  open(file='data.txt',mode='r',encoding='utf-8')
+file_object.readline()
+
+def red_hundred():
+    num = 0
+    for i in range(100):
+        line = file_object.readline()
+        num += int(line.strip().split(',')[-1])
+    print(num)
+
+for i in range(100):
+    t = threading.Thread(target=red_hundred)
+    t.start()
+    t.join()
+
+file_object.close()
+
+# ----进阶版
+import threading
+def count(l : list):
+    con=sum(l)
+    print(con)
+def run():
+    file_object =  open(file='data.txt',mode='r',encoding='utf-8')
+    file_object.readline()
+    sum_list = []
+    for line in file_object:
+        number = int(line.strip().split(',')[-1])
+        sum_list.append(number)
+        if len(sum_list) == 100:
+            t = threading.Thread(target=count,args=(sum_list,))
+            t.start()
+            sum_list = [] #不要使用 sum_list.clear() 这会造成子线程计算没有数据了。原因：sum_list=[] 赋值了空列表内存地址发生变化了。clear方法内存地址没有变化。
+    if sum_list:
+        t = threading.Thread(target=count,args=(sum_list,))
+        t.start()
+    file_object.close()
+
+if __name__ == '__main__':
+    run()
+
+```
 
 
 
