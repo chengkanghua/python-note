@@ -1,14 +1,16 @@
 # ################### socket客户端 ###################
 import socket
 
-client = socket.socket()
-# 阻塞
-client.connect(('127.0.0.1', 8001))
+client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client.connect(('localhost',8001))
 
 while True:
-    content = input(">>>")
-    if content.upper() == 'Q':
+    text = input('>>>>')
+    if text.upper() == 'Q':
         break
-    client.sendall(content.encode('utf-8'))
+    client.sendall(text.encode('utf-8'))
+    reply = client.recv(1024)
+    print('收到消息{}'.format(reply.decode('utf-8')))
 
 client.close()
+

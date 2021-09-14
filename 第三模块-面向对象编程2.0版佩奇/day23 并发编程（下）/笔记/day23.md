@@ -911,7 +911,7 @@ if __name__ == '__main__':
       total_count = 0
       ip_count = 0
       file_path = os.path.join("files", file_name)
-      file_object = open(file_path, mode='r', encoding='utf-8')
+      file_object = open(file_path, mode='r', encoding='utf-8',errors='ignore') #,errors='ignore' 输出前报错增加的
       for line in file_object:
           if not line.strip():
               continue
