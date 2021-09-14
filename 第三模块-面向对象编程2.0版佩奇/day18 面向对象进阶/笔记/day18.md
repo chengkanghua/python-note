@@ -422,49 +422,56 @@ res.text
 
   ```python
   class C(object):
-      
+  
       @property
       def x(self):
-          pass
-      
+          print('x')
+  
       @x.setter
       def x(self, value):
-          pass
-      
+          self.value = value
+          print(value)
+  
       @x.deleter
       def x(self):
-  		pass
-          
+          self.value = None
+          print('del value')
+  
+  
   obj = C()
   
   obj.x
-  obj.x = 123
-  del obj.x
+  obj.x = 123  # @x.setter 执行这里
+  print(obj.value)
+  del obj.x    #  @x.deleter 执行这里
+  print(obj.value)
+  
   ```
 
 - 方式二，基于定义变量
 
   ```python
   class C(object):
-      
-      def getx(self): 
-  		pass
-      
-      def setx(self, value): 
-  		pass
-          
-      def delx(self): 
-  		pass
-          
-      x = property(getx, setx, delx, "I'm the 'x' property.")
-      
+  
+      def getx(self):
+          print('getx')
+  
+      def setx(self, value):
+          print('setx')
+  
+      def delx(self):
+          print('delx')
+  
+      x = property(getx, setx, delx, "I'm the 'x' property.")  #第四个位置是注释
+  
+  
   obj = C()
   
-  obj.x
-  obj.x = 123
-  del obj.x
+  obj.x        #执行property里第一个位置的 函数 getx
+  obj.x = 123  #执行property里第二个位置的 函数 setx
+  del obj.x    #执行property里第三个位置的 函数 delx
   ```
-
+  
   
 
 Django源码一撇：
