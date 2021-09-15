@@ -1306,7 +1306,7 @@ for obj in user_object_list:
 4. `__new__`方法的作用？
 
    ```phthon
-   类实例化对象时候第一步 new 方法创建一个空对象并返回 第二步 init方法
+   构造方法  用于创建对象
    ```
 
    
