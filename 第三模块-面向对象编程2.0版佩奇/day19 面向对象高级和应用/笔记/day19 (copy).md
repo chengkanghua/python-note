@@ -1182,19 +1182,17 @@ func()
                raise StopIteration()
            return self.counter
    
-       
-   obj = IterRange(20)
    
+   obj = IterRange(20)
    while True:
        try:
-       	ele = next(obj)
-   	except StopIteration as e:
+           ele = next(obj)
+       except StopIteration as e:
            print("数据获取完毕")
            break
        print(ele)
-       
    ```
-
+   
 2. 补充代码实现捕获程序中的错误。
 
    ```python
@@ -1226,11 +1224,12 @@ func()
    
    while True:
        try:
-       	ele = next(obj_iter)
-   	except StopIteration as e:
-           print("数据获取完毕")
+           ele = obj_iter.__next__()
+       except StopIteration as e:
+           print('end time')
            break
        print(ele)
+   
    ```
 
 3. 补充代码实现捕获程序中的错误。
@@ -1240,13 +1239,14 @@ func()
        yield 1
        yield 2
        yield 3
-       
+   
+   
    gen = func()
    while True:
        try:
-       	ele = next(gen)
-   	except StopIteration as e:
-           print("数据获取完毕")
+           ele = gen.__next__()
+       except StopIteration as e:
+           print('end time')
            break
        print(ele)
    ```
@@ -1274,7 +1274,7 @@ func()
    ```python
    try:
        data = [11,22,33,44,55]
-   	data[1000]
+       data[1000]
    except IndexError as e:
        print("转换失败")
    ```
@@ -1290,9 +1290,9 @@ func()
 
    ```python
    try:
-       data = {"k1":123,"k2":456}
-   	data["xxxx"]
-   except KyeError as e:
+       data = {"k1": 123, "k2": 456}
+       data["xxxx"]
+   except KeyError as e:
        print("转换失败")
    ```
 
@@ -1472,7 +1472,6 @@ def run(self):
         return 
     method()
 ```
-
 
 
 
