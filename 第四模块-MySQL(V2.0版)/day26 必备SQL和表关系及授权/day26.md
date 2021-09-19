@@ -93,7 +93,7 @@ select * from info where id in (select id from depart);
 
 # exists select * from depart where id=5，去查数据是否存在，如果存在，如果不存在。
 select * from info where exists (select * from depart where id=5);
-select * from info where not exists (select * from depart where id=5);
+  select * from info where not exists (select * from depart where id=5);
 
 select * from (select * from info where id>2) as T where age > 10;
 ```
@@ -132,7 +132,7 @@ select * from info where email like "__peiqi@live.com";
 select * from info where email like "__peiqi_live.co_";
 ```
 
-注意：数量少，数据量大的搜索。
+注意：数量少，数据量大的搜索。（这里效率不高）
 
 
 
@@ -158,6 +158,18 @@ select
 	( select min(id) from depart) as nid, -- max/min/sum
 	age
 from info;
++----+-----------+-----+------+------+------+
+| id | name      | num | mid  | nid  | age  |
++----+-----------+-----+------+------+------+
+|  1 | 武沛齐    | 666 |    3 |    1 |   19 |
+|  2 | 于超      | 666 |    3 |    1 |   49 |
+|  3 | alex      | 666 |    3 |    1 |    9 |
+|  4 | tony      | 666 |    3 |    1 |   29 |
+|  5 | kelly     | 666 |    3 |    1 |   99 |
+|  6 | james     | 666 |    3 |    1 |   49 |
+|  7 | 李杰      | 666 |    3 |    1 |   49 |
++----+-----------+-----+------+------+------+
+7 rows in set (0.00 sec)
 ```
 
 ```sql
@@ -166,7 +178,18 @@ select
 	name,
 	( select title from depart where depart.id=info.depart_id) as x1
 from info;
-
++----+-----------+--------+
+| id | name      | x1     |
++----+-----------+--------+
+|  1 | 武沛齐    | 开发   |
+|  2 | 于超      | 开发   |
+|  3 | alex      | 运营   |
+|  4 | tony      | 开发   |
+|  5 | kelly     | 销售   |
+|  6 | james     | 开发   |
+|  7 | 李杰      | 开发   |
++----+-----------+--------+
+7 rows in set (0.00 sec)
 # 注意：效率很低
 
 select 
@@ -183,7 +206,18 @@ select
 	name,
 	case depart_id when 1 then "第1部门" end v1
 from info;
-
++----+-----------+--------------+
+| id | name      | v1           |
++----+-----------+--------------+
+|  1 | 武沛齐    | 第一部门     |
+|  2 | 于超      | 第一部门     |
+|  3 | alex      | NULL         |
+|  4 | tony      | 第一部门     |
+|  5 | kelly     | NULL         |
+|  6 | james     | 第一部门     |
+|  7 | 李杰      | 第一部门     |
++----+-----------+--------------+
+7 rows in set (0.00 sec)
 select 
 	id,
 	name,
@@ -225,28 +259,6 @@ select * from info where id>6 or name like "%y" order by age asc,id desc;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### 1.5 取部分
 
 一般要用于获取部分数据。
@@ -278,6 +290,16 @@ select * from info limit 3 offset 2;	-- 从位置2开始，向后获取前3数�
 
 ```sql
 select age,max(id),min(id),count(id),sum(id),avg(id) from info group by age;
++------+---------+---------+-----------+---------+---------+
+| age  | max(id) | min(id) | count(id) | sum(id) | avg(id) |
++------+---------+---------+-----------+---------+---------+
+|    9 |       3 |       3 |         1 |       3 |  3.0000 | -- 9岁的 最大id  最小id 多少个 总和 平均id 
+|   19 |       1 |       1 |         1 |       1 |  1.0000 |
+|   29 |       4 |       4 |         1 |       4 |  4.0000 |
+|   49 |       7 |       2 |         3 |      15 |  5.0000 |
+|   99 |       5 |       5 |         1 |       5 |  5.0000 |
++------+---------+---------+-----------+---------+---------+
+5 rows in set (0.00 sec)
 ```
 
 ```sql
@@ -291,7 +313,7 @@ select depart_id,count(id) from info group by depart_id;
 ```
 
 ```sql
-select depart_id,count(id) from info group by depart_id having count(id) > 2;
+select depart_id,count(id) from info group by depart_id having count(id) > 2; -- having 是group 之后的数据再进行条件判断
 ```
 
 
@@ -299,12 +321,6 @@ select depart_id,count(id) from info group by depart_id having count(id) > 2;
 ```sql
 select count(id) from info;
 select max(id) from info;
-```
-
-
-
-```sql
-select age,max(id),min(id),sum(id),count(id) from info group by age;
 ```
 
 ```sql
@@ -356,6 +372,7 @@ select * from info left outer join depart on info.depart_id = depart.id;
 
 ```sql
 select info.id,info.name,info.email,depart.title from info left outer join depart on info.depart_id = depart.id;
+select a.id,a.name,a.email,b.title from info as a left outer join depart as b on a.depart_id = b.id;
 ```
 
 
@@ -439,11 +456,41 @@ select * from info inner join depart on info.depart_id=depart.id;
 select id,title from depart 
 union
 select id,name from info;
++----+-----------+
+| id | title     |
++----+-----------+
+|  1 | 开发      |
+|  2 | 运营      |
+|  3 | 销售      |
+|  1 | 武沛齐    |
+|  2 | 于超      |
+|  3 | alex      |
+|  4 | tony      |
+|  5 | kelly     |
+|  6 | james     |
+|  7 | 李杰      |
++----+-----------+
+10 rows in set (0.00 sec)
 
 
 select id,title from depart 
 union
 select email,name from info;
++------------------+-----------+
+| id               | title     |
++------------------+-----------+
+| 1                | 开发      |
+| 2                | 运营      |
+| 3                | 销售      |
+| wupeiqi@live.com | 武沛齐    |
+| pyyu@live.com    | 于超      |
+| alex@live.com    | alex      |
+| tony@live.com    | tony      |
+| kelly@live.com   | kelly     |
+| james@live.com   | james     |
+| lijie@live.com   | 李杰      |
++------------------+-----------+
+10 rows in set (0.00 sec)
 -- 列数需相同
 ```
 
@@ -451,7 +498,19 @@ select email,name from info;
 select id from depart 
 union
 select id from info;
-
+mysql> select id from depart union select id from info;
++----+
+| id |
++----+
+|  1 |
+|  2 |
+|  3 |
+|  4 |
+|  5 |
+|  6 |
+|  7 |
++----+
+7 rows in set (0.00 sec)
 -- 自动去重
 ```
 
@@ -459,7 +518,21 @@ select id from info;
 select id from depart 
 union all
 select id from info;
-
++----+
+| id |
++----+
+|  1 |
+|  2 |
+|  3 |
+|  1 |
+|  2 |
+|  3 |
+|  4 |
+|  5 |
+|  6 |
+|  7 |
++----+
+10 rows in set (0.01 sec)
 -- 保留所有
 ```
 
@@ -790,7 +863,7 @@ mysql> select user,authentication_string,host from  mysql.user;
     update                  使用update
     reload                  使用flush
     shutdown                使用mysqladmin shutdown(关闭MySQL)
-    super                   􏱂􏰈使用change master、kill、logs、purge、master和set global。还允许mysqladmin􏵗􏵘􏲊􏲋调试登陆
+    super                   􏱂􏰈使用 change master、kill、logs、purge、master和set global。还允许 mysqladmin􏵗􏵘􏲊􏲋 调试登陆
     replication client      服务器位置的访问
     replication slave       由复制从属使用
     ```
