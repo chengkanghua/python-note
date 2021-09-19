@@ -403,6 +403,14 @@ sudo mysql.server stop
   ```
   use mysql;
   update user set authentication_string = password('新密码'),password_last_changed=now() where user='root';
+  
+  # 小提示
+  mysql> #我是一个可爱的注释 show databases; 不会被执行的命令
+  mysql> -- 我是一个可爱的注释 show databases; 不会被执行的命令
+  mysql> /*我是一个可爱的注释 show databases; 不会被执行的命令*/
+  # password_last_changed=now() 可以不要
+  mysql> use mysql
+  mysql> select * from user \G   #列太多显示不全可以用 \G 列显示
   ```
 
 - 退出并再次修改配置文件，删除 [mysqld] 节点下的 `skip-grant-tables=1`
@@ -449,6 +457,13 @@ sudo mysql.server stop
   create database day25db;
   
   create database day25db DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+  
+  # 小提示
+  mysql> show variables like '%character%'; #显示当前mysql 默认的字符集
+  mysql> show variables like 'collation_%'; # collate 字符集排序规则
+  mysql> show charset;   #显示支持的字符集
+  mysql> show collation; #显示支持的字符集排序规则
+  # https://www.cnblogs.com/Neeo/articles/13531059.html#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93  #扩展
   ```
 
 - 删除数据库：`drop database 数据库名`;
@@ -564,6 +579,11 @@ mysql> show tables;
 
 # 8. 退出
 mysql>exit;
+
+#小笔记
+mysql> status #当前所在库信息
+mysql> select database(); #当前所在库名
+
 ```
 
 
@@ -598,7 +618,7 @@ import pymysql
 
 # 连接MySQL（socket）
 conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='root123', charset="utf8")
-cursor = conn.cursor()
+cursor = conn.cursor()    #生成游标对象
 
 # 1. 查看数据库
 # 发送指令
@@ -610,7 +630,7 @@ print(result) # (('information_schema',), ('mysql',), ('performance_schema',), (
 # 2. 创建数据库（新增、删除、修改）
 # 发送指令
 cursor.execute("create database db3 default charset utf8 collate utf8_general_ci")
-conn.commit()
+conn.commit() #不写这条也成功创建数据库  如果是执行插入表数据操作一定要加这句，否则不成功
 
 # 3. 查看数据库
 # 发送指令
@@ -1508,6 +1528,38 @@ conn.close()
    | amount   | decimal(10,2) | 不为空 & 默认值为 0                            |
    | ctime    | datetime      | 新增时的时间<br />提示：可基于datetime模块实现 |
 
+   ```sql
+   create table user(
+   id int not null primary key auto_increment,
+   name varchar(32) not null,
+   password varchar(64) not null,
+   gender char(1) not null,
+   email varchar(64),
+   amount decimal(10,2) not null default 0,
+   ctime datetime default now()
+   )charset=utf8;
+   
+   insert into user1(name,password,gender,email,amount) values('a','123','男',null,1000.22);
+   insert into user1(name,password,gender,email,amount) values('a','123','女',null,1000.22);
+   insert into user1(name,password,gender,email,amount) values('a','123','女',null,1000.22);
+   mysql> select * from user1;
+   +----+------+----------+--------+-------+---------+---------------------+
+   | id | name | password | gender | email | amount  | ctime               |
+   +----+------+----------+--------+-------+---------+---------------------+
+   |  1 | a    | 123      | 男     | NULL  |   10.22 | 2021-09-19 00:11:55 |
+   |  2 | a    | 123      | 男     | NULL  |   10.22 | 2021-09-19 00:29:21 |
+   |  3 | a    | 123      | 男     | NULL  | 1000.22 | 2021-09-19 00:32:25 |
+   |  4 | a    | 123      | 女     | NULL  | 1000.22 | 2021-09-19 00:33:01 |
+   |  5 | a    | 123      | 女     | NULL  | 1000.22 | 2021-09-19 00:33:29 |
+   +----+------+----------+--------+-------+---------+---------------------+
+   5 rows in set (0.00 sec)
+   
+   update user1 set gender='男' where id > 3;
+   select * from user1 where amount > 1000;
+   update user1 set amount=amount+1000;
+   
+   ```
+
    - 根据上述表的要求创建相应的数据和表结构（注意编码）。
 
    - 任意插入5条数据。
@@ -1584,6 +1636,75 @@ conn.close()
    ```
 
 
+
+```sql
+create table new(
+id int not null primary key auto_increment,
+num int(16) not null,
+title varchar(64) not null,
+url varchar(1024) not null
+)default charset=utf8;
+
+#-----------------------------------------------------------------------------
+import pymysql
+import re
+
+
+def into_db(num, title, url):
+    conn = pymysql.connect(host='localhost', user='root', password='root123', port=3306, db='db1', charset='utf8')
+    cursor = conn.cursor()
+    # sql = 'insert into new(num,title,url) values(%s,%s,%s)'
+    cursor.execute('insert into new(num,title,url) values(%s,%s,%s)', [num, title, url])
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def run():
+    file_object = open(file='info.csv', mode='r', encoding='utf-8')
+    for line in file_object:
+        # num ,title ,url = re.findall('(\d),(.*),(http.*.mp4)',line) #返回格式[(数据1，数据2，数据3)]
+        # _, num, title, url, _ = re.split('(\d),(.*),(http.*.mp4)', line.strip())
+        num,title,url = re.match('(\d+),(.*),(http.*.mp4)', line.strip()).groups()
+        into_db(num, title, url)
+    file_object.close()
+
+if __name__ == '__main__':
+    run()
+
+
+
+```
+
+
+
+小秘籍 mysql命令行操作快捷方式
+
+```
+quit 
+exit
+# 发现输入错误时候 退出？ \c  ''\c
+help contents 帮助文档
+system 或者\!  调用系统命令行
+
+键盘上下键来查看使用过的命令，也可以Ctrl+R快捷键查找我们曾经使用过的命令
+
+Ctrl + L用于清理终端的内容，就是清屏的作用
+Ctrl + D 给终端传递 EOF （End Of File，文件结束符）
+
+Shift + PgUp 用于向上滚屏，与鼠标的滚轮向上滚屏是一个效果；
+Shift + PgDn 用于向下滚屏，与鼠标的滚轮向下滚屏是一个效果。
+
+下面的快捷键在编辑一条比较长的命令时很有用：
+Ctrl + A 光标跳到一行命令的开头。一般来说，Home 键有相同的效果；
+Ctrl + E 光标跳到一行命令的结尾。一般来说，End 键有相同的效果；。
+Ctrl + U 删除所有在光标左侧的命令字符；
+Ctrl + K 删除所有在光标右侧的命令字符；
+Ctrl + W 删除光标左侧的一个“单词”，这里的“单词”指的是用空格隔开的一个字符串。
+Ctrl + Y 粘贴用 Ctrl + U、 Ctrl + K 或 Ctrl + W “删除”的字符串，有点像“剪切-粘贴”。
+
+
+```
 
 
 

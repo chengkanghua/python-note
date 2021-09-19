@@ -1,26 +1,30 @@
-import time
-import random
-from concurrent.futures import ThreadPoolExecutor, Future
+import pymysql
+import re
 
 
-def task(video_url):
-    print("开始执行任务", video_url)
-    time.sleep(2)
-    return random.randint(0, 10)
+def into_db(num, title, url):
+    conn = pymysql.connect(host='localhost', user='root', password='root123', port=3306, db='db1', charset='utf8')
+    cursor = conn.cursor()
+    # sql = 'insert into new(num,title,url) values(%s,%s,%s)'
+    cursor.execute('insert into new(num,title,url) values(%s,%s,%s)', [num, title, url])
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 
-# 创建线程池，最多维护10个线程。
-pool = ThreadPoolExecutor(10)
+def run():
+    file_object = open(file='info.csv', mode='r', encoding='utf-8')
+    for line in file_object:
+        # num ,title ,url = re.findall('(\d),(.*),(http.*.mp4)',line) #返回格式[(数据1，数据2，数据3)]
+        # _, num, title, url, _ = re.split('(\d),(.*),(http.*.mp4)', line.strip())
+        num,title,url = re.match('(\d+),(.*),(http.*.mp4)', line.strip()).groups()
+        into_db(num, title, url)
 
-future_list = []
+    file_object.close()
 
-url_list = ["www.xxxx-{}.com".format(i) for i in range(15)]
-for url in url_list:
-    # 在线程池中提交一个任务，线程池中如果有空闲线程，则分配一个线程去执行，执行完毕后再将线程交还给线程池；如果没有空闲线程，则等待。
-    future = pool.submit(task, url)
-    future_list.append(future)
 
-pool.shutdown(True)
-# print('------------------')
-for fu in future_list:
-    print(fu.result())
+# result = cursor.fetchall()
+# print(result)
+
+if __name__ == '__main__':
+    run()
