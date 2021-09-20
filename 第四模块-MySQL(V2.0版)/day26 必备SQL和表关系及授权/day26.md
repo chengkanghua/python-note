@@ -1,4 +1,4 @@
-
+​	
 
 
 
@@ -136,7 +136,7 @@ select * from info where email like "__peiqi_live.co_";
 
 
 
-### 1.3 映射
+### 1.3 获取指定列数据
 
 想要获取的列。
 
@@ -236,7 +236,7 @@ select
 from info;
 ```
 
-
+扩展  [MySQL跨库数据表映射方案](https://www.cnblogs.com/xuke/p/13959680.html)：https://www.cnblogs.com/xuke/p/13959680.html
 
 
 
@@ -598,6 +598,8 @@ create table info(
 
 ```sql
 alter table info add constraint fk_info_depart foreign key info(depart_id) references depart(id);
+简写：
+alter table info add foreign key fk_info_depart (depart_id) reference depart(id);
 ```
 
 删除外键：
@@ -631,6 +633,15 @@ create table boy_girl(
     constraint fk_boy_girl_boy foreign key boy_girl(boy_id) references boy(id),
     constraint fk_boy_girl_girl foreign key boy_girl(girl_id) references girl(id)
 )default charset=utf8;
+简写：
+mysql> create table boy_girl(
+    -> id int not null auto_increment,
+    -> boy_id int not null ,
+    -> girl_id int not null,
+    -> primary key(id),
+    -> foreign key fk_self_boyid (boy_id) references boy(id),
+    -> foreign key fk_self_girlid (girl_id) references girl(id)
+    -> )charset=utf8;
 ```
 
 如果表结构已创建好了，额外想要增加外键：
