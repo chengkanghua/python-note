@@ -1,7 +1,5 @@
 ​	
 
-
-
 # day26 必备SQL和表关系及授权
 
 ![image-20210530161018798](assets/image-20210530161018798.png)
@@ -598,7 +596,7 @@ create table info(
 
 ```sql
 alter table info add constraint fk_info_depart foreign key info(depart_id) references depart(id);
-简写：
+简写：外键的名称会变， 索引会是这个。
 alter table info add foreign key fk_info_depart (depart_id) reference depart(id);
 ```
 
