@@ -559,7 +559,7 @@
     GROUP BY
     	student_id
     HAVING
-    	count(1) > 1
+    	count(1) >= 1
     ```
 
 34. 查询与学号为 “2” 的同学选修的课程完全相同的其他 学生学号 和 姓名 。
@@ -575,16 +575,35 @@
     WHERE
     	score.course_id in ( select course_id from score where student_id=2)
     	and score.student_id in (
-        	select student_id from score where student_id!=2 group by student having count(1) = select count(1) from score where student_id=2
+        	select student_id from score where student_id!=2 group by student_id having count(1) = (select count(1) from score where student_id=2)
         )
     GROUP BY
     	student_id
     HAVING
     	count(1) = ( select count(1) from score where student_id=2 )
-    	
+    -----------------------------------------------------------------
+    SELECT 
+    student.sid, student.sname 
+    FROM score 
+    LEFT JOIN student ON score.student_id = student.sid 
+    WHERE score.course_id in ( select course_id from score where student_id=2)  
+    and (select count(1) from score where student_id=student.sid) = (select count(1) from score where student_id=2) 
+    and student.sid !=2
+    GROUP BY student_id;
+    
+    
+    SELECT 
+    student.sid,case when (score.course_id not exists( select course_id from score where student_id=2)) student.sname else 1 end as student.sname
+    FROM score 
+    LEFT JOIN student ON score.student_id = student.sid 
+    WHERE (select count(1) from score where student_id=student.sid) = (select count(1) from score where student_id=2) 
+    and student.sid !=2
+    GROUP BY student_id;
+    
+    -----------------------------------------------------------------
     	
     # 如果id=2学生他的课程数量和其他人的课程数量是一样。
-    select student_id from score where student_id!=2 group by student having count(1) = select count(1) from score where student_id=2
+    select student_id from score where student_id!=2 group by student_id having count(1) = (select count(1) from score where student_id=2) -- 判断其他学生 报课数量 是否 和id2 相等
     
     select 
     	student_id 
@@ -655,14 +674,21 @@
 36. 查询每门课程成绩最好的前3名 (不考虑成绩并列情况) 。
 
     ```sql
-    SELECT
-    	cid,
-    	cname,
-    	( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 0) as "第1名",
-    	( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 1) as "第2名",
-    	( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 2) as "第3名"
-    FROM
-    	course;
+    SELECT cid,cname,
+    ( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 0) as "第1名",
+    ( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 1) as "第2名",
+    ( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 2) as "第3名"
+    FROM course;
+    -- where course_id = course.cid  值是从外层的查询中取得。
+    
+    SELECT cid,cname, -- 添加分数列
+    ( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 0) as "第1名",
+    ( select score.num from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 0) as "num",
+    ( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 1) as "第2名",
+    ( select score.num from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 1) as "num",
+    ( select student.sname from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 2) as "第3名",
+    ( select score.num from score left join student on student.sid = score.student_id where course_id = course.cid order by num desc limit 1 offset 2) as "num"
+    FROM course;
     ```
 
 37. 查询每门课程成绩最好的前3名 (考虑成绩并列情况) 。
@@ -679,22 +705,16 @@
     ```
 
     ```sql
-    select 
-    	* 
-    from 
-    	score 
-    	
-    	left join (
-    		SELECT
-    			cid,
-    			cname,
-    			( select num from score  where course_id = course.cid GROUP BY num order by num desc limit 1 offset 0) as "最高分",
-    			( select num from score  where course_id = course.cid GROUP BY num order by num desc limit 1 offset 1) as "第二高分",
-    			( select num from score  where course_id = course.cid GROUP BY num order by num desc limit 1 offset 2) as third
-    		FROM
-    			course ) as C on score.course_id = C.cid 
-    WHERE
-    	score.num >= C.third
+    select * 
+    from score 
+    left join (
+    SELECT cid,cname,
+    ( select num from score  where course_id = course.cid GROUP BY num order by num desc limit 1 offset 0) as "最高分",
+    ( select num from score  where course_id = course.cid GROUP BY num order by num desc limit 1 offset 1) as "第二高分",
+    ( select num from score  where course_id = course.cid GROUP BY num order by num desc limit 1 offset 2) as third
+    FROM course ) as C on score.course_id = C.cid 
+    WHERE score.num >= C.third;
+    
     ```
 
 38. 创建一个表 `sc`，然后将 score 表中所有数据插入到 sc 表中。
