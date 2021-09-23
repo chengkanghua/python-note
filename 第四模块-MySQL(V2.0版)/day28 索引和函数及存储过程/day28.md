@@ -1,4 +1,4 @@
-# day28 索引和函数及存储过程
+# `day28 索引和函数及存储过程
 
 ![image-20210531123330918](assets/image-20210531123330918.png)
 
@@ -18,7 +18,7 @@
 
 在数据库中索引最核心的作用是：**加速查找**。  例如：在含有300w条数据的表中查询，无索引需要700秒，而利用索引可能仅需1秒。
 
-```
+```sql
 mysql> select * from big where password="81f98021-6927-433a-8f0d-0f5ac274f96e";
 +----+---------+---------------+--------------------------------------+------+
 | id | name    | email         | password                             | age  |
@@ -46,10 +46,6 @@ mysql> select * from big where name="wu-13-1";
 
 在开发过程中会为哪些 经常会被搜索的列 创建索引，以提高程序的响应速度。例如：查询手机号、邮箱、用户名等。
 
-
-
-
-
 ### 1.1 索引原理
 
 为什么加上索引之后速度能有这么大的提升呢？ 因为索引的底层是基于B+Tree的数据结构存储的。
@@ -71,38 +67,6 @@ B+Tree结构连接：https://www.cs.usfca.edu/~galles/visualization/BPlusTree.ht
 - myisam引擎，非聚簇索引（数据 和 索引结构 分开存储）
 
 - innodb引擎，聚簇索引（数据 和 主键索引结构存储在一起）
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #### 1.1.1 非聚簇索引（mysiam引擎）
@@ -145,7 +109,7 @@ create table 表名(
 
 在MySQL文件存储中的体现：
 
-```
+```sql
 root@192 userdb # pwd
 /usr/local/mysql/data/userdb
 root@192 userdb # ls -l
@@ -161,9 +125,7 @@ total 1412928
 
 
 
-
-
-上述 聚簇索引 和 非聚簇索引 底层均利用了B+Tree结构结构，只不过内部数据存储有些不同罢了。
+上述 聚簇索引 和 非聚簇索引 底层均利用了B+Tree 数据结构，只不过内部数据存储有些不同罢了。
 
 在企业开发中一般都会使用 innodb 引擎（内部支持事务、行级锁、外键等特点），在MySQL5.5版本之后默认引擎也是innodb。
 
@@ -223,8 +185,6 @@ innodb引擎，一般创建的索引：聚簇索引。
 - 唯一索引：加速查找、不能重复。  + 联合唯一索引
 - 普通索引：加速查找。 + 联合索引
 
-
-
 #### 1.2.1 主键和联合主键索引
 
 ```sql
@@ -236,7 +196,7 @@ create table 表名(
 create table 表名(
     id int not null auto_increment,
     name varchar(32) not null,
-    primary key(id)
+    primary key(id)     -- 主键
 );
 
 create table 表名(
@@ -258,8 +218,8 @@ alter table 表名 drop primary key;
 
 ```
 ERROR 1075 (42000): Incorrect table definition; there can be only one auto column and it must be defined as a key
-
 alter table 表 change id id int not null;
+
 ```
 
 ```sql
@@ -281,8 +241,8 @@ create table 表名(
     id int not null auto_increment primary key,
     name varchar(32) not null,
     email varchar(64) not null,
-    unique ix_name (name),
-    unique ix_email (email),
+    unique ix_name (name),      -- 唯一索引
+    unique ix_email (email),    -- 唯一索引
 );
 
 create table 表名(
@@ -294,10 +254,17 @@ create table 表名(
 
 ```sql
 create unique index 索引名 on 表名(列名);
-```
+drop index 索引名 on 表名; 
 
-```sql
-drop unique index 索引名 on 表名;
+
+
+alter table table_name add index index_name (column_list) ;   -- 创建普通索引 或者联合索引
+alter table table_name add unique unique_name (column_list) ; -- 创建唯一索引 或者联合唯一索引
+alter table table_name add primary key (column_list) ;        -- 创建主键   或者联合主键
+
+drop index index_name on table_name ;                        -- 可删除 普通索引和唯一索引
+alter table table_name drop index index_name ; 							 -- 可删除 普通索引和唯一索引
+alter table table_name drop primary key ;										 -- 删除主键
 ```
 
 
@@ -322,10 +289,14 @@ create table 表名(
 ```
 
 ```sql
-create index 索引名 on 表名(列名);
+alter table table_name add index index_name (column_list) ;   -- 创建普通索引 或者联合索引
+alter table table_name drop index index_name ; 							 -- 可删除 普通索引和唯一索引
+
+alter table user add index ix_nickname(nickname);
 ```
 
 ```sql
+create index 索引名 on 表名(列名);
 drop index 索引名 on 表名;
 ```
 
@@ -345,23 +316,18 @@ drop index 索引名 on 表名;
 - 推荐表
   - user_id和article_id创建联合唯一索引。
 
+```sql
+alter table user add primary key (id);
+alter table user modify id int(11) auto_increment; #给主键添加自增长   或者使用 change 修改成自增长。
+alter table user auto_increment=100;  #给自增值设置初始值  已经有值了不能随意修改，否则导致主键冲突
 
 
+alter table user add index ix_user_pwd (username,password);  -- 用户加密码联合索引
+alter table user add unique ue_phone (cellphone);    -- 手机号唯一索引
+alter table user add unique ue_email (email);        -- 邮箱唯一索引
+alter table up_down add unique ue_uid_aid (user_id,article_id); -- user_id和article_id创建联合唯一索引
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 ### 1.3 操作表
 
@@ -444,10 +410,10 @@ select * from big where name = "kelly" and password="ffsijfs";
   select * from big where id = 123 or password="xx";			-- 未命中
   select * from big where name = "wupeiqi" or password="xx";	-- 未命中
   特别的：
-  	select * from big where id = 10 or password="xx" and name="xx"; -- 命中
+  	select * from big where id = 10 or password="xx" and name="xx"; -- 命中  条件全是索引
   ```
 
-- 排序，当根据索引排序时候，选择的映射如果不是索引，则不走索引。
+- 排序，当根据索引排序时候，选择的~~映射~~（列）如果不是索引，则不走索引。
 
   ```sql
   select * from big order by name asc;     -- 未命中
@@ -465,8 +431,8 @@ select * from big where name = "kelly" and password="ffsijfs";
   select * from big where name like "wu-%-10";		-- 未命中
   
   特别的：
-  	select * from big where name like "wu-1111-%";	-- 命中
-  	select * from big where name like "wuw-%";		-- 命中
+  	select * from big where name like "wu-1111-%";	-- 命中  模糊的位置要是在关键词结尾的位置 % _
+  	select * from big where name like "wuw-%";		  -- 命中
   ```
 
 - 使用函数
@@ -481,9 +447,9 @@ select * from big where name = "kelly" and password="ffsijfs";
 - 最左前缀，如果是联合索引，要遵循最左前缀原则。
 
   ```sql
-  如果联合索引为：(name,password)
+  如果联合索引为：(name,password) 
       name and password       -- 命中
-      name                 	-- 命中
+      name                 	-- 命中    左边第一个优先，第二个没有也可以
       password                -- 未命中
       name or password       	-- 未命中
   ```
@@ -493,24 +459,6 @@ select * from big where name = "kelly" and password="ffsijfs";
 常见的无法命中索引的情况就是上述的示例。
 
 对于大家来说会现在的最大的问题是，记不住，哪怎么办呢？接下来看执行计划。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ### 1.4 执行计划
 

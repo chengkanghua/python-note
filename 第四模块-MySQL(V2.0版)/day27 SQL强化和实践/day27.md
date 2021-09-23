@@ -564,6 +564,8 @@ insert into sc(student_id,course_id,num) select sid,2,(select max(num) from scor
 
 
 
+
+
 ### 2.3 文章详细
 
 ![image-20210520205148509](assets/image-20210520205148509.png)
@@ -575,6 +577,64 @@ insert into sc(student_id,course_id,num) select sid,2,(select max(num) from scor
 ![image-20210520205332907](assets/image-20210520205332907.png)
 
 注意：假设都是一级评论（不能回复评论）。
+
+```sql
+
+create database if not exists cnblogs default charset utf8 collate utf8_general_ci;
+use cnblogs
+
+create table user(  
+  id int not null auto_increment primary key,
+  username varchar(16) not null,
+  nickname varchar(16) not null,
+  password varchar(64) not null,
+  cellphone char(11) not null,
+  email varchar(64) not null,
+  ctime datetime not null
+)default charset=utf8;
+
+/*
+create table essay_list(
+  id int not null auto_increment primary key,
+	title varchar(32) not null,
+)*/
+
+create table article(   -- 文章
+	id int not null auto_increment primary key,
+  title varchar(255) not null,   -- 标题
+  text text not null, -- 文章内容
+  read_count int not null,   -- 阅读数
+  comment_count int not null,   -- 评论数
+  support_count int not null,     -- 赞 数量
+  step_count   int not null,      -- 踩 数量
+  user_id int not null,      -- 外键userid
+  ctime datetime not null    -- 发布时间
+)default charset=utf8;
+
+
+create table comment(    -- 评论
+  id int not null auto_increment primary key,
+  content varchar(255) not null, -- 内容
+  user_id int not null,        -- 外键用户id
+  article_id int not null,      -- 外键 essay-id
+  ctime datetime not null         -- 时间
+)default charset=utf8;
+
+create table up_down(
+	id int not null auto_increment primary key,
+  choice tinyint not null, -- 1 赞 0踩
+  user_id int not null, -- 外键用户id
+  article_id int not null, -- 外键文章id
+  ctime datetime not null -- 创建时间
+)default charset=utf8;
+
+
+alter table article add constraint fk_article_user foreign key (user_id) references user(id); 
+alter table comment add constraint fk_comment_user foreign key (user_id) references user(id);
+alter table comment add constraint fk_comment_article foreign key (article_id) references article(id);
+alter table up_down add constraint fk_up_down_user foreign key (user_id) references user(id);
+alter table up_down add constraint fk_up_down_article foreign key (article_id) references article(id);
+```
 
 
 
