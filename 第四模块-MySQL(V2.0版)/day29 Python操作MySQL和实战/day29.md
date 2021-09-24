@@ -140,27 +140,27 @@ mysql> select * from users;
 ```sql
 import pymysql
 
-conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='root123', charset="utf8", db='userdb')
+conn = pymysql.Connect(host='localhost', port=3306, user='root', password='root123', db='blogs')
 cursor = conn.cursor()
 
-# 开启事务
 conn.begin()
 
 try:
-    cursor.execute("update users set amount=1 where id=1")
-    int('asdf')
-    cursor.execute("update tran set amount=2 where id=2")
+    cursor.execute('update student set sname="张飞" where sid=5; ')
+    int('sadf')
+    cursor.execute('update student set sname="张晓峰" where sid=4; ')
 except Exception as e:
     # 回滚
-    print("回滚")
+    print('rollback')
     conn.rollback()
 else:
-    # 提交
-    print("提交")
+    # commit
+    print('commit')
     conn.commit()
 
 cursor.close()
 conn.close()
+
 ```
 
 
@@ -204,7 +204,7 @@ CREATE TABLE `L1` (
 在innodb引擎中，update、insert、delete的行为内部都会先申请锁（排它锁），申请到之后才执行相关操作，最后再释放锁。
 
 ```
-所以，当多个人同时像数据库执行：insert、update、delete等操作时，内部加锁后会排队逐一执行。
+所以，当多个人同时向数据库执行：insert、update、delete等操作时，内部加锁后会排队逐一执行。
 ```
 
 而select则默认不会申请锁。
@@ -215,7 +215,17 @@ select * from xxx;
 
 如果，你想要让select去申请锁，则需要配合 事务 + 特殊语法来实现。
 
-- `for update`，排它锁，加锁之后，其他不可以读写。
+SELECT ... LOCK IN SHARE MODE走的是IS锁(意向共享锁)，即在符合条件的rows上都加了共享锁，这样的话，其他session可以读取这些记录，也可以继续添加IS锁，但是无法修改这些记录直到你这个加锁的session执行完成(否则直接锁等待超时)。
+
+SELECT ... FOR UPDATE 走的是IX锁(意向排它锁)，即在符合条件的rows上都加了排它锁，其他session也就无法在这些记录上添加任何的S锁或X锁。如果不存在一致性非锁定读的话，那么其他session是无法读取和修改这些记录的，但是innodb有非锁定读(快照读并不需要加锁)，for update之后并不会阻塞其他session的快照读取操作，除了select ...lock in share mode和select ... for update这种显示加锁的查询操作。
+
+通过对比，发现for update的加锁方式无非是比lock in share mode的方式多阻塞了select...lock in share mode的查询方式，并不会阻塞快照读。
+
+lock in share mode 只锁覆盖索引，但是如果是 for update 就不一样了。 执行 for update 时， 系统会认为你接下来要更新数据，因此会顺便给主键索引上满足条件的行加上行锁。 锁是加在索引上的，如果你要用 lock in share mode 来 给行加读锁避免数据被更新的话，就必须得绕过覆盖索引的优化，在查询字段中加入索引中不存在 的字段
+
+
+
+- `for update`，走的是IX锁(意向排它锁) 排它锁，符合条件的rows上都加了排它锁，其他session是~~无法读取~~和**无法修改**这些记录，
 
   ```sql
   begin; 
@@ -229,7 +239,7 @@ select * from xxx;
   commit;
   ```
 
-- `lock in share mode` ，共享锁，加锁之后，其他可读但不可写。
+- `lock in share mode` ，走的是IS锁(意向共享锁)，即在符合条件的rows上都加了共享锁，其他session可以**读取**这些记录，也可以继续添加IS锁，但是**无法修改**这些记录直到你这个加锁的session执行完成(否则直接锁等待超时)    
 
   ```sql
   begin; 
@@ -247,7 +257,7 @@ select * from xxx;
 
 ### 2.1 排它锁 
 
-排它锁（ `for update`），加锁之后，其他事务不可以读写。
+排它锁（ `for update`）。
 
 应用场景：总共100件商品，每次购买一件需要让商品个数减1 。
 
@@ -291,7 +301,7 @@ import threading
 
 def task():
     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='root123', charset="utf8", db='userdb')
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)  # fetchone会返回dict fetchall 字典里包含多个dict
     # cursor = conn.cursor()
 	
     # 开启事务
@@ -349,23 +359,11 @@ SELECT * FROM parent WHERE NAME = 'Jones' LOCK IN SHARE MODE;
 
 After the `LOCK IN SHARE MODE` query returns the parent `'Jones'`, you can safely add the child record to the `CHILD` table and commit the transaction. Any transaction that tries to acquire an exclusive lock in the applicable row in the `PARENT` table waits until you are finished, that is, until the data in all tables is in a consistent state.
 
+---------------------------------------------------------------------------------------------------------
 
+扩展  https://blog.csdn.net/sinat_27143551/article/details/89968902
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+lock in share mode适用于两张表存在业务关系时的一致性要求，for  update适用于操作同一张表时的一致性要求。
 
 
 
