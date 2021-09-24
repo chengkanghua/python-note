@@ -60,5 +60,6 @@ class DBHelper(object):
 
         return result
 
+
 db = DBHelper()
 
