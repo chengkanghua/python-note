@@ -1,3 +1,4 @@
+# 数据池所需要的配置信息
 DB_POOL_CONN = {
     "maxconnections": 5,
     "mincached": 2,
@@ -9,6 +10,6 @@ DB_POOL_CONN = {
     "port": 3306,
     "user": 'root',
     "password": 'root123',
-    "database": 'blog',
+    "database": 'cnblogs',
     "charset": 'utf8'
 }

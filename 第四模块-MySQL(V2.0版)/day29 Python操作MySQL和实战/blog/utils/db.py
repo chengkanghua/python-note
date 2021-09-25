@@ -3,7 +3,7 @@ from dbutils.pooled_db import PooledDB
 from config import settings
 
 POOL = PooledDB(creator=pymysql, **settings.DB_POOL_CONN)
-
+''' 数据连接处理方法'''
 
 class Connect(object):
     def __init__(self):

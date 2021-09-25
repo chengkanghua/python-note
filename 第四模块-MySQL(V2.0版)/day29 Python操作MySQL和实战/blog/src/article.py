@@ -1,18 +1,20 @@
 import datetime
 from utils.db import Connect
 from utils.context import ArticleModel, UpDownModel
+''' 文章  发布 更新'''
 
-
+# 发布文章
 def publish(title, text, user_id):
     try:
         with Connect() as conn:
             sql = "insert into article(title,text,user_id,ctime) values(%s,%s,%s,%s)"
             result = conn.exec(sql, title, text, user_id, datetime.datetime.now())
+            # print(result)  # 成功返回1
             return result
     except Exception as e:
         pass
 
-
+# 文章总数
 def total_count():
     with Connect() as conn:
         sql = "select count(1) as ct from article"
@@ -21,20 +23,21 @@ def total_count():
             return 0
         return result['ct']
 
-
-def page_list(limit, offset):
+# 文章列表
+def page_list(limit, offset):  # 10,0
     with Connect() as conn:
-        sql = "select id,title from article order by id desc limit %s offset %s"
+        sql = "select id,title from article order by id asc limit %s offset %s"
         result = conn.fetch_all(sql, limit, offset)
+        # print(result) # [{'id': 3, 'title': '方法2'}, {'id': 2, 'title': '方法一'}]
         return result
 
-
+# 返回文章详情对象
 def get_article(aid):
     with Connect() as conn:
         # select title,text from article where id=%s
         # result = conn.fetch_one(sql, aid)
         # {"title":xxxx,"text":xxxx,}
-
+        # select title,text,read_count,comment_count,support_count,step_count,nickname from article left join user on article.user_id = user.id where article.id=1
         sql = """
             select 
                 {}
@@ -43,26 +46,27 @@ def get_article(aid):
                 left join user  on article.user_id = user.id
             where article.id=%s""".format(ArticleModel.db_fields())
         result = conn.fetch_one(sql, aid)
+        # [{title:xxx},{text:xxx}......]
         if not result:
             return None
-        return ArticleModel(result)
+        return ArticleModel(result)   # 数据存进 ArticleModel对象里
 
-
-def update_read_count(aid):
+# 更新阅读数 +1
+def update_read_count(aid):  # 阅读量+1
     with Connect() as conn:
         sql = "update article set read_count=read_count+1 where id=%s"
         result = conn.exec(sql, aid)
         return result
 
-
+# 获取赞踩的情况
 def fetch_up_down(user_id, aid):
     with Connect() as conn:
         sql = "select id,choice from up_down where user_id=%s and article_id=%s"
         result = conn.fetch_one(sql, user_id, aid)
-        if result:
-            return UpDownModel(result)
+        if result:  # [{id:xx}{choice:xx}]
+            return UpDownModel(result)  # 返回对象信息
 
-
+# 赞
 def up(user_id, aid):
     with Connect() as conn:
         conn.conn.begin()
@@ -80,8 +84,8 @@ def up(user_id, aid):
         except Exception as e:
             conn.conn.rollback()
 
-
-def update_down_to_up(aid, uid):
+# 更新 从踩 改 赞
+def update_down_to_up(aid, uid):  # 文章id  对象id
     with Connect() as conn:
         conn.conn.begin()
         try:
@@ -98,7 +102,7 @@ def update_down_to_up(aid, uid):
         except Exception as e:
             conn.conn.rollback()
 
-
+#  踩
 def down(user_id, aid):
     with Connect() as conn:
         conn.conn.begin()
@@ -114,7 +118,7 @@ def down(user_id, aid):
         except Exception as e:
             conn.conn.rollback()
 
-
+# 从赞改踩
 def update_up_to_down(aid, uid):
     with Connect() as conn:
         conn.conn.begin()
@@ -131,7 +135,7 @@ def update_up_to_down(aid, uid):
         except Exception as e:
             conn.conn.rollback()
 
-
+# 评论
 def comment(user_id, article_id, content):
     """ 评论 """
     with Connect() as conn:

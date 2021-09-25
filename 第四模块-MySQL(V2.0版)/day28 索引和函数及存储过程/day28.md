@@ -1215,6 +1215,80 @@ DROP TRIGGER tri_after_insert_tb1;
 
 
 
+day 27的博客系统的表结构
+
+```sql
+create database if not exists cnblogs default charset utf8 collate utf8_general_ci;
+use cnblogs
+
+create table user(  
+  id int not null auto_increment primary key,
+  username varchar(16) not null,
+  nickname varchar(16) not null,
+  password varchar(64) not null,
+  cellphone char(11) not null,
+  email varchar(64) not null,
+  ctime datetime not null
+)default charset=utf8;
+
+
+
+create table article(   -- 文章
+	id int not null auto_increment primary key,
+  title varchar(255) not null,   -- 标题
+  text text not null, -- 文章内容
+  read_count int not null,   -- 阅读数
+  comment_count int not null,   -- 评论数
+  support_count int not null,     -- 赞 数量
+  step_count   int not null,      -- 踩 数量
+  user_id int not null,      -- 外键userid
+  ctime datetime not null    -- 发布时间
+)default charset=utf8;
+
+
+create table comment(    -- 评论
+  id int not null auto_increment primary key,
+  content varchar(255) not null, -- 内容
+  user_id int not null,        -- 外键用户id
+  article_id int not null,      -- 外键 essay-id
+  ctime datetime not null         -- 时间
+)default charset=utf8;
+
+create table up_down(
+	id int not null auto_increment primary key,
+  choice tinyint not null, -- 1 赞 0踩
+  user_id int not null, -- 外键用户id
+  article_id int not null, -- 外键文章id
+  ctime datetime not null -- 创建时间
+)default charset=utf8;
+
+-- 外键
+alter table article add constraint fk_article_user foreign key (user_id) references user(id); 
+alter table comment add constraint fk_comment_user foreign key (user_id) references user(id);
+alter table comment add constraint fk_comment_article foreign key (article_id) references article(id);
+alter table up_down add constraint fk_up_down_user foreign key (user_id) references user(id);
+alter table up_down add constraint fk_up_down_article foreign key (article_id) references article(id);
+
+
+-- 索引
+ALTER table user add unique un_name_pwd (username,password); -- 联合唯一索引 
+-- alter table user add index ix_user_pwd (username,password);  -- 用户加密码联合索引
+alter table user add unique ue_phone (cellphone);    -- 手机号唯一索引
+alter table user add unique ue_email (email);        -- 邮箱唯一索引
+alter table up_down add unique ue_uid_aid (user_id,article_id); -- user_id和article_id创建联合唯一索引
+
+
+-- alter table user add primary key (id);
+-- alter table user modify id int(11) auto_increment; #给主键添加自增长   或者使用 change 修改成自增长。
+-- alter table user auto_increment=100;  #给自增值设置初始值  已经有值了不能随意修改，否则导致主键冲突
+
+
+```
+
+
+
+
+
 
 
 

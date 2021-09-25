@@ -301,7 +301,7 @@ import threading
 
 def task():
     conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='root123', charset="utf8", db='userdb')
-    cursor = conn.cursor(pymysql.cursors.DictCursor)  # fetchone会返回dict fetchall 字典里包含多个dict
+    cursor = conn.cursor(pymysql.cursors.DictCursor)  # fetchone会返回dict fetchall 列表里包含多个dict
     # cursor = conn.cursor()
 	
     # 开启事务

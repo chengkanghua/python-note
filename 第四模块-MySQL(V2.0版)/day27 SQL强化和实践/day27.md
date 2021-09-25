@@ -593,22 +593,16 @@ create table user(
   ctime datetime not null
 )default charset=utf8;
 
-/*
-create table essay_list(
-  id int not null auto_increment primary key,
-	title varchar(32) not null,
-)*/
-
 create table article(   -- 文章
 	id int not null auto_increment primary key,
   title varchar(255) not null,   -- 标题
   text text not null, -- 文章内容
-  read_count int not null,   -- 阅读数
-  comment_count int not null,   -- 评论数
-  support_count int not null,     -- 赞 数量
-  step_count   int not null,      -- 踩 数量
+  read_count int default 0,   -- 阅读数
+  comment_count int default 0,   -- 评论数
+  support_count int default null,     -- 赞 数量
+  step_count   int default null,      -- 踩 数量
   user_id int not null,      -- 外键userid
-  ctime datetime not null    -- 发布时间
+  ctime datetime not null   -- 发布时间
 )default charset=utf8;
 
 

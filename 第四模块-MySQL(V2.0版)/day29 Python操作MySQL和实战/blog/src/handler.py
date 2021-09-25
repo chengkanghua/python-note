@@ -1,19 +1,19 @@
 import time
-
 from utils.context import Context, UserDict
 from utils import validator
-
 from src import account, article
+
+""" 主入口程序  """
 
 
 class Handler(object):
-    LOGIN_USER_DICT = UserDict()  # {"id":None,"nickname":xxx}
+    LOGIN_USER_DICT = UserDict()  # {"id":None,"nickname":xxx} 记录登录状态
 
-    NAV = []
+    NAV = []  # 标题导航
 
-    def wrapper(self, method):
+    def wrapper(self, method):  # 闭包函数
         def inner(*args, **kwargs):
-            print(" > ".join(self.NAV).center(50, "*"))
+            print(" > ".join(self.NAV).center(50, "*"))  # 打印导航位置
             res = method(*args, **kwargs)
             self.NAV.pop(-1)
             return res
@@ -36,7 +36,7 @@ class Handler(object):
             print("登录成功")
             self.LOGIN_USER_DICT.set_info(user_dict)
 
-            self.NAV.insert(0, self.LOGIN_USER_DICT.nickname)
+            self.NAV.insert(0, self.LOGIN_USER_DICT.nickname)  # 导航0的位置插入用户昵称
             return
 
     def register(self):
@@ -48,9 +48,9 @@ class Handler(object):
             user = validator.while_input("用户名：")
             pwd = validator.while_input("密码：")
             email = validator.while_input("邮箱：", validator.email)
-            mobile = validator.while_input("手机号：", validator.mobile)
+            cellphone = validator.while_input("手机号：", validator.cellphone)
 
-            if not account.register(user, pwd, nickname, mobile, email):
+            if not account.register(user, pwd, nickname, cellphone, email):
                 print("注册失败，请重新注册。")
                 continue
             print("注册成功，请使用新账户去登录。")
@@ -83,7 +83,7 @@ class Handler(object):
         # 总共需要多少页来展示数据（用户输入的页码）
         max_page_num, div = divmod(total_count, per_page_count)
         if div:
-            max_page_num += 1
+            max_page_num += 1   # 总页数
 
         # 当前想查看的页码
         current_page_num = 1
@@ -94,16 +94,15 @@ class Handler(object):
 
         counter = 0
         while True:
-            if counter:
+            if counter:   # 翻页的时候走这里
                 print(" > ".join(self.NAV).center(50, "*"))
             counter += 1
-
             # 10, 0   第1页
             # 10, 10  第2页
             # 10, 20  第3页
             # 10, 30  第4页
             # select x from xxxx limit 10 offset 30
-            data_list = article.page_list(per_page_count, (current_page_num - 1) * per_page_count)
+            data_list = article.page_list(per_page_count, (current_page_num - 1) * per_page_count) # 博客列表数据
             print("文章列表：")
             for row in data_list:
                 line = "    {id}. {title}".format(**row)
@@ -122,7 +121,7 @@ class Handler(object):
                 continue
 
             # 2. 查看文章详细
-            if not text.isdecimal():
+            if not text.isdecimal():  # 是否可以转换成十进制数
                 print("格式错误，请重新输入")
                 continue
             article_id = int(text)
@@ -135,7 +134,7 @@ class Handler(object):
             # 查看文章详细
             # self.article_detail(article_id, article_object)
             self.NAV.append("文章详细")
-            self.wrapper(self.article_detail)(article_id, article_object)
+            self.wrapper(self.article_detail)(article_id, article_object)  # 文章信息(文章id,文章信息对象)
 
     def article_detail(self, article_id, article_object):
         # 展示文章信息，article_object封装了这一行的所有的数据。
@@ -147,35 +146,35 @@ class Handler(object):
         def up():
             # 先去数据库中获取 当前用户、对这篇文章的 赞踩记录
             up_down_object = article.fetch_up_down(self.LOGIN_USER_DICT.id, article_id)
-            if not up_down_object:
+            if not up_down_object:   # 表里没数据
                 if article.up(self.LOGIN_USER_DICT.id, article_id):
                     print("点赞成功")
                 else:
                     print("点赞失败")
                 return
 
-            if up_down_object.choice == 1:
+            if up_down_object.choice == 1:  # 表里有数据 并且 choice=1 表示已赞过
                 print("已赞过，不能重复操作")
                 return
 
-            if article.update_down_to_up(article_id, up_down_object.id):
+            if article.update_down_to_up(article_id, up_down_object.id): # 之前是踩的改点赞
                 print("点赞成功")
             else:
                 print("点赞失败")
 
         def down():
-            up_down_object = article.fetch_up_down(self.LOGIN_USER_DICT.id, article_id)
-            if not up_down_object:
+            up_down_object = article.fetch_up_down(self.LOGIN_USER_DICT.id, article_id) # 获取up_down表里的信息.
+            if not up_down_object:  # 表里没信息 更新
                 if article.down(self.LOGIN_USER_DICT.id, article_id):
                     print("踩成功")
                 else:
                     print("踩失败")
                 return
-            if up_down_object.choice == 0:
+            if up_down_object.choice == 0:  # 如果有信息 choice 并且等于0
                 print("已踩过，不能重复操作")
                 return
 
-            if article.update_up_to_down(article_id, up_down_object.id):
+            if article.update_up_to_down(article_id, up_down_object.id): # 之前是赞的选择改踩了
                 print("踩成功")
             else:
                 print("踩失败")
@@ -213,10 +212,10 @@ class Handler(object):
 
     def run(self):
         """ 主程序 """
-        self.NAV.append("系统首页")
+        self.NAV.append("系统首页")  # 标题导航
 
         mapping = {
-            "1": Context("登录", self.wrapper(self.login)),
+            "1": Context("登录", self.wrapper(self.login)),  # Context 对象存储 text method
             "2": Context("注册", self.wrapper(self.register)),
             "3": Context("发布博客", self.wrapper(self.publish_blog)),
             "4": Context("查看博客列表", self.wrapper(self.blog_list)),
@@ -225,8 +224,8 @@ class Handler(object):
         message = "\n".join(["{}.{}".format(k, v.text) for k, v in mapping.items()])
         while True:
             # ["系统首页",""注册",]
-            print(" > ".join(self.NAV).center(50, "*"))
-            print(message)
+            print(" > ".join(self.NAV).center(50, "*"))  # 打印导航位置
+            print(message)  # 打印功能选项列表
             choice = input("请输入序号：").strip()
             if not choice:
                 continue
@@ -239,8 +238,8 @@ class Handler(object):
                 print("序号输入错误，请重新输入。\n")
                 continue
 
-            self.NAV.append(context.text)
-            context.method()
+            self.NAV.append(context.text)  # 选择的位置 增加到导航列表
+            context.method()  # 运行所选择的对应方法
 
 
 handler = Handler()
