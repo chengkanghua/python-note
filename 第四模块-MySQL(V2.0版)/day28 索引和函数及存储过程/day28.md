@@ -1238,9 +1238,9 @@ create table article(   -- 文章
   title varchar(255) not null,   -- 标题
   text text not null, -- 文章内容
   read_count int not null,   -- 阅读数
-  comment_count int not null,   -- 评论数
-  support_count int not null,     -- 赞 数量
-  step_count   int not null,      -- 踩 数量
+  comment_count int unsigned default 0,   -- 评论数
+  support_count int unsigned default 0,     -- 赞 数量
+  step_count   int unsigned default 0,      -- 踩 数量
   user_id int not null,      -- 外键userid
   ctime datetime not null    -- 发布时间
 )default charset=utf8;

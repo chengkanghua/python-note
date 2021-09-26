@@ -3,7 +3,7 @@ import re
 
 # 验证 email
 def email(text):
-    return re.match('^[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+ $', text)
+    return re.match('^[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+$', text)
 
 
 # 验证cellphone
@@ -15,6 +15,8 @@ def cellphone(text):
 def while_input(text, validator=None):
     while True:
         data = input(text).strip()
+        if data.upper() == 'Q':
+            return
         if not data:
             continue
         if not validator:
