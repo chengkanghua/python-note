@@ -13,34 +13,35 @@ class Article(object):
     # 文章总数
     @property
     def article_count(self):
-        sql = 'select count(1) from article'
+        sql = 'select count(1) as ct from article'
         result = db.fetch_one(sql)
-        return result
+        return result['ct']
 
     # 文章列表
-    def article_list(self, limit, offset):
-        sql = 'select title,text from article order by id asc limit %s offset %s'
+    def page_list(self, limit, offset):
+        sql = "select id,title from article order by id asc limit %s offset %s"
         result = db.fetch_all(sql, limit, offset)
         return result
 
     # 文章详情
     def get_article(self, article_id):
-        sql = 'select {} from article where id=%s'.format(ArticleModel.db_fields())
+        sql = 'select {} from article left join user on article.user_id = user.id  where article.id=%s'.format(ArticleModel.db_fields())
+        # print(sql)
         result = db.fetch_one(sql, article_id)
         if not result:
             return None
         return ArticleModel(result)  # 数据存到对象里了
 
     # 获取踩赞记录情况
-    def get_up_down(self, user_id):
-        sql = 'select id,choice from up_down where id=%s '
-        result = db.fetch_one(sql, user_id)
+    def get_up_down(self, user_id,article_id):
+        sql = 'select id,choice from up_down where user_id=%s and article_id=%s '
+        result = db.fetch_one(sql, user_id,article_id)
         if not result:
             return None
         return UpDownModel(result)  # 数据存到对象里了
 
     # 踩
-    def setp(self, user_id, article_id):
+    def step(self, user_id, article_id):
         sql = 'insert into up_down(choice,user_id,article_id,ctime) values(%s,%s,%s,%s)'
         db.exec(sql, 0, user_id, article_id, datetime.datetime.now())
 
@@ -69,7 +70,7 @@ class Article(object):
         sql = 'update up_down set choice=1 where user_id=%s and article_id=%s'
         db.exec(sql, user_id, article_id)
 
-        step_sql = 'update article set step_count=step_count-1,support_count=support+1 where id=%s'
+        step_sql = 'update article set step_count=step_count-1,support_count=support_count+1 where id=%s'
         db.exec(step_sql, article_id)
         return True
 
@@ -78,13 +79,13 @@ class Article(object):
         sql = 'update up_down set choice=0 where user_id=%s and article_id=%s'
         db.exec(sql, user_id, article_id)
 
-        step_sql = 'update article set step_count=step_count+1,support_count=support-1 where id=%s'
+        step_sql = 'update article set step_count=step_count+1,support_count=support_count-1 where id=%s'
         db.exec(step_sql, article_id)
         return True
 
     # 评论
-    def comment(self, content, user_id, article_id):
-        sql = 'insert into comment(content,user_id,article_id,ctime)'
+    def comment(self,user_id, article_id,content):
+        sql = 'insert into comment(content,user_id,article_id,ctime) values(%s,%s,%s,%s)'
         result = db.exec(sql, content, user_id, article_id, datetime.datetime.now())
         return result
 
@@ -93,4 +94,4 @@ art = Article()
 
 if __name__ == '__main__':
     art = Article()
-    art.get_article(1)
+    art.page_list(10,0)

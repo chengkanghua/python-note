@@ -628,6 +628,16 @@ alter table comment add constraint fk_comment_user foreign key (user_id) referen
 alter table comment add constraint fk_comment_article foreign key (article_id) references article(id);
 alter table up_down add constraint fk_up_down_user foreign key (user_id) references user(id);
 alter table up_down add constraint fk_up_down_article foreign key (article_id) references article(id);
+
+
+
+# 数据库导出  包含 数据和表结构
+$ mysqldump -u root -p database_name table_name > dump.txt
+# -d 表示指导出表结构
+mysqldump -uroot -p -d databasename > createtab.sql，
+
+# 导入进去,先创建好数据名称
+mysql -u root -p database_name < dump.txt
 ```
 
 

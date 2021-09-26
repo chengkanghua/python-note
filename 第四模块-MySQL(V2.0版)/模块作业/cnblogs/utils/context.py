@@ -49,13 +49,13 @@ class ArticleModel(object):
             line = '{}:{}'.format(k, getattr(self, k))
             print(line)
 
-        column_list = ['read_count', 'comment_count', 'support_count', 'setp_count', 'nickname']
-        session_list = []
-        for k in column_list:
-            session_list.append('{}:{}'.format(k, getattr(self, k)))
-
-        info = ' '.join(session_list)
-        print('提示:', info)
+        # column_list = ['read_count', 'comment_count', 'support_count', 'step_count', 'nickname']
+        # session_list = []
+        # for k in column_list:
+        #     session_list.append('{}:{}'.format(k, getattr(self, k)))
+        #
+        # info = ' '.join(session_list)
+        # print('提示:', info)
 
 
 # 封装文章踩赞对象

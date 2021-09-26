@@ -241,3 +241,4 @@ class Handler(object):
 
 
 handler = Handler()
+handler.run()
