@@ -3,8 +3,6 @@ from utils.context import Context, UserDict
 from utils import validator
 from src import account, article
 
-""" 主入口程序  """
-
 
 class Handler(object):
     LOGIN_USER_DICT = UserDict()  # {"id":None,"nickname":xxx} 记录登录状态
@@ -83,7 +81,7 @@ class Handler(object):
         # 总共需要多少页来展示数据（用户输入的页码）
         max_page_num, div = divmod(total_count, per_page_count)
         if div:
-            max_page_num += 1   # 总页数
+            max_page_num += 1  # 总页数
 
         # 当前想查看的页码
         current_page_num = 1
@@ -94,7 +92,7 @@ class Handler(object):
 
         counter = 0
         while True:
-            if counter:   # 翻页的时候走这里
+            if counter:  # 翻页的时候走这里
                 print(" > ".join(self.NAV).center(50, "*"))
             counter += 1
             # 10, 0   第1页
@@ -102,7 +100,7 @@ class Handler(object):
             # 10, 20  第3页
             # 10, 30  第4页
             # select x from xxxx limit 10 offset 30
-            data_list = article.page_list(per_page_count, (current_page_num - 1) * per_page_count) # 博客列表数据
+            data_list = article.page_list(per_page_count, (current_page_num - 1) * per_page_count)  # 博客列表数据
             print("文章列表：")
             for row in data_list:
                 line = "    {id}. {title}".format(**row)
@@ -146,7 +144,7 @@ class Handler(object):
         def up():
             # 先去数据库中获取 当前用户、对这篇文章的 赞踩记录
             up_down_object = article.fetch_up_down(self.LOGIN_USER_DICT.id, article_id)
-            if not up_down_object:   # 表里没数据
+            if not up_down_object:  # 表里没数据
                 if article.up(self.LOGIN_USER_DICT.id, article_id):
                     print("点赞成功")
                 else:
@@ -157,13 +155,13 @@ class Handler(object):
                 print("已赞过，不能重复操作")
                 return
 
-            if article.update_down_to_up(article_id, up_down_object.id): # 之前是踩的改点赞
+            if article.update_down_to_up(article_id, up_down_object.id):  # 之前是踩的改点赞
                 print("点赞成功")
             else:
                 print("点赞失败")
 
         def down():
-            up_down_object = article.fetch_up_down(self.LOGIN_USER_DICT.id, article_id) # 获取up_down表里的信息.
+            up_down_object = article.fetch_up_down(self.LOGIN_USER_DICT.id, article_id)  # 获取up_down表里的信息.
             if not up_down_object:  # 表里没信息 更新
                 if article.down(self.LOGIN_USER_DICT.id, article_id):
                     print("踩成功")
@@ -174,7 +172,7 @@ class Handler(object):
                 print("已踩过，不能重复操作")
                 return
 
-            if article.update_up_to_down(article_id, up_down_object.id): # 之前是赞的选择改踩了
+            if article.update_up_to_down(article_id, up_down_object.id):  # 之前是赞的选择改踩了
                 print("踩成功")
             else:
                 print("踩失败")
