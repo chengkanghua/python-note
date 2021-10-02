@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        /*!*毗邻选择器*   这个只选择.c2旁边的.c3 只选择一个!*/
+        /*!*毗邻选择器 相邻选择器   这个只选择.c2旁边的.c3 只选择相邻的一个元素 */
         .c2 + .c3{
            color:green;
         }
 
-        /*普通兄弟选择器 .c2 之后的div都会选择*/
+        /*兄弟节点选择器 .c2 之后的 div都会选择多个 */
         .c2 ~ div{
            color: red;
         }
