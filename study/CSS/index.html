@@ -3,6 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>a</title>
+    <style>
+*{
+    margin: 0;
+    padding: 0;
+}
+.SearchBox{
+    height: 36px;
+
+}
+.SearchBtn{
+    vertical-align:bottom;
+    line-height: 40px;
+    /* border: 1px solid red; */
+    height: 40px;
+    width: 40px;
+    margin-left: -7px;
+    
+}
+    </style>
 </head>
 <body>
 <h1>注册用户</h1>
@@ -33,11 +52,16 @@
 
     <input type="button" value="按钮">
     <input type="reset" value="reset">
-    <button>提交数据</button>  <
+    <button>提交数据</button>  
     <input type="submit" value="submit">
 </form>
 
-
+<form action="">
+    <input type="search" class="SearchBox" placeholder="ffff" >
+    <button type="submit" class="SearchBtn">
+        <i id="fa-search" class="fa fa-search"></i>
+    </button>
+</form>
 
 </body>
 </html>
