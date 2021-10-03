@@ -113,7 +113,8 @@ div{
     height: 62px;
     margin-top: 22px;
     background-size: 56px;
-    background-image: url(https://s02.mifile.cn/assets/static/image/logo-mi2.png);
+    /* background-image: url(https://s02.mifile.cn/assets/static/image/logo-mi2.png); */
+    background-image: url(../images/xiaomilogo.png);
     background-repeat: no-repeat;
     /* background-color: sandybrown; */
 }
@@ -310,19 +311,19 @@ div{
     /* background-color: rosybrown; */
     border-width:thin;
     border: 1px solid rgb(82, 81, 81);
-    opacity: 0.5;  /* 透明度 50% */
+    opacity: 0.7;  /* 透明度 50% */
+    text-align: center;
 }
 .span4 li a{
     padding-top:18px;
     font-size: 12px;
-    text-align: center;
     color:#fff;
     text-decoration: none;
 }
 .span4 li i{
     width: 24px;
     height: 24px;
-    font-size: 30px;
+    font-size: 24px;
     color: #fff;
     display: block;
     padding: 18px 0 8px 20px;
@@ -777,8 +778,7 @@ h2{
     margin-left: auto;
   }
   .site-info .logo{
-    background: url(https://s02.mifile.cn/assets/static/image/logo-mi2.png) no-repeat;
-    /* background: url(images/xiaomilogo.png) no-repeat; */
+    background: url(../images/xiaomilogo.png) no-repeat;
     display: block;
     text-align: left;
     margin-right: 10px;
