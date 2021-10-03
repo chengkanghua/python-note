@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id  */
-  src: url('iconfont.ttf?t=1633170133731') format('truetype');
+  src: url('iconfont.ttf?t=1633259902379') format('truetype');
 }
 
 .iconfont {
@@ -15,8 +15,20 @@
   content: "\344b";
 }
 
+.icon-31dingwei:before {
+  content: "\f0205";
+}
+
+.icon-15:before {
+  content: "\e61e";
+}
+
 .icon-shenghuohuafeichongzhi:before {
   content: "\e647";
+}
+
+.icon-7:before {
+  content: "\e67d";
 }
 
 .icon-shouye:before {
@@ -31,13 +43,25 @@
   content: "\e728";
 }
 
+.icon-banshou:before {
+  content: "\e659";
+}
+
 .icon-jinrujiantou:before {
   content: "\e88e";
 }
 
 .icon-shizhong:before {
   content: "\e78b";
+}
 
+.icon-lipin:before {
+  content: "\e633";
+}
+
+.icon-xiaoxi:before {
+  content: "\e627";
+  font-size: 12px;
 }
 
 .icon-Group-:before {
@@ -47,4 +71,13 @@
 .icon-sousuo:before {
   content: "\eafe";
 }
+
+.icon-youjiantou:before {
+  content: "\e602";
+}
+
+.icon-icon_jinrujiantouxiao:before {
+  content: "\e630";
+}
+
 
