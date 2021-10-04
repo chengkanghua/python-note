@@ -18,16 +18,16 @@
         console.log(s1.slice());
         console.log(s1.slice(3));
         console.log(s1.slice(-4,-1));
-        console.log(s1.slice(-1,-4));  // ""
+        console.log(s1.slice(-1,-4));  //只能从左到右切片
 
         //  split分割方法
         var ret = s1.split(" ");
         console.log(ret);  // ["hello", "world"]
 
         // substr截断方法
-        console.log(s1.substr(2,2));
+        console.log(s1.substr(2,2));//从第2个位置开始取2个
+        //去除两边空格
         var password = "    ge llo   ";
-
         console.log(password.trim());
         console.log(password.trim().length);
 
