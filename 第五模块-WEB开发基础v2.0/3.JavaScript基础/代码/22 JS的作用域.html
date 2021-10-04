@@ -21,8 +21,9 @@
 
         // var num = 10; // 在函数外部声明的变量, 全局变量
         function func(){
-            // var num = 20;
-            console.log("函数内部num：",num)
+            // num = 20;     //直接使用的外部的num变量 重新赋值
+            // var num = 20;  //申明局部变量,只在函数里使用 这个和外部num没有关系
+            console.log("函数内部num：",num) // num值先找内部,没有再去全局找.
         }
         func();
         console.log("全局num：",num);
