@@ -6,6 +6,7 @@
 </head>
 <body>
 
+//div#i1{div1}+div.c1*3{div}+div.outer>div.c1{item}^div.c2>div.c3>ul.c4>li.c5#i2{111}+li{222}+li{333}
 
 <div id="i1">DIV1</div>
 
@@ -53,9 +54,9 @@
     var c5 = document.getElementsByClassName("c5")[0];
     console.log(c5);  // c5是一个DOM对象
 
-    console.log(c5.parentElement.lastElementChild);  // 返回值是dom对象
-    console.log(c5.parentElement.children);  // 返回值是dom对象数组
-    console.log(c5.nextElementSibling.nextElementSibling);
+    console.log(c5.parentElement.lastElementChild);  // 返回值是dom对象 父元素的最后一个儿子
+    console.log(c5.parentElement.children);  // 返回值是dom对象数组 父元素的所有儿子元素
+    console.log(c5.nextElementSibling.nextElementSibling); // c5.下一个元素.下一个元素
     console.log(c5.parentElement.children);
 
 

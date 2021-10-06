@@ -7,11 +7,15 @@
     <style>
 
         .tb {
-            height: 300px;
+            height: 500px;
+            width: 1226px;
+            margin:0 auto;
+            overflow:auto;
+            background-color: #ebebeb
+            
         }
         .box{
               margin: 10px auto;
-
         }
 
         .box td{
@@ -92,11 +96,7 @@
     var add_btn = document.querySelector(".submit");
     var tbody = document.querySelector(".tbody");
 
-
-
     add_btn.onclick = function () {
-
-
         // 创建tr的dom对象
         var tr = document.createElement("tr"); // <tr></tr>
         var inps = document.querySelectorAll("#name,#age,#dep");
@@ -148,7 +148,6 @@
 
     // 编辑事件
     function edit_btn(self) {
-
         // 文本处理
         self.innerHTML = "保存";
         self.setAttribute("onclick","keep_btn(this)");
@@ -156,7 +155,6 @@
         var children_td = self.parentElement.parentElement.children;
         
         for (var i= 0;i<children_td.length-2;i++){
-
             var input = document.createElement("input");
             input.setAttribute("type","text");
             input.value = children_td[i].innerHTML;

@@ -35,12 +35,39 @@
 
     </script>
 
+<script>
+/* 
+    // 定时执行 5秒后停止
+    var num =0
+    var id = setInterval(function (){
+        console.log("ok");
+        num++;
+        if(num==5){
+        clearInterval(id)
+        }
+    
+    },1000)
 
+    console.log(id)
+     */
+
+    /* 
+    var id = setInterval(function (){console.log("ok")},1000)
+    console.log(id)
+
+    function stopInterval(){
+        clearInterval(id)
+    }
+    setTimeout(stopInterval,10000)
+    */
+</script>
 
 </head>
 <body>
 
-<input type="text" value="" id="i1"> <button onclick="start()">开始</button> <button onclick="end()">结束</button>
+<input type="text" value="" id="i1"> 
+<button onclick="start()">开始</button> 
+<button onclick="end()">结束</button>
 
 
 </body>
