@@ -33,8 +33,9 @@
     };
 
     var ele2 = document.querySelector(".c2");
+    // 触发.c2区域时候同时也是触发了父元素的onclick事件
     ele2.onclick = function (event) {
-        // alert("c2区域");
+        alert("c2区域");
         // 如何阻止事件冒泡
         event.stopPropagation();
     }

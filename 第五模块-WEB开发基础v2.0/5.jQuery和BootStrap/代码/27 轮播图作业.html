@@ -85,8 +85,6 @@
 </head>
 <body>
 
-
-
 <div class="outer">
       <ul class="img">
             <li><a href=""><img src="https://imgcps.jd.com/ling4/100009077475/5Lqs6YCJ5aW96LSn/5L2g5YC85b6X5oul5pyJ/p-5bd8253082acdd181d02fa71/c3196f74/cr/s/q.jpg" alt=""></a></li>
@@ -119,7 +117,6 @@
     var i =0;
 
     $(".outer .btn .right_btn").click(go_right);
-
     function go_right() {
 
         if(i===4){
@@ -128,7 +125,6 @@
         i++;
         $(".outer .img li").eq(i).stop().fadeIn(1000).siblings().stop().fadeOut(1000);
         $(".outer .num li").eq(i).addClass("current").siblings().removeClass("current");
-
     }
 
     $(".outer .btn .left_btn").click(go_left);

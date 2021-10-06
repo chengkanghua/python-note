@@ -8,6 +8,7 @@ a,a:hover{
 a{
     color:#757575;
     background-color: rgba(0, 0,0,0);
+    cursor:pointer;
 }
 .clearfix:after{
     display: block;
@@ -277,6 +278,7 @@ div{
     line-height: 42px;
     padding-left: 30px;
     color:#fff;
+    cursor:pointer;
 }
 .home-nav ul li a{
     color:#fff;
