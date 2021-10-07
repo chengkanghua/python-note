@@ -27,11 +27,12 @@
 
 
     // 如何将jQury对象转换为Dom对象
-    console.log($(".c1 li")[1].innerHTML);
+    console.log($(".c1 li")[1].innerText);  // [num] 得到的是dom对象
+    console.log($(".c1 li").eq(1).text());  // .eq是jQery对象
 
     // 如何将Dom对象转换为jQuery对象;
 
-    var ele = document.querySelector(".c1 li");
+    var ele = document.querySelector(".c1 li");  //dom
     // console.log(ele);
     // ele.style.color = "red";
     $(ele).css("color", "orange")  // [ele]
