@@ -8,7 +8,10 @@
     <script>
 
         $(function () {
-
+            // text() - 设置或返回所选元素的文本内容
+            // html() - 设置或返回所选元素的内容（包括 HTML 标记）
+            // val()  - 设置或返回表单字段的值  /val()是获取文本框的实际value值
+            // attr() -  设置/改变属性值 或返回属性值 /attr()获取的则是文档结构中的value的属性值
 
             $("#i1").blur(function () {
 
@@ -32,6 +35,8 @@
 
             console.log($("#i2").val());
             console.log($("#i2").val("hello pig!"))
+
+
 
         })
 
