@@ -1,6 +1,3 @@
-
-
-
 from wsgiref.simple_server import make_server
 
 
@@ -24,9 +21,6 @@ def application(environ, start_response):
             data=f.read()
 
     return [data.encode("utf8")]
-
-
-
 
 
 
