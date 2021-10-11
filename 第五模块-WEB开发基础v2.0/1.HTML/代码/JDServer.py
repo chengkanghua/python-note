@@ -10,3 +10,6 @@ while 1:
         html = f.read()
     conn.send(("HTTP/1.1 200 ok\r\nContent_Length:11\r\n\r\n"+html).encode())
     conn.close()
+
+
+
