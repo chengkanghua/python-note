@@ -344,7 +344,7 @@ print("asdfasdf")
 - 下载Pycharm
 
   ```
-  https://www.jetbrains.com/pycharm/
+  https://www.jetbrains.com/pycharm/    选择 Version 2020.1
   ```
 
 - 安装
