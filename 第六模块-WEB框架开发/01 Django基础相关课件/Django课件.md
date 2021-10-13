@@ -336,9 +336,7 @@ backend.html
 
 yuan这个package就是一个web框架，下载这个web框架就可以快速实现一些简单的web功能，比如查看时间。
 
-# 4 Django简介
-
-
+# 4 [4 Django简介](https://www.cnblogs.com/yuanchenqi/articles/8875659.html)
 
 ## MVC与MTV模型
 
@@ -3647,8 +3645,8 @@ a. 配置 settings.py
    
     SESSION_ENGINE = 'django.contrib.sessions.backends.db'   # 引擎（默认）
        
-    SESSION_COOKIE_NAME ＝ "sessionid"                       # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
-    SESSION_COOKIE_PATH ＝ "/"                               # Session的cookie保存的路径（默认）
+    SESSION_COOKIE_NAME = "sessionid"                       # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
+    SESSION_COOKIE_PATH = "/"                               # Session的cookie保存的路径（默认）
     SESSION_COOKIE_DOMAIN = None                             # Session的cookie保存的域名（默认）
     SESSION_COOKIE_SECURE = False                            # 是否Https传输cookie（默认）
     SESSION_COOKIE_HTTPONLY = True                           # 是否Session的cookie只支持http传输（默认）
