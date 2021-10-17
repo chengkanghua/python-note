@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {% block title %}
+    {% block title %}   <!-- 定义能够被子模版覆盖的 blocks  -->
     <title>base</title>
     {% endblock %}
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
@@ -30,11 +30,11 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            {% include 'advertise.html' %}
+            {% include 'advertise.html' %} <!-- 导入 html文件-->
         </div>
         <div class="col-md-9">
              
-            {% block con %}
+            {% block con %}  <!-- 定义能够被子模版覆盖的 block -->
               <h4>content</h4>
             {% endblock %}
             

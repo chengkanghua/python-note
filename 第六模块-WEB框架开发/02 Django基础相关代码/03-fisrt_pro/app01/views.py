@@ -3,21 +3,21 @@ from django.shortcuts import render,HttpResponse
 # Create your views here.
 
 
-from django.urls import reverse
+from django.urls import reverse       #导入反向解析工具
 
 def timer(request):
 
     import time
     ctime=time.time()
 
-    url=reverse("s_c_2003")
-    url=reverse("y_a",args=(3333,)) # app01/articles/([0-9]{4})/
+    url=reverse("s_c_2003")         # 反向解析出的地址 app01/articles/2003/
+    url=reverse("y_a",args=(3333,)) # 反向解析 app01/articles/([0-9]{4})/
 
 
     print(url)
 
 
-    return render(request,"timer.html",{"date":ctime})
+    return render(request,"timer.html",{"date":ctime})   #返回模板传入变量进行渲染
 
 
 
