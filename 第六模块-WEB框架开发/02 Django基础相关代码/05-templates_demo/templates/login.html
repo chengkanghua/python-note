@@ -10,7 +10,7 @@
 <body>
 
 <form action="" method="post">
-    {% csrf_token %}
+    {% csrf_token %}   <!-- 这是一个隐藏input  这个标签用于跨站请求伪造保护-->
     <input type="text" name="user">
     <input type="submit">
 </form>

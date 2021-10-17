@@ -100,7 +100,6 @@ http协议包含由浏览器发送数据到服务器需要遵循的请求协议�
 ```python
 import socket
 
-
 sock=socket.socket()
 sock.bind(("127.0.0.1",8808))
 sock.listen(5)
@@ -154,7 +153,6 @@ Web框架（Web framework）是一种开发框架，用来支持动态网站、�
 
 ```python
 from wsgiref.simple_server import make_server
-
 
 def application(environ, start_response):
     start_response('200 OK', [('Content-Type', 'text/html')])
@@ -368,12 +366,15 @@ Django的MTV模式本质上和MVC是一样的，也是为了各组件间保持�
 
 ```
 pip3 install django
-pip3 install django=2.0.1
+pip3 install django==2.0.1
 ```
 
 ### 2、创建一个django project
 
 ```
+#安装之后 文件所在位置
+/Library/Frameworks/Python.framework/Versions/3.9/bin/django-admin.py  
+
 django_admin.py startproject mysite
 ```
 
@@ -396,7 +397,7 @@ python manage.py startapp blog
 ### 4、启动django项目
 
 ```
-python manage.py runserver ``8080
+python manage.py runserver 8080
 ```
 
 ​    这样我们的django就启动起来了！当我们访问：http://127.0.0.1:8080/时就可以看到：
@@ -465,7 +466,51 @@ def index(request):
 
  ![img](assets/877318-20180423153419047-864210640.png)
 
+ ```python
+ #小提示:
+ #settings.py 配置 应用名称 和templates 路径
  
+ INSTALLED_APPS = [
+     'django.contrib.admin',
+     'django.contrib.auth',
+     'django.contrib.contenttypes',
+     'django.contrib.sessions',
+     'django.contrib.messages',
+     'django.contrib.staticfiles',
+     'blog'   # 创建的应用名称
+ ]
+ 
+ 
+ TEMPLATES = [
+     {
+         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+         'DIRS': [os.path.join(BASE_DIR,'templates')],  # templates 目录路径
+         'APP_DIRS': True,
+         'OPTIONS': {
+             'context_processors': [
+                 'django.template.context_processors.debug',
+                 'django.template.context_processors.request',
+                 'django.contrib.auth.context_processors.auth',
+                 'django.contrib.messages.context_processors.messages',
+             ],
+         },
+     },
+ ]
+ 
+ 
+ # 在pycharm 中导入老师的代码
+ # 用pycharm 打开终端,在项目目录下 运行运行 
+ python3.9 manage.py runserver
+ #配置到pycharm中直接点运行
+ open ---> new window  -- > edit Configurations... -->配置 host 127.0.0.1
+ # 数据库迁移
+ python manage.py makemigrations   # 创建数据库的映射关系
+ python manage.py migrate  # 根据上条命令生成的映射关系，在数据库中生成相应的表
+ ```
+
+
+
+
 
 # 5 Django-2的路由层(URLconf)
 
@@ -488,14 +533,13 @@ urlpatterns = [
     re_path(r'^articles/([0-9]{4})/([0-9]{2})/$', views.month_archive),
     re_path(r'^articles/([0-9]{4})/([0-9]{2})/([0-9]+)/$', views.article_detail),
 ]
+
 ```
-
-
 
 注意：
 
 -   若要从URL 中捕获一个值，只需要在它周围放置一对圆括号。
--   不需要添加一个前导的反斜杠，因为每个URL 都有。例如，应该是`^articles` 而不是 `^/articles`。
+-   不需要添加一个前导的反斜杠，因为每个URL 都有。例如，应该是`^articles` 而不是 `^/articles`。 
 -   每个正则表达式前面的'r' 是可选的但是建议加上。它告诉Python 这个字符串是“原始的” —— 字符串中任何字符都不应该转义
 
 示例：
@@ -564,7 +608,10 @@ from app01 import views
 
 urlpatterns = [
    re_path(r'^admin/', admin.site.urls),
-   re_path(r'^blog/', include('blog.urls')),
+   re_path(r'^blog/', include('blog.urls')),   # 这个blog/路径分发给 blog.urls 文件里处理
+   re_path(r'^', include('blog.urls')),   # 这个跟目录路径分发给 blog.urls 文件里处理
+	 # re_path(r"^app02/",include(("app02.urls","app02"))), #第二个参数对应的是应用名称-名称空间
+
 ]
 ```
 
@@ -581,15 +628,13 @@ urlpatterns = [
 
 urls.py:
 
-
-
 ```
 from django.conf.urls import url
 
 from . import views
 
 urlpatterns = [
-    #...
+    #...   name 是起了一个别名, 在模板中引用 {% url 'news-year-archive' %}
     re_path(r'^articles/([0-9]{4})/$', views.year_archive, name='news-year-archive'),
     #...
 ]
@@ -600,7 +645,7 @@ urlpatterns = [
 在模板中：
 
 ```
-<a href="{% url 'news-year-archive' 2012 %}">2012 Archive</a>
+<a href="{% url 'news-year-archive' 2012 %}">2012 Archive</a>  # 反向解析
 
 <ul>
 {% for yearvar in year_list %}
@@ -614,7 +659,7 @@ urlpatterns = [
 在python中：
 
 ```
-from django.urls import reverse
+from django.urls import reverse     #导入反向解析函数
 from django.http import HttpResponseRedirect
 
 def redirect_to_year(request):
@@ -641,8 +686,11 @@ def redirect_to_year(request):
 ```
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
-    re_path(r'^app01/', include("app01.urls",namespace="app01")),
-    re_path(r'^app02/', include("app02.urls",namespace="app02")),
+    #re_path(r'^app01/', include("app01.urls",namespace="app01")), #报错
+    #re_path(r'^app02/', include("app02.urls",namespace="app02")), #
+    re_path(r'^app01/', include(("app01.urls","app01"))), #指定名称空间 app01
+    re_path(r'^app02/', include(("app02.urls","app02"))), 
+
 ]
 ```
 
@@ -650,7 +698,7 @@ urlpatterns = [
 
 ```
 urlpatterns = [
-    re_path(r'^index/', index,name="index"),
+    re_path(r'^index/', index,name="index"),   # name 别名
 ]
 ```
 
@@ -658,7 +706,7 @@ urlpatterns = [
 
 ```
 urlpatterns = [
-    re_path(r'^index/', index,name="index"),
+    re_path(r'^index/', index,name="index"),  # name 别名
 ]
 ```
 
@@ -669,7 +717,7 @@ from django.core.urlresolvers import reverse
 
 def index(request):
 
-    return  HttpResponse(reverse("app01:index"))
+    return  HttpResponse(reverse("app01:index"))  #reverse反向解析("名称空间app01下的index")
 ```
 
 #### app02.views
@@ -679,7 +727,7 @@ from django.core.urlresolvers import reverse
 
 def index(request):
 
-    return  HttpResponse(reverse("app02:index"))
+    return  HttpResponse(reverse("app02:index")) # 指定名称空间app02 下的index
 ```
 
 ## django2.0版的path
@@ -712,7 +760,8 @@ from django.urls import path
 from . import views  
 urlpatterns = [  
     path('articles/2003/', views.special_case_2003),  
-    path('articles/<int:year>/', views.year_archive),  
+    # 内置转换器转换成int类型<int:year> 同时也是有名分组
+    path('articles/<int:year>/', views.year_archive),   
     path('articles/<int:year>/<int:month>/', views.month_archive),  
     path('articles/<int:year>/<int:month>/<slug>/', views.article_detail),  
 ]  
@@ -754,23 +803,27 @@ Django默认支持以下5个转化器：
 例子：
 
 ```
+# 注册文件建议写在 应用目录里 写urlconvert.py
 class FourDigitYearConverter:  
-    regex = '[0-9]{4}'  
+    regex = '[0-9]{4}'   # regex 固定属性写法
     def to_python(self, value):  
         return int(value)  
-    def to_url(self, value):  
+    def to_url(self, value):   # 反向解析  
         return '%04d' % value  
 ```
 
 使用`register_converter` 将其注册到URL配置中：
 
 ```
-from django.urls import register_converter, path  
+# 在主项目的 urls.py注册
+from django.urls import register_converter, path    # 导入 register_converter
+from app01.urlconvert import FourDigitYearConverter  # 导入app01里写的转化器方法
 from . import converters, views  
 register_converter(converters.FourDigitYearConverter, 'yyyy')  
+register_converter(FourDigitYearConverter, 'yy')  # 注册转化器方法 别名 yy
 urlpatterns = [  
     path('articles/2003/', views.special_case_2003),  
-    path('articles/<yyyy:year>/', views.year_archive),  
+    path('articles/<yy:year>/', views.year_archive),   # yy是调用的自定义的转换器
     ...  
 ]  
 ```
@@ -965,6 +1018,7 @@ django将请求报文中的请求行、首部信息、内容主体封装成 Http
    你应该使用 vary_on_headers('HTTP_X_REQUESTED_WITH') 装饰你的视图以让响应能够正确地缓存。
 
 */
+
 ```
 
 
@@ -991,6 +1045,7 @@ render(request, template_name[, context]）` `结合一个给定的模板和一�
      context：添加到模板上下文的一个字典。默认是一个空字典。如果字典中的某个值是可调用的，视图将在渲染模板之前调用它。
 
 render方法就是将一个模板页面中的模板语法进行渲染，最终渲染成一个html页面作为响应体。
+
 ```
 
 ### redirect()
@@ -998,13 +1053,17 @@ render方法就是将一个模板页面中的模板语法进行渲染，最终�
 传递要重定向的一个硬编码的URL
 
 ```
-def` `my_view(request):``  ``...``  ``return` `redirect(``'/some/url/'``)
+def my_view(request):
+    ...
+    return redirect('/some/url/')
 ```
 
 也可以是一个完整的URL：
 
 ```
-def` `my_view(request):``  ``...``  ``return` `redirect(``'http://example.com/'``)　
+def my_view(request):
+    ...
+    return redirect('http://example.com/')　
 ```
 
 key：两次请求　
@@ -1019,19 +1078,27 @@ key：两次请求　
 
 　　302表示旧地址A的资源还在（仍然可以访问），这个重定向只是临时地从旧地址A跳转到地址B，搜索引擎会抓取新的内容而保存旧的网址。 SEO302好于301
 
- 
-
 2）重定向原因：
 （1）网站调整（如改变网页目录结构）；
 （2）网页被移到一个新地址；
 （3）网页扩展名改变(如应用需要把.php改成.Html或.shtml)。
         这种情况下，如果不做重定向，则用户收藏夹或搜索引擎数据库中旧地址只能让访问客户得到一个404页面错误信息，访问流量白白丧失；再者某些注册了多个域名的
     网站，也需要通过重定向让访问这些域名的用户自动跳转到主站点等。
+    
 ```
 
 
 
 用redirect可以解释APPEND_SLASH的用法！
+
+```
+小提示:
+HttpResponse() #用于回复一个字符串 HttpResponse("aaa")  开发中很少用.
+```
+
+
+
+
 
  # [7 Django的模板层](https://www.cnblogs.com/yuanchenqi/articles/8876892.html)
 
@@ -1095,11 +1162,9 @@ def current_time(req):
 {{var_name}}
 ```
 
-***views.py：\***
+**views.py：**
 
-
-
-```
+```python
 def index(request):
     import datetime
     s="hello"
@@ -1117,13 +1182,13 @@ def index(request):
  
     person_list=[person_yuan,person_egon,person_alex]
  
- 
-    return render(request,"index.html",{"l":l,"dic":dic,"date":date,"person_list":person_list})　
+    return render(request,"index.html",{"l":l,"dic":dic,"date":date,"person_list":person_list})
+    
 ```
 
 
 
-***template：\*** 
+***template：** 
 
 ```
 <h4>{{s}}</h4>
@@ -1361,6 +1426,14 @@ def my_input(id,arg):
 {% endif %}
 ```
 
+```
+小笔记:
+自定义的过滤器最多两个参数,
+自定义标签不限制参数
+```
+
+
+
 ## 5 模板继承 (extend)
 
 Django模版引擎中最强大也是最复杂的部分就是模版继承了。模版继承可以让您创建一个基本的“骨架”模版，它包含您站点中的全部元素，并且可以定义能够被子模版覆盖的 blocks 。
@@ -1561,7 +1634,6 @@ from django.db import models
 
 # Create your models here.
 
-
 class Book(models.Model):
      id=models.AutoField(primary_key=True)
      title=models.CharField(max_length=32)
@@ -1569,6 +1641,7 @@ class Book(models.Model):
      pub_date=models.DateField()
      price=models.DecimalField(max_digits=8,decimal_places=2)
      publish=models.CharField(max_length=32)
+     
 ```
 
 
@@ -1639,48 +1712,44 @@ class Book(models.Model):
      admin 用一个<input type="file">部件表示该字段保存的数据(一个文件上传部件) .
  
      注意：在一个 model 中使用 FileField 或 ImageField 需要以下步骤:
-            （1）在你的 settings 文件中, 定义一个完整路径给 MEDIA_ROOT 以便让 Django在此处保存上传文件.
-            (出于性能考虑,这些文件并不保存到数据库.) 定义MEDIA_URL 作为该目录的公共 URL. 要确保该目录对
+ （1）在你的 settings 文件中, 定义一个完整路径给 MEDIA_ROOT 以便让 Django在此处保存上传文件.
+        (出于性能考虑,这些文件并不保存到数据库.) 定义MEDIA_URL 作为该目录的公共 URL. 要确保该目录对
              WEB服务器用户帐号是可写的.
-            （2） 在你的 model 中添加 FileField 或 ImageField, 并确保定义了 upload_to 选项,以告诉 Django
-             使用 MEDIA_ROOT 的哪个子目录保存上传文件.你的数据库中要保存的只是文件的路径(相对于 MEDIA_ROOT).
-             出于习惯你一定很想使用 Django 提供的 get_<#fieldname>_url 函数.举例来说,如果你的 ImageField
-             叫作 mug_shot, 你就可以在模板中以 {{ object.#get_mug_shot_url }} 这样的方式得到图像的绝对路径.
+ （2） 在你的 model 中添加 FileField 或 ImageField, 并确保定义了 upload_to 选项,以告诉 Django
+      使用 MEDIA_ROOT 的哪个子目录保存上传文件.你的数据库中要保存的只是文件的路径(相对于 MEDIA_ROOT).
+      出于习惯你一定很想使用 Django 提供的 get_<#fieldname>_url 函数.举例来说,如果你的 ImageField
+    叫作 mug_shot, 你就可以在模板中以 {{ object.#get_mug_shot_url }} 这样的方式得到图像的绝对路径.
  
 <12> URLField
-      用于保存 URL. 若 verify_exists 参数为 True (默认), 给定的 URL 会预先检查是否存在( 即URL是否被有效装入且
-      没有返回404响应).
-      admin 用一个 <input type="text"> 文本框表示该字段保存的数据(一个单行编辑框)
+    用于保存 URL. 若 verify_exists 参数为 True (默认), 给定的 URL 会预先检查是否存在( 即URL是否被有效装入且没有返回404响应).
+   admin 用一个 <input type="text"> 文本框表示该字段保存的数据(一个单行编辑框)
  
 <13> NullBooleanField
-       类似 BooleanField, 不过允许 NULL 作为其中一个选项. 推荐使用这个字段而不要用 BooleanField 加 null=True 选项
-       admin 用一个选择框 <select> (三个可选择的值: "Unknown", "Yes" 和 "No" ) 来表示这种字段数据.
+    类似 BooleanField, 不过允许 NULL 作为其中一个选项. 推荐使用这个字段而不要用 BooleanField 加 null=True 选项admin 用一个选择框 <select> (三个可选择的值: "Unknown", "Yes" 和 "No" ) 来表示这种字段数据.
  
 <14> SlugField
-       "Slug" 是一个报纸术语. slug 是某个东西的小小标记(短签), 只包含字母,数字,下划线和连字符.#它们通常用于URLs
-       若你使用 Django 开发版本,你可以指定 maxlength. 若 maxlength 未指定, Django 会使用默认长度: 50.  #在
-       以前的 Django 版本,没有任何办法改变50 这个长度.
-       这暗示了 db_index=True.
-       它接受一个额外的参数: prepopulate_from, which is a list of fields from which to auto-#populate
-       the slug, via JavaScript,in the object's admin form: models.SlugField
-       (prepopulate_from=("pre_name", "name"))prepopulate_from 不接受 DateTimeFields.
+      "Slug" 是一个报纸术语. slug 是某个东西的小小标记(短签), 只包含字母,数字,下划线和连字符.#它们通常用于URLs 若你使用 Django 开发版本,你可以指定 maxlength. 若 maxlength 未指定, Django 会使用默认长度: 50.  #在以前的 Django 版本,没有任何办法改变50 这个长度. 这暗示了 db_index=True.
+ 它接受一个额外的参数: 
+ prepopulate_from, which is a list of fields from which to auto-#populate
+ the slug, via JavaScript,in the object's admin form: models.SlugField
+ (prepopulate_from=("pre_name", "name"))prepopulate_from 不接受 DateTimeFields.
  
 <13> XMLField
-        一个校验值是否为合法XML的 TextField,必须提供参数: schema_path, 它是一个用来校验文本的 RelaxNG schema #的文件系统路径.
+   一个校验值是否为合法XML的 TextField,必须提供参数: schema_path, 它是一个用来校验文本的 RelaxNG schema #的文件系统路径.
  
 <14> FilePathField
-        可选项目为某个特定目录下的文件名. 支持三个特殊的参数, 其中第一个是必须提供的.
-        参数    描述
-        path    必需参数. 一个目录的绝对文件系统路径. FilePathField 据此得到可选项目.
-        Example: "/home/images".
-        match    可选参数. 一个正则表达式, 作为一个字符串, FilePathField 将使用它过滤文件名. 
-        注意这个正则表达式只会应用到 base filename 而不是
-        路径全名. Example: "foo.*\.txt^", 将匹配文件 foo23.txt 却不匹配 bar.txt 或 foo23.gif.
-        recursive可选参数.要么 True 要么 False. 默认值是 False. 是否包括 path 下面的全部子目录.
-        这三个参数可以同时使用.
-        match 仅应用于 base filename, 而不是路径全名. 那么,这个例子:
-        FilePathField(path="/home/images", match="foo.*", recursive=True)
-        ...会匹配 /home/images/foo.gif 而不匹配 /home/images/foo/bar.gif
+可选项目为某个特定目录下的文件名. 支持三个特殊的参数, 其中第一个是必须提供的.
+参数    描述
+path    必需参数. 一个目录的绝对文件系统路径. FilePathField 据此得到可选项目.
+Example: "/home/images".
+match    可选参数. 一个正则表达式, 作为一个字符串, FilePathField 将使用它过滤文件名. 
+注意这个正则表达式只会应用到 base filename 而不是
+路径全名. Example: "foo.*\.txt^", 将匹配文件 foo23.txt 却不匹配 bar.txt 或 foo23.gif.
+recursive可选参数.要么 True 要么 False. 默认值是 False. 是否包括 path 下面的全部子目录.
+这三个参数可以同时使用.
+match 仅应用于 base filename, 而不是路径全名. 那么,这个例子:
+FilePathField(path="/home/images", match="foo.*", recursive=True)
+...会匹配 /home/images/foo.gif 而不匹配 /home/images/foo/bar.gif
  
 <15> IPAddressField
         一个字符串形式的 IP 地址, (i.e. "24.124.1.30").
@@ -1732,9 +1801,7 @@ Django 就会自动添加一个IntegerField字段做为主键，所以除非你�
 
 若想将模型转为mysql数据库中的表，需要在settings中配置：
 
-
-
-```
+```python
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -1752,18 +1819,18 @@ DATABASES = {
 注意1：NAME即数据库的名字，在mysql连接前该数据库必须已经创建，而上面的sqlite数据库下的db.sqlite3则是项目自动创建 USER和PASSWORD分别是数据库的用户名和密码。设置完后，再启动我们的Django项目前，我们需要激活我们的mysql。然后，启动项目，会报错：no module named MySQLdb 。这是因为django默认你导入的驱动是MySQLdb，可是MySQLdb 对于py3有很大问题，所以我们需要的驱动是PyMySQL 所以，我们只需要找到项目名文件下的__init__,在里面写入：
 
 ```
-import` `pymysql``pymysql.install_as_MySQLdb()
+import pymysql
+pymysql.install_as_MySQLdb()
 ```
 
 最后通过两条数据库迁移命令即可在指定的数据库中创建表 ：
 
 ```
-python manage.py makemigrations``python manage.py migrate
+python manage.py makemigrations
+python manage.py migrate
 ```
 
 注意2:确保配置文件中的INSTALLED_APPS中写入我们创建的app名称
-
-
 
 ```
 INSTALLED_APPS = [
@@ -1773,7 +1840,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "book"
+    "book"   #新建的app名称
 ]
 ```
 
@@ -1782,7 +1849,7 @@ INSTALLED_APPS = [
 注意3:如果报错如下：
 
 ```
-django.core.exceptions.ImproperlyConfigured: mysqlclient ``1.3``.``3` `or` `newer ``is` `required; you have ``0.7``.``11.None
+django.core.exceptions.ImproperlyConfigured: mysqlclient 1.3.3 or newer is required; you have 0.7.11.None
 ```
 
 MySQLclient目前只支持到python3.4，因此如果使用的更高版本的python，需要修改如下：
@@ -1799,7 +1866,7 @@ if version < (1, 3, 3):
 
 注意4: 如果想打印orm转换过程中的sql，需要在settings中进行如下配置：
 
-```
+```python
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -1816,7 +1883,8 @@ LOGGING = {
             'level':'DEBUG',
         },
     }
-}　　
+}
+
 ```
 
 
@@ -1825,16 +1893,18 @@ LOGGING = {
 
 ### 方式1 
 
-```
+```python
 # create方法的返回值book_obj就是插入book表中的python葵花宝典这本书籍纪录对象
-  book_obj=Book.objects.create(title="python葵花宝典",state=True,price=100,publish="苹果出版社",pub_date="2012-12-12")
+ book_obj=Book.objects.create(title="python葵花宝典",state=True,price=100,publish="苹果出版社",pub_date="2012-12-12")
+  
 ```
 
 ### 方式2
 
-```
+```python
 book_obj=Book(title="python葵花宝典",state=True,price=100,publish="苹果出版社",pub_date="2012-12-12")
 book_obj.save()
+
 ```
 
 
@@ -1878,11 +1948,12 @@ book_obj.save()
 Book.objects.filter(price__in=[100,200,300])
 Book.objects.filter(price__gt=100)
 Book.objects.filter(price__lt=100)
-Book.objects.filter(price__range=[100,200])
-Book.objects.filter(title__contains="python")
-Book.objects.filter(title__icontains="python")
-Book.objects.filter(title__startswith="py")
+Book.objects.filter(price__range=[100,200])    # range 范围 100 -200 之间
+Book.objects.filter(title__contains="python")  # 包含
+Book.objects.filter(title__icontains="python") # 包含 不区分大小写
+Book.objects.filter(title__startswith="py")    # py开头的
 Book.objects.filter(pub_date__year=2012)
+Book.objects.filter(pub_date__year=2018,pub_date__month=1,pub_date__day=1) # 过滤年月日
 ```
 
 ## 删除表纪录
@@ -1898,31 +1969,37 @@ model_obj.delete()
 例如，下面的代码将删除 pub_date 是2005年的 Entry 对象：
 
 ```
-Entry.objects.``filter``(pub_date__year``=``2005``).delete()
+Entry.objects.filter(pub_date__year=2005).delete()
+
 ```
 
 在 Django 删除对象时，会模仿 SQL 约束 ON DELETE CASCADE 的行为，换句话说，删除一个对象时也会删除与它相关联的外键对象。例如：
 
 ```
-b ``=` `Blog.objects.get(pk``=``1``)``# This will delete the Blog and all of its Entry objects.``b.delete()
+b = Blog.objects.get(pk=1)
+# This will delete the Blog and all of its Entry objects.
+b.delete()
 ```
 
 要注意的是： delete() 方法是 QuerySet 上的方法，但并不适用于 Manager 本身。这是一种保护机制，是为了避免意外地调用 Entry.objects.delete() 方法导致 所有的 记录被误删除。如果你确认要删除所有的对象，那么你必须显式地调用：
 
 ```
-Entry.objects.``all``().delete()　　
+	
+Entry.objects.all().delete()　　
 ```
 
 如果不想级联删除，可以设置为:
 
 ```
-pubHouse ``=` `models.ForeignKey(to``=``'Publisher'``, on_delete``=``models.SET_NULL, blank``=``True``, null``=``True``)
+pubHouse = models.ForeignKey(to='Publisher', on_delete=models.SET_NULL, blank=True, null=True)
+
 ```
 
 ## 修改表纪录
 
 ```
-Book.objects.``filter``(title__startswith``=``"py"``).update(price``=``120``)
+Book.objects.filter(title__startswith="py").update(price=120)
+
 ```
 
 此外，update()方法对于任何结果集（QuerySet）均有效，这意味着你可以同时更新多条记录update()方法会返回一个整型数值，表示受影响的记录条数。　　
@@ -1947,6 +2024,7 @@ Book.objects.``filter``(title__startswith``=``"py"``).update(price``=``120``)
 4 查询价格在100到200之间的所有书籍名称及其价格
  
 5 查询所有人民出版社出版的书籍的价格（从高到低排序，去重）
+
 ```
 
 

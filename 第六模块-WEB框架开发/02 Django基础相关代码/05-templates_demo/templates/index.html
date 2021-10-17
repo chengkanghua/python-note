@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}    <!--继承基础模板 -->
 
 
-{% block title %}
-<title>index</title>
-{% endblock %}
+{% block title %}   <!-- 定义要替换的block 块 -->
+<title>index</title>    <!-- 要替换的内容 -->
+{% endblock %}   <!-- 结束标志 -->
 
 {% block con %}
 
@@ -88,13 +88,13 @@
             <hr>
             <h4>自定义过滤器,标签</h4>
 
-            {% load my_tag_filter %}
-            <p>{{ i|multi_fliter:20 }}</p>
+            {% load my_tag_filter %}  <!-- 导入 templatetags 下的my_tag_filter.py -->
+            <p>{{ i|multi_fliter:20 }}</p>  <!-- 调用自定义的过滤器方法 i是views 传过来的multi_fliter(1,20) -->
 
-            {#<p>{% multi_tag 7 9 6 %}</p>#}
+            <p>{% multi_tag 7 9 %}</p>  <!-- 调用自定义标签  -->
 
 
-            {% if i|multi_fliter:10 > 100 %}
+            {% if i|multi_fliter:10 > 100 %} <!-- if  过滤器结果 > 100  -->
                 <p>100</p>
             {% else %}
                 <p>{{ i }}</p>

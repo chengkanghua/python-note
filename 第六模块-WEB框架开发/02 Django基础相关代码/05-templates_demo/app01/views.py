@@ -1,8 +1,7 @@
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render, HttpResponse
+
 
 # Create your views here.
-
-
 
 
 def index(request):
@@ -21,62 +20,47 @@ def index(request):
     :return:
     '''
     ######################深度查询   句点符
-    name="yuan"
-    i=1
-    l=[111,222,333]
-    info={"name":"yuan","age":22}
+    name = "yuan"
+    i = 1
+    l = [111, 222, 333]
+    info = {"name": "yuan", "age": 22}
 
-    b=True
+    b = True
 
     class Person(object):
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
 
-        def __init__(self,name,age):
-            self.name=name
-            self.age=age
+    alex = Person("alex", 35)
+    egon = Person("egon", 33)
 
-    alex=Person("alex",35)
-    egon=Person("egon",33)
-
-    person_list=[alex,egon]
-
-
-    #person_list=[]
-
+    person_list = [alex, egon]
 
     ######################过滤器
 
     import datetime
-    now=datetime.datetime.now()
-    file_size=12343242123123
+    now = datetime.datetime.now()
+    file_size = 12343242123123
 
-    content="hello yuan xiao bisheng hello yuan xiao bisheng hello yuan xiao bisheng hello yuan xiao bisheng"
+    content = "hello yuan xiao bisheng hello yuan xiao bisheng hello yuan xiao bisheng hello yuan xiao bisheng"
 
-
-    link="<a href=''>click</a>"
+    link = "<a href=''>click</a>"
 
     ###################### 标签
 
+    user = "alex"
 
-    user="alex"
-
-
-    #return render(request,"index.html",{"n":name})
-    return render(request,"index.html",locals())
-
+    # return render(request,"index.html",{"n":name})
+    return render(request, "index.html", locals()) # locals()将本地的变量都传送到模板里
 
 
 def login(request):
-
-    if request.method=="POST":
-
+    if request.method == "POST":
         return HttpResponse("OK")
 
-
-    return render(request,"login.html")
-
-
+    return render(request, "login.html")
 
 
 def orders(request):
-
-    return render(request,"orders.html")
+    return render(request, "orders.html")
