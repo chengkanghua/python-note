@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="col-md-6 col-md-offset-3">
+            <form action="" method="post">
+                {% csrf_token %}
+                <h3>修改</h3>
+                <div class="from-group">
+                    <lable for="title">书名</lable>
+                    <input type="text" id="title" class="form-control" name="title" value="{{ book_obj.title }}">
+                </div>
+                <div class="from-group">
+                    <lable for="price">价格</lable>
+                    <input type="text" id="price" class="form-control" name="price" value="{{ book_obj.price }}">
+                </div>
+                <div class="from-group">
+                    <lable for="pub_date">出版时间</lable>
+                    <input type="date" id="pub_date" class="form-control" name="pub_date"  value="{{ book_obj.pub_date |date:"Y-m-d"}}" >
+                </div>
+                <div class="from-group">
+                    <lable for="author">作者</lable>
+                    <input type="text" id="author" class="form-control" name="author" value="{{ book_obj.author }}">
+                </div>
+                <div class="from-group">
+                    <lable for="publish">出版社</lable>
+                    <input type="text" id="publish" class="form-control" name="publish" value="{{ book_obj.publish }}">
+                </div>
+                <p></p>
+                <input type="submit" value="修改" class="btn btn-success pull-right">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
