@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+</head>
+<body>
+<div class="container">
+    <div class="col-md-4 col-md-offset-4">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+            <lable> 书名</lable>
+            <input type="text" name="title" placeholder="书名" class="form-control">
+            </div>
+            <div class="form-group">
+            <lable> 出版时间</lable>
+            <input type="date" name="publishDate" class="form-control">
+            </div>
+             <div class="form-group">
+            <lable> 价格</lable>
+            <input type="text" name="price" class="form-control">
+            </div>
+            <div class="form-group">
+            <lable> 出版社</lable>
+            <select name="publish_id" id="" class="form-control">
+                {% for publish in publish_list %}
+                <option value="{{  publish.pk }}">{{ publish.name }}</option>
+                {% endfor %}
+            </select>
+            </div>
+            <div class="form-group">
+            <lable> 作者</lable>
+            <select name="authors_id_list" id="" class="" multiple class="form-control">
+                {% for author in author_list %}
+                <option value="{{ author.pk }}">{{ author.name }}</option>
+
+                {% endfor %}
+            </select>
+            </div>
+            <input type="submit" class="btn btn-default">
+        </form>
+    </div>
+</div>
+</body>
+</html>
