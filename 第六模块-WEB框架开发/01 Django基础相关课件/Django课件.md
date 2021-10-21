@@ -1087,16 +1087,12 @@ key：两次请求　
     
 ```
 
-
-
 用redirect可以解释APPEND_SLASH的用法！
 
 ```
 小提示:
 HttpResponse() #用于回复一个字符串 HttpResponse("aaa")  开发中很少用.
 ```
-
-
 
 
 
@@ -1281,7 +1277,11 @@ value="<a href="">点击</a>"
 {{ value|safe}}
 ```
 
-这里简单介绍一些常用的模板的过滤器，[更多详见](http://python.usyiyi.cn/translate/django_182/ref/templates/builtins.html#ref-templates-builtins-tags)
+这里简单介绍一些常用的模板的过滤器，
+
+https://docs.djangoproject.com/zh-hans/3.2/ref/templates/builtins/
+
+
 
 ## 3 模板之标签　
 
@@ -1346,8 +1346,6 @@ forloop.last               True if this is the last time through the loop
     <p>凑活吧</p>
 {% endif %}
 ```
-
-
 
 ### with[ ](http://python.usyiyi.cn/documents/django_182/ref/templates/builtins.html#with)
 
@@ -1547,9 +1545,9 @@ Django模版引擎中最强大也是最复杂的部分就是模版继承了。�
 
 -   不能在一个模版中定义多个相同名字的 `block` 标签。
 
+
+
 # [8 Django 模型层(1)](https://www.cnblogs.com/yuanchenqi/articles/8933283.html)
-
-
 
 # ORM简介
 
@@ -1557,8 +1555,6 @@ Django模版引擎中最强大也是最复杂的部分就是模版继承了。�
 -   ORM是“对象-关系-映射”的简称。
 
 ![img](assets/877318-20180425153356710-1116321211.png)
-
-
 
 
 
@@ -1590,9 +1586,6 @@ Django模版引擎中最强大也是最复杂的部分就是模版继承了。�
 
   #删除一条表纪录:                                                          
       DELETE FROM employee WHERE name="alex"                             
-
-
-
 
 
 #python的类
@@ -1628,8 +1621,6 @@ class Employee(models.Model):
 <img src="assets/877318-20180426141311697-594587712.png" alt="img" style="zoom:50%;" />
 
 创建名为book的app，在book下的models.py中创建模型：
-
-
 
 ```
 from django.db import models
@@ -2666,9 +2657,7 @@ bookList=Book.objects.filter(Q(authors__name="yuan") & ~Q(publishDate__year=2017
 查询函数可以混合使用`Q 对象`和关键字参数。所有提供给查询函数的参数（关键字参数或`Q` 对象）都将"AND”在一起。但是，如果出现`Q` 对象，它必须位于所有关键字参数的前面。例如：
 
 ```
-bookList=Book.objects.filter(Q(publishDate__year=2016) | Q(publishDate__year=2017),
-                              title__icontains="python"
-                             )
+bookList=Book.objects.filter(Q(publishDate__year=2016) | Q(publishDate__year=2017), title__icontains="python" )
                              
 ```
 
@@ -2710,8 +2699,6 @@ class Pizza(models.Model):
 
 **add(obj1[, obj2, ...])**
 
-[![复制代码](assets/copycode-20211010222607418.gif)](javascript:void(0);)
-
 ```
 把指定的模型对象添加到关联对象集中。
 
@@ -2735,11 +2722,7 @@ book_obj.authors.add(*[1,3])  # 将id=1和id=3的作者对象添加到这本书�
                               # 应用: 添加或者编辑时,提交作者信息时可以用到.  
 ```
 
-[![复制代码](assets/copycode-20211010222607418.gif)](javascript:void(0);)
-
 **create(\**kwargs)**
-
-[![复制代码](assets/copycode-20211010222607418.gif)](javascript:void(0);)
 
 ```
 创建一个新的对象，保存对象，并将它添加到关联对象集之中。返回新创建的对象：
@@ -2766,7 +2749,7 @@ book_obj.authors.add(*[1,3])  # 将id=1和id=3的作者对象添加到这本书�
 
 ```
 
-[![复制代码](assets/copycode-20211010222607418.gif)](javascript:void(0);)
+
 
 **remove(obj1[, obj2, ...])**
 
@@ -2781,8 +2764,6 @@ book_obj.authors.add(*[1,3])  # 将id=1和id=3的作者对象添加到这本书�
 
 **clear()**
 
-[![复制代码](assets/copycode-20211010222607418.gif)](javascript:void(0);)
-
 ```
 从关联对象集中移除一切对象。
 
@@ -2792,8 +2773,6 @@ book_obj.authors.add(*[1,3])  # 将id=1和id=3的作者对象添加到这本书�
 
 就像 remove() 方法一样，clear()只能在 null=True的ForeignKey上被调用。
 ```
-
-[![复制代码](assets/copycode-20211010222607418.gif)](javascript:void(0);)
 
 **set()方法**
 
@@ -2815,6 +2794,38 @@ book_obj.authors.add(*[1,3])  # 将id=1和id=3的作者对象添加到这本书�
 ```
 
 如果外键关系满足null=True，关联管理器会在添加new_list中的内容之前，首先调用clear()方法来解除关联集中一切已存在对象的关联。否则， new_list中的对象会在已存在的关联的基础上被添加。　　
+
+
+
+```python
+报错记录:
+#报错环境  python3.9.4  django2.2  PyMySQL1.0.2  mysql 5.7.31
+#数据迁移时候
+python3.9 manage.py makemigrations 
+AttributeError: 'str' object has no attribute 'decode'
+
+# 修改django 源码
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/django/db/backends/mysql/operations.py
+
+#140行
+def last_executed_query(self, cursor, sql, params):
+# With MySQLdb, cursor objects have an (undocumented) "_executed"
+# attribute where the exact query sent to the database is saved.
+# See MySQLdb/cursors.py in the source distribution.
+query = getattr(cursor, '_executed', None)
+# 修改前的源码
+# if query is not None:
+#     # query = query.decode(errors='replace')
+#     query = query.encode(errors='replace') # 或者把上一行注释掉 用这一行也可以解决
+# return query
+# 修改后的源码
+from django.utils.encoding import force_str  # 只需要将这个导入，放到该模块的最上面即可
+return force_str(query, errors='replace')
+
+更多报错 参考 https://www.cnblogs.com/Neeo/articles/14036364.html#attributeerror-str-object-has-no-attribute-decode
+```
+
+
 
 
 
@@ -4080,8 +4091,6 @@ MIDDLEWARE = [
 ## 自定义中间件
 
 中间件中一共有四个方法：
-
-
 
 ```
 process_request
