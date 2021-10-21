@@ -2,58 +2,61 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
+
 '''
 Book  ----   Publish 一对多
 
 '''
 
+# 作者表
 class Author(models.Model):
     nid = models.AutoField(primary_key=True)
-    name=models.CharField( max_length=32)
-    age=models.IntegerField()
+    name = models.CharField(max_length=32)
+    age = models.IntegerField()
     # 一对一
-    authordetail=models.OneToOneField(to="AuthorDetail",to_field="nid",on_delete=models.CASCADE)
+    authordetail = models.OneToOneField(to="AuthorDetail", to_field="nid", on_delete=models.CASCADE)
+
     def __str__(self):
         return self.name
 
+
 # 作者详情表
 class AuthorDetail(models.Model):
-
     nid = models.AutoField(primary_key=True)
-    birthday=models.DateField()
-    telephone=models.BigIntegerField()
-    addr=models.CharField( max_length=64)
+    birthday = models.DateField()
+    telephone = models.BigIntegerField()
+    addr = models.CharField(max_length=64)
+
 
 # 出版社表
 class Publish(models.Model):
     nid = models.AutoField(primary_key=True)
-    name=models.CharField( max_length=32)
-    city=models.CharField( max_length=32)
-    email=models.EmailField()
-
+    name = models.CharField(max_length=32)
+    city = models.CharField(max_length=32)
+    email = models.EmailField()
 
     def __str__(self):
         return self.name
 
 
+# 图书表
 class Book(models.Model):
     nid = models.AutoField(primary_key=True)
-    title = models.CharField( max_length=32)
-    publishDate=models.DateField()
-    price=models.DecimalField(max_digits=5,decimal_places=2)
-
-
-
+    title = models.CharField(max_length=32)
+    publishDate = models.DateField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    comment_sum = models.IntegerField(default=0)
+    read_sum  = models.IntegerField(default=0)
     # 一对多关系
-    publish=models.ForeignKey(to="Publish",to_field="nid",on_delete=models.CASCADE,)
+    publish = models.ForeignKey(to="Publish", to_field="nid", on_delete=models.CASCADE, )
     '''
         publish_id INT ,
         FOREIGN KEY (publish_id) REFERENCES publish(id)
 
     '''
 
-    #多对多
-    authors =models.ManyToManyField(to="Author")
+    # 多对多
+    authors = models.ManyToManyField(to="Author")
 
     '''
     CREATE  TABLE book_authors(
@@ -65,43 +68,19 @@ class Book(models.Model):
         )
     '''
 
-
-# class Book2Author(models.Model):
-#
-#     nid = models.AutoField(primary_key=True)
-#     book=models.ForeignKey(to="Book")
-#     author=models.ForeignKey(to="Author")
+    # class Book2Author(models.Model):
+    #     nid = models.AutoField(primary_key=True)
+    #     book=models.ForeignKey(to="Book")
+    #     author=models.ForeignKey(to="Author")
 
     def __str__(self):
-        return self.title
+        return self.title  # 当打印 关联字段 publish对象时候返回 对象.title
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 员工表
 class Emp(models.Model):
-
-    name=models.CharField(max_length=32)
-    age=models.IntegerField()
-    salary=models.DecimalField(max_digits=8,decimal_places=2)
-    dep=models.CharField(max_length=32)
-    province=models.CharField(max_length=32)
-
-
-
-
-
-
+    name = models.CharField(max_length=32)
+    age = models.IntegerField()
+    salary = models.DecimalField(max_digits=8, decimal_places=2)
+    dep = models.CharField(max_length=32)
+    province = models.CharField(max_length=32)   # province 省份

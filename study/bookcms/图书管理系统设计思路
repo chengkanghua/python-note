@@ -1,0 +1,16 @@
+
+1 需求了解
+
+2 设计数据库
+class Book(models.Model):
+     id=models.AutoField(primary_key=True)
+     title=models.CharField(max_length=32)
+     pub_date=models.DateField()
+     price=models.DecimalField(max_digits=8,decimal_places=2)
+     publish=models.CharField(max_length=32)
+
+
+3 数据结构创建好后 ,做增加页面功能
+ url --> views --> template
+
+

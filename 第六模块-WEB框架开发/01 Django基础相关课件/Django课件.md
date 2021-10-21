@@ -375,7 +375,7 @@ pip3 install django==2.0.1
 #安装之后 文件所在位置
 /Library/Frameworks/Python.framework/Versions/3.9/bin/django-admin.py  
 
-django_admin.py startproject mysite
+django-admin.py startproject mysite
 ```
 
  当前目录下会生成mysite的工程，目录结构如下：
@@ -1361,9 +1361,11 @@ forloop.last               True if this is the last time through the loop
 {% endwith %}
 ```
 
-### csrf_token[ ](http://python.usyiyi.cn/documents/django_182/ref/templates/builtins.html#csrf-token)
+### csrf_token
 
 这个标签用于跨站请求伪造保护
+
+这叫跨站请求伪造，Cross Site Request Forgery（**CSRF**）
 
 ## 4 自定义标签和过滤器
 
@@ -2047,29 +2049,32 @@ Book.objects.filter(title__startswith="py").update(price=120)
 
 模型建立如下：
 
-
-
-```
+```python
 from django.db import models
 
 # Create your models here.
 
-
+# 作者表
 class Author(models.Model):
     nid = models.AutoField(primary_key=True)
     name=models.CharField( max_length=32)
     age=models.IntegerField()
 
     # 与AuthorDetail建立一对一的关系
-    authorDetail=models.OneToOneField(to="AuthorDetail",on_delete=models.CASCADE)
-
+    # authorDetail=models.OneToOneField(to="AuthorDetail",on_delete=models.CASCADE)
+		# 与AuthorDetail建立一对一的关系  OneToOneField会自动给字段限制unique  
+    # 关联是主键nid可不加,django会自动加.  on_delete=models.CASCADE Django2.0之后要加上.
+    # on_delete=models.CASCADE,    # 删除关联数据,与之关联也删除
+    authorDetail=models.OneToOneField(to="AuthorDetail",to_field="nid", on_delete=models.CASCADE)
+    
+# 作者详情表
 class AuthorDetail(models.Model):
-
     nid = models.AutoField(primary_key=True)
     birthday=models.DateField()
     telephone=models.BigIntegerField()
     addr=models.CharField( max_length=64)
 
+# 出版社表
 class Publish(models.Model):
     nid = models.AutoField(primary_key=True)
     name=models.CharField( max_length=32)
@@ -2077,20 +2082,20 @@ class Publish(models.Model):
     email=models.EmailField()
 
 
+# 图书表
 class Book(models.Model):
-
     nid = models.AutoField(primary_key=True)
     title = models.CharField( max_length=32)
     publishDate=models.DateField()
     price=models.DecimalField(max_digits=5,decimal_places=2)
 
-    # 与Publish建立一对多的关系,外键字段建立在多的一方
+    # 与Publish建立一对多的关系,外键字段建立在多的一方 #关联出版社表 nid字段  publish生成字段时候会自动生成publish_id
     publish=models.ForeignKey(to="Publish",to_field="nid",on_delete=models.CASCADE)
     # 与Author表建立多对多的关系,ManyToManyField可以建在两个模型中的任意一个，自动创建第三张表
     authors=models.ManyToManyField(to='Author',)
 ```
 
-
+扩展: https://www.django.cn/article/show-6.html   Django2.0外键参数on_delete的使用方法
 
  生成表如下：
 
@@ -2114,6 +2119,18 @@ class Book(models.Model):
 -    这个例子中的`CREATE TABLE` SQL 语句使用PostgreSQL 语法格式，要注意的是Django 会根据settings 中指定的数据库类型来使用相应的SQL 语句。
 -    定义好模型之后，你需要告诉Django _使用_这些模型。你要做的就是修改配置文件中的INSTALL_APPSZ中设置，在其中添加`models.py`所在应用的名称。
 -   外键字段 ForeignKey 有一个 null=True 的设置(它允许外键接受空值 NULL)，你可以赋给它空值 None 。
+
+```
+小笔记:
+一旦确定一对多关系:  建立一对多的关系----> 在多的表中建立关联字段
+一旦确定多对多关系:  建立多对多的关系----> 创建第三张表(关联表)  id 和 两个关联字段
+一旦确定一对一关系:  建立一对一的关系----> 在两张表中任意一张表中建立关联字段+Unique
+
+建关联字段是为了查询, 外键约束是为了避免产生脏数据
+ 
+```
+
+
 
 ## 添加表纪录 
 
@@ -2202,7 +2219,7 @@ print(book_obj.publish.city) 　
 
 ```
 publish=Publish.objects.get(name="苹果出版社")
-#publish.book_set.all() : 与苹果出版社关联的所有书籍对象集合
+#publish.book_set.all() : 与苹果出版社关联的所有书籍对象集合   按表名小写 book_set.all()
 book_list=publish.book_set.all()    
 for book_obj in book_list:
        print(book_obj.title)
@@ -2245,10 +2262,10 @@ for author_obj in authors:
 ```
 # 查询egon出过的所有书籍的名字
  
-    author_obj=Author.objects.get(name="egon")
-    book_list=author_obj.book_set.all()        #与egon作者相关的所有书籍
-    for book_obj in book_list:
-        print(book_obj.title)
+ author_obj=Author.objects.get(name="egon")
+ book_list=author_obj.book_set.all()        #与egon作者相关的所有书籍
+ for book_obj in book_list:
+     print(book_obj.title)
 ```
 
 **注意：**
@@ -2523,7 +2540,6 @@ print(queryResult)
 ```
 '''
 
-
 SELECT "app01_publish"."name", MIN("app01_book"."price")  AS "MinPrice" FROM "app01_publish" 
 LEFT  JOIN "app01_book" ON ("app01_publish"."nid" = "app01_book"."publish_id") 
 GROUP BY "app01_publish"."nid", "app01_publish"."name", "app01_publish"."city", "app01_publish"."email" 
@@ -2536,15 +2552,16 @@ GROUP BY "app01_publish"."nid", "app01_publish"."name", "app01_publish"."city", 
 (2) 练习：统计每一本书的作者个数
 
 ```
-ret=Book.objects.annotate(authorsNum=Count('authors__name'))
+ret = Book.objects.annotate(authorsNum=Count("authors__name")).values("title","authorsNum")
 ```
 
 (3) 统计每一本以py开头的书籍的作者个数：
 
 ```
- queryResult=Book.objects
-　　　　　　　　　　 .filter(title__startswith="Py")
-　　　　　　　　　 　.annotate(num_authors=Count('authors'))
+ queryResult=Book.objects.filter(title__startswith="Py").annotate(num_authors=Count('authors'))
+　　　　　　　　　 　
+ret = Book.objects.filter(title__startswith="py").annotate(authorSnum=Count("authors__name")).values_list("title","authorSnum")
+
 ```
 
 (4) 统计不止一个作者的图书：
@@ -2582,9 +2599,10 @@ Django 提供 F() 来做这样的比较。F() 的实例可以在查询中引用�
 
 ```
 # 查询评论数大于收藏数的书籍
- 
-   from django.db.models import F
-   Book.objects.filter(commnetNum__lt=F('keepNum'))
+
+from django.db.models import F
+Book.objects.filter(commnetNum__lt=F('keepNum'))
+
 ```
 
 Django 支持 F() 对象之间以及 F() 对象和常数之间的加减乘除和取模的操作。
@@ -2598,8 +2616,22 @@ Django 支持 F() 对象之间以及 F() 对象和常数之间的加减乘除和
 
 ```
 Book.objects.all().update(price=F("price")+30)　
+```
 
 ```
+数据准备:
+直接在models.py  book 类中添加两个字段
+comment_sum = models.IntegerField(default=0)
+read_sum  = models.IntegerField(default=0)
+
+
+kanghuadeMacBook-Pro:08-ORM2 kanghua$  python3.9 manage.py makemigrations
+kanghuadeMacBook-Pro:08-ORM2 kanghua$ python3.9 manage.py migrate
+
+
+```
+
+
 
 ### Q查询
 
