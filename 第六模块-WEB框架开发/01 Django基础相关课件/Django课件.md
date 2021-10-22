@@ -2822,7 +2822,7 @@ query = getattr(cursor, '_executed', None)
 from django.utils.encoding import force_str  # 只需要将这个导入，放到该模块的最上面即可
 return force_str(query, errors='replace')
 
-更多报错 参考 https://www.cnblogs.com/Neeo/articles/14036364.html#attributeerror-str-object-has-no-attribute-decode
+更多报错 参考 https://www.cnblogs.com/Neeo/articles/14036364.html
 ```
 
 
@@ -2898,7 +2898,7 @@ AJAX除了**异步**的特点外，还有一个就是：浏览器页面**局部�
 
 ### Ajax－服务器－Ajax流程图
 
-略
+![image-20211022103615555](assets/image-20211022103615555.png)
 
 ## 案例
 
@@ -2983,8 +2983,6 @@ JSON 格式支持比键值对复杂得多的结构化数据，这一点也很有
 
 ### 视图部分
 
-
-
 ```
 def index(request):
     print(request.body)   # 原始的请求体数据
@@ -2996,15 +2994,13 @@ def index(request):
     return render(request,"index.html")
 ```
 
-
-
 ## 基于Ajax的文件上传
 
 ### 模板
 
 
 
-```
+```js
 <form>
       用户名 <input type="text" id="user">
       头像 <input type="file" id="avatar">
@@ -3072,8 +3068,6 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryaWl9k5ZMiTAzx3
 # Django的分页器（paginator）
 
 ### view
-
-
 
 ```
 from django.shortcuts import render,HttpResponse

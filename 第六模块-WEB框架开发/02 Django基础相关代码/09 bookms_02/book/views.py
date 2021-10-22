@@ -54,9 +54,6 @@ def change_book(request,edit_book_id):
 
         return redirect("/books/")
 
-
-
-
     publish_list=Publish.objects.all()
     author_list=Author.objects.all()
 
