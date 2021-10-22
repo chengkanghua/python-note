@@ -1,4 +1,4 @@
-"""bookcms2 URL Configuration
+"""Ajaxdemo URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -14,13 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,re_path
-from book import views
+from django.urls import path
 
+
+from app01 import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path("books/add/$", views.add_book),
-    re_path("books/$", views.books),
-    re_path("books/(\d+)/editbook/$", views.editbook),
-    re_path('books/(\d+)/delete/$', views.delete_book),
+    path('index/', views.index),
+    path('test_ajax/', views.test_ajax),
+    path('cal/', views.cal),
+    path('login/', views.login),
+    path('file_put/', views.file_put),
+
 ]
