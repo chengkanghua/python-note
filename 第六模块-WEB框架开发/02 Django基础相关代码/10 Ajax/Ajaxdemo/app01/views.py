@@ -48,11 +48,11 @@ def file_put(request):
         print("body", request.body)  # 请求报文中的请求体
         print("POST", request.POST)  # if contentType==urlencoded ,request.POST才有数据
 
-        print(request.FILES)
-        file_obj = request.FILES.get("avatar")
-        with open(file_obj.name, "wb") as f:
-            for line in file_obj:
-                f.write(line)
+        print(request.FILES)                    # 打印文件对象
+        # file_obj = request.FILES.get("avatar")   # 接受ajax发过来的头像图片
+        # with open(file_obj.name, "wb") as f:     # 存入服务器
+        #     for line in file_obj:
+        #         f.write(line)
 
         return HttpResponse("OK")
 

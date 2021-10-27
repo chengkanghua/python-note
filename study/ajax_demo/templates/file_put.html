@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
+</head>
+<body>
+<h3>简单form</h3>
+<form action="" method="post">
+    用户名: <input type="text" name="user">
+    密码: <input type="password" name="pwd">
+    <input type="submit" >
+</form>
+<h3>基于form表单文件上传</h3>
+<form action="" method="post" enctype="multipart/form-data">
+    用户名: <input type="text" name="user">
+    头像: <input type="file" name="avatar">
+    <input type="submit">
+</form>
+<h3>基于ajax 上传文件</h3>
+<form action="" method="post" enctype="multipart/form-data">
+    用户名: <input type="text" id="user">
+    头像: <input type="file" id="avatar">
+    <input type="button" class="btn" value="Ajax">
+</form>
+
+
+</body>
+<script>
+    $('.btn').click(function () {
+        var formdata = new FormData()
+        formdata.append("user",$('#user').val())
+        formdata.append("avatar",$("#avatar")[0].files[0])
+        $.ajax({
+            url:"",
+            type:"post",
+            contentType:false,
+            processData:false,
+            data:formdata,
+            success:function (data) {
+                console.log(data)
+            }
+        })
+    })
+</script>
+
+</html>
