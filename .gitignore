@@ -142,3 +142,9 @@ Desktop.ini
 
 # My configurations:
 .DS_Store
+
+# vscode
+.vscode/
+
+# pychram
+.idea/
