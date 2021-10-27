@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+
+</head>
+<body>
+<h3>this is index</h3>
+<button class="Ajax">Ajax</button>
+<p class="content"></p>
+
+<hr>
+<input type="text" id="num1">+<input type="text" id="num2">=<input type="text" id="ret"><button class="cal">计算</button>
+
+<form>
+    用户名<input type="text" name="uname" class="uname">
+    密码 <input type="password" name="password" class="password">
+    <input type="button" class="login" value="登陆"> <span class="error"></span>
+</form>
+
+</body>
+<script>
+    $('.Ajax').click(function () {
+        $.ajax({
+            url:"/test_ajax/",
+            type:'get',
+            data:{a:1,b:1},
+            success:function (data) {
+                console.log(data);
+                $(".content").html(data)
+            }
+        })
+
+    })
+
+    $(".cal").click(function () {
+        $.ajax({
+            url:"/cal/",
+            type:'post',
+            data:{
+                "n1":$("#num1").val(),
+                "n2":$("#num2").val(),
+            },
+            success:function (data) {
+                console.log(data)
+                $("#ret").val(data)
+
+            }
+        })
+
+    })
+
+    $(".login").click(function () {
+        $.ajax({
+            url:"/login/",
+            type:"post",
+            data:{
+                uname: $(".uname").val(),
+                password: $(".password").val(),
+            },
+            success:function(data){
+                console.log(data)
+                console.log(typeof data)
+
+                var data = JSON.parse(data)
+                console.log(data)
+                console.log(typeof data)
+
+                if (data.uname) {
+                    location.href="http://www.baidu.com"
+                }else{
+                   // $(".error").html(data.msg).css({"color":"red","margin-left":"10px"})
+                    $(".error").html(data.msg).css({"color":"red"})
+
+                   // alert('aa')
+                }
+
+            }
+        })
+    })
+</script>
+</html>

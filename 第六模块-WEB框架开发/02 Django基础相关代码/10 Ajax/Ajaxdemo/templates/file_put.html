@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+    <!--
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>  -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
 
 </head>
 <body>
@@ -36,68 +38,61 @@
 
 
 <script>
+/*
+    // Content-Type: application/json
+    $(".btn").click(function(){
+      $.ajax({
+          url:"",
+          type:"post",
+          contentType:"application/json",
+          data:JSON.stringify({  // json序列化 json字符串 body打印结果 b'{"a":1,"b":2}'
+              a:1,
+              b:2
+          }),
+          success:function(data){
+              console.log(data)
+          }
+      })
+  })
+*/
 
-{##}
-{#    $(".btn").click(function(){#}
-{##}
-{#        $.ajax({#}
-{#            url:"",#}
-{#            type:"post",#}
-{#            contentType:"application/json",#}
-{#            data:JSON.stringify({#}
-{#                a:1,#}
-{#                b:2#}
-{#            }),#}
-{#            success:function(data){#}
-{#                console.log(data)#}
-{#            }#}
-{#        })#}
-{##}
-{##}
-{##}
-{#    })#}
-{#    #}
+/*
+    // Content-Type: application/x-www-form-urlencoded;
+    $(".btn").click(function(){
+       $.ajax({
+            url:"",
+            type:"post",
+            data:{         //  源数据 a=1&b=2
+               a:1,
+               b:2
+           },
+           success:function(data){
+               console.log(data)
+           }
+        })
+    })
 
-
-
-{#    $(".btn").click(function(){#}
-{##}
-{#        $.ajax({#}
-{#            url:"",#}
-{#            type:"post",#}
-{#            data:{#}
-{#                a:1,#}
-{#                b:2#}
-{#            },#}
-{#            success:function(data){#}
-{#                console.log(data)#}
-{#            }#}
-{#        })#}
-{##}
-{#    })#}
-
-
-
+*/
 
 
     // ajax上传文件
     $(".btn").click(function(){
-
         var formdata=new FormData();
         formdata.append("user",$("#user").val());
         formdata.append("avatar",$("#avatar")[0].files[0]);
-
         $.ajax({
             url:"",
             type:"post",
-            contentType:false,
-            processData:false,
-            data:formdata,
+            contentType:false,  // 固定参数 不做任何编码
+            processData:false,  // 固定参数  数据不做预处理
+            data:formdata,      // 发送formdata对象
             success:function(data){
                 console.log(data)
             }
         })
     })
+
+
 </script>
 
 

@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+# DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000  # 文件上传接收值大小限制 默认： 2621440 （即 2.5 MB）。
 # Application definition
 
 INSTALLED_APPS = [

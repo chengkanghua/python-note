@@ -2855,17 +2855,17 @@ AJAX除了**异步**的特点外，还有一个就是：浏览器页面**局部�
 
 
 
-```
+```js
 <button class="send_Ajax">send_Ajax</button>
 <script>
 
        $(".send_Ajax").click(function(){
-
+					 //	发送ajax请求
            $.ajax({
-               url:"/handle_Ajax/",
-               type:"POST",
-               data:{username:"Yuan",password:123},
-               success:function(data){
+               url:"/handle_Ajax/",  // 请求url
+               type:"POST",          // 请求方式post
+               data:{username:"Yuan",password:123},  //发送数据
+               success:function(data){    // 回调函数
                    console.log(data)
                },
          　　　　　　
@@ -2890,8 +2890,9 @@ AJAX除了**异步**的特点外，还有一个就是：浏览器页面**局部�
            })
 
        })
-
+// 更多参考 https://blog.csdn.net/zhbitxhd/article/details/9946799
 </script>
+
 ```
 
 
@@ -2998,8 +2999,6 @@ def index(request):
 
 ### 模板
 
-
-
 ```js
 <form>
       用户名 <input type="text" id="user">
@@ -3035,8 +3034,6 @@ def index(request):
 
 ### 视图
 
-
-
 ```
 def index(request):
 
@@ -3061,6 +3058,15 @@ def index(request):
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryaWl9k5ZMiTAzx3FT
 ```
 
+```
+小笔记:
+这里先把 django 的 csrf_token功能关闭
+settings.py 文件  注释 MIDDLEWARE=[] 里
+# 'django.middleware.csrf.CsrfViewMiddleware',
+
+
+```
+
 
 
 # [11 Django组件-分页器](https://www.cnblogs.com/yuanchenqi/articles/9036515.html)
@@ -3069,7 +3075,7 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryaWl9k5ZMiTAzx3
 
 ### view
 
-```
+```python
 from django.shortcuts import render,HttpResponse
 
 # Create your views here.
@@ -3077,10 +3083,8 @@ from app01.models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def index(request):
-
     '''
     批量导入数据:
-
     Booklist=[]
     for i in range(100):
         Booklist.append(Book(title="book"+str(i),price=30+i*i))
@@ -3089,23 +3093,19 @@ def index(request):
 
     '''
 分页器的使用:
-
     book_list=Book.objects.all()
 
-    paginator = Paginator(book_list, 10)
+    paginator = Paginator(book_list, 10)  # 10表示每页显示数
 
     print("count:",paginator.count)           #数据总数
     print("num_pages",paginator.num_pages)    #总页数
     print("page_range",paginator.page_range)  #页码的列表
-
-
 
     page1=paginator.page(1) #第1页的page对象
     for i in page1:         #遍历第1页的所有数据对象
         print(i)
 
     print(page1.object_list) #第1页的所有数据
-
 
     page2=paginator.page(2)
 
@@ -3114,8 +3114,6 @@ def index(request):
     print(page2.has_previous())        #是否有上一页
     print(page2.previous_page_number()) #上一页的页码
 
-
-
     # 抛错
     #page=paginator.page(12)   # error:EmptyPage
 
@@ -3123,13 +3121,11 @@ def index(request):
 
     '''
 
-
     book_list=Book.objects.all()
 
     paginator = Paginator(book_list, 10)
-    page = request.GET.get('page',1)
+    page = request.GET.get('page',1)  # 获取浏览传过来的参数page的值,如果没有默认1
     currentPage=int(page)
-
 
     try:
         print(page)
@@ -3139,17 +3135,16 @@ def index(request):
     except EmptyPage:
         book_list = paginator.page(paginator.num_pages)
 
-
     return render(request,"index.html",{"book_list":book_list,"paginator":paginator,"currentPage":currentPage})
+  
+  
 ```
 
 
 
 ### index.html:
 
-
-
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3159,30 +3154,21 @@ def index(request):
     integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body>
-
 <div class="container">
-
     <h4>分页器</h4>
     <ul>
-
         {% for book in book_list %}
              <li>{{ book.title }} -----{{ book.price }}</li>
         {% endfor %}
-
      </ul>
-
-
     <ul class="pagination" id="pager">
-
-                 {% if book_list.has_previous %}
+                 {% if book_list.has_previous %}  <!-- 判断是否有下一页 -->
                     <li class="previous"><a href="/index/?page={{ book_list.previous_page_number }}">上一页</a></li>
                  {% else %}
                     <li class="previous disabled"><a href="#">上一页</a></li>
                  {% endif %}
 
-
                  {% for num in paginator.page_range %}
-
                      {% if num == currentPage %}
                        <li class="item active"><a href="/index/?page={{ num }}">{{ num }}</a></li>
                      {% else %}
@@ -3191,18 +3177,13 @@ def index(request):
                      {% endif %}
                  {% endfor %}
 
-
-
                  {% if book_list.has_next %}
                     <li class="next"><a href="/index/?page={{ book_list.next_page_number }}">下一页</a></li>
                  {% else %}
                     <li class="next disabled"><a href="#">下一页</a></li>
                  {% endif %}
-
             </ul>
 </div>
-
-
 
 </body>
 </html>
@@ -3212,32 +3193,24 @@ def index(request):
 
 ## 扩展
 
-
-
-```
+```python
 def index(request):
 
-
     book_list=Book.objects.all()
-
     paginator = Paginator(book_list, 15)
     page = request.GET.get('page',1)
     currentPage=int(page)
 
-    #  如果页数十分多时，换另外一种显示方式
+    #  页数过多时候, 页数始终保持10页显示
     if paginator.num_pages>11:
-
         if currentPage-5<1:
             pageRange=range(1,11)
         elif currentPage+5>paginator.num_pages:
             pageRange=range(currentPage-5,paginator.num_pages+1)
-
         else:
             pageRange=range(currentPage-5,currentPage+5)
-
     else:
-        pageRange=paginator.page_range
-
+        pageRange=paginator.page_range    # 低于10页的显示
 
     try:
         print(page)
@@ -3247,8 +3220,8 @@ def index(request):
     except EmptyPage:
         book_list = paginator.page(paginator.num_pages)
 
-
     return render(request,"index.html",locals())
+  
 ```
 
 
@@ -3263,7 +3236,7 @@ def index(request):
 
 模型：models.py
 
-```
+```python
 class UserInfo(models.Model):
     name=models.CharField(max_length=32)
     pwd=models.CharField(max_length=32)
@@ -3273,9 +3246,7 @@ class UserInfo(models.Model):
 
 模板: register.html:
 
-
-
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3314,31 +3285,24 @@ class UserInfo(models.Model):
 
 视图函数：register
 
-
-
-```
+```python
 # forms组件
 from django.forms import widgets
 
 wid_01=widgets.TextInput(attrs={"class":"form-control"})
 wid_02=widgets.PasswordInput(attrs={"class":"form-control"})
 
-class UserForm(forms.Form):
-    name=forms.CharField(max_length=32,
-                         widget=wid_01
-                         )
+class UserForm(forms.Form): #继承forms类
+    name=forms.CharField(max_length=32,widget=wid_01)  # name是字符串最长32
     pwd=forms.CharField(max_length=32,widget=wid_02)
     r_pwd=forms.CharField(max_length=32,widget=wid_02)
     email=forms.EmailField(widget=wid_01)
     tel=forms.CharField(max_length=32,widget=wid_01)
 
-
-
 def register(request):
-
     if request.method=="POST":
-        form=UserForm(request.POST)
-        if form.is_valid():
+        form=UserForm(request.POST)  # 接收的所有值交给UserForm
+        if form.is_valid():    # 所有校验的规则都对才返回True
             print(form.cleaned_data)       # 所有干净的字段以及对应的值
         else:
             print(form.cleaned_data)       #
@@ -3355,9 +3319,7 @@ def register(request):
 
 ### 渲染方式1
 
-
-
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -3371,7 +3333,6 @@ def register(request):
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-lg-offset-3">
-
                 <form action="" method="post">
                     {% csrf_token %}
                     <div>
@@ -3390,14 +3351,11 @@ def register(request):
                         <label for=""> 邮箱</label>
                         {{ form.email }}
                     </div>
-
                     <input type="submit" class="btn btn-default pull-right">
                 </form>
         </div>
     </div>
 </div>
-
-
 
 </body>
 </html>
@@ -3407,20 +3365,16 @@ def register(request):
 
 ### 渲染方式2
 
-
-
-```
+```html
 <form action="" method="post">
-                    {% csrf_token %}
-                    
+                    {% csrf_token %}    
                     {% for field in form %}
                         <div>
                             <label for="">{{ field.label }}</label>
                             {{ field }}
                         </div>
                     {% endfor %}
-                    <input type="submit" class="btn btn-default pull-right">
-                
+                    <input type="submit" class="btn btn-default pull-right">              
 </form>
 ```
 
@@ -3428,15 +3382,11 @@ def register(request):
 
 ### 渲染方式3
 
-
-
-```
+```html
 <form action="" method="post">
-    {% csrf_token %}
-    
+    {% csrf_token %}    
     {{ form.as_p }}
     <input type="submit" class="btn btn-default pull-right">
-
 </form>
 ```
 
@@ -3446,11 +3396,8 @@ def register(request):
 
 ### 视图
 
-
-
-```
+```python
 def register(request):
-
     if request.method=="POST":
         form=UserForm(request.POST)
         if form.is_valid():
@@ -3468,12 +3415,9 @@ def register(request):
 
 ### 模板
 
-
-
-```
+```python
 <form action="" method="post" novalidate>
     {% csrf_token %}
-    
     {% for field in form %}
         <div>
             <label for="">{{ field.label }}</label>
@@ -3481,7 +3425,6 @@ def register(request):
         </div>
     {% endfor %}
     <input type="submit" class="btn btn-default">
-
 </form>
 ```
 
@@ -3491,9 +3434,7 @@ def register(request):
 
 ### 模板
 
-
-
-```
+```python
 # forms组件
 from django.forms import widgets
 
@@ -3509,7 +3450,6 @@ class UserForm(forms.Form):
     r_pwd=forms.CharField(max_length=32,widget=wid_02)
     email=forms.EmailField(widget=wid_01)
     tel=forms.CharField(max_length=32,widget=wid_01)
-
 
     # 局部钩子
     def clean_name(self):
@@ -3530,16 +3470,13 @@ class UserForm(forms.Form):
         else:
             raise ValidationError('两次密码不一致!')
 
-
 def register(request):
-
     if request.method=="POST":
         form=UserForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)       # 所有干净的字段以及对应的值
         else:
             clean_error=form.errors.get("__all__")
-
         return render(request,"register.html",locals())
     form=UserForm()
     return render(request,"register.html",locals())
@@ -3549,9 +3486,7 @@ def register(request):
 
 ### 视图
 
-
-
-```
+```python
  <form action="" method="post" novalidate>
             {% csrf_token %}
 
@@ -3637,8 +3572,6 @@ rep.set_signed_cookie(key,value,salt='加密盐',...)　
 
 源码：　　
 
-
-
 ```
 '''
 class HttpResponseBase:
@@ -3648,25 +3581,19 @@ class HttpResponseBase:
         　　　　　　　　　　　　 max_age=None,        超长时间 
 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　cookie需要延续的时间（以秒为单位）
 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　如果参数是\ None`` ，这个cookie会延续到浏览器关闭为止。
-
         　　　　　　　　　　　　 expires=None,        超长时间
-       　　　　　　　　　　　　　　　　　　　　　　　　　　expires默认None ,cookie失效的实际日期/时间。 
-    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
-
+       　　　　　　　　　　　　　　　　　　　　　　　　　　expires默认None ,cookie失效的实际日期/时间。 　　　　　　　　
         　　　　　　　　　　　　 path='/',           Cookie生效的路径，
                                                  浏览器只会把cookie回传给带有该路径的页面，这样可以避免将
                                                  cookie传给站点中的其他的应用。
-                                                 / 表示根路径，特殊的：根路径的cookie可以被任何url的页面访问
-        　　　　　　　　　　　　 
-                             domain=None,         Cookie生效的域名
-                                                
+                                                 / 表示根路径，特殊的：根路径的cookie可以被任何url的页面访问　　　　　　　　　 
+                             domain=None,         Cookie生效的域名             
                                                   你可用这个参数来构造一个跨站cookie。
                                                   如， domain=".example.com"
                                                   所构造的cookie对下面这些站点都是可读的：
                                                   www.example.com 、 www2.example.com 
         　　　　　　　　　　　　　　　　　　　　　　　　　和an.other.sub.domain.example.com 。
                                                   如果该参数设置为 None ，cookie只能由设置它的站点读取。
-
         　　　　　　　　　　　　 secure=False,        如果设置为 True ，浏览器将通过HTTPS来回传cookie。
         　　　　　　　　　　　　 httponly=False       只能http协议传输，无法被JavaScript获取
                                                  （不是绝对，底层抓包可以获取到也可以被覆盖）
@@ -3713,11 +3640,11 @@ Session是服务器端技术，利用这个技术，服务器在运行时可以 
 3、删除Sessions值
           del request.session["session_name"]
 4、flush()
-     删除当前的会话数据并删除会话的Cookie。
+     删除当前的会话数据(seesion)并删除会话的Cookie。
      这用于确保前面的会话数据不可以再次被用户的浏览器访问
             
 ------------------
-5、get(key, default=None)
+5、get(key, default=None)  # 参数1 获取值, 参数2获取不到默认值
   
 fav_color = request.session.get('fav_color', 'red')
   
@@ -3749,6 +3676,7 @@ fav_color = request.session.pop('fav_color')
             * 如果value是个datatime或timedelta，session就会在这个时间后失效。
             * 如果value是0,用户关闭浏览器session就会失效。
             * 如果value是None,session会依赖全局session失效策略。
+            
 ```
 
 session配置
@@ -3757,17 +3685,17 @@ session配置
 Django默认支持Session，并且默认是将Session数据存储在数据库中，即：django_session 表中。
    
 a. 配置 settings.py
-   
     SESSION_ENGINE = 'django.contrib.sessions.backends.db'   # 引擎（默认）
-       
-    SESSION_COOKIE_NAME = "sessionid"                       # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
-    SESSION_COOKIE_PATH = "/"                               # Session的cookie保存的路径（默认）
-    SESSION_COOKIE_DOMAIN = None                             # Session的cookie保存的域名（默认）
-    SESSION_COOKIE_SECURE = False                            # 是否Https传输cookie（默认）
-    SESSION_COOKIE_HTTPONLY = True                           # 是否Session的cookie只支持http传输（默认）
-    SESSION_COOKIE_AGE = 1209600                             # Session的cookie失效日期（2周）（默认）
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = False                  # 是否关闭浏览器使得Session过期（默认）
-    SESSION_SAVE_EVERY_REQUEST = False                       # 是否每次请求都保存Session，默认修改之后才保存（默认）
+    
+    SESSION_COOKIE_NAME = "sessionid"    # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
+    SESSION_COOKIE_PATH = "/"                        # Session的cookie保存的路径（默认）
+    SESSION_COOKIE_DOMAIN = None                     # Session的cookie保存的域名（默认）
+    SESSION_COOKIE_SECURE = False                    # 是否Https传输cookie（默认）
+    SESSION_COOKIE_HTTPONLY = True                   # 是否Session的cookie只支持http传输（默认）
+    SESSION_COOKIE_AGE = 1209600                     # Session的cookie失效日期（2周）（默认）
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = False          # 是否关闭浏览器使得Session过期（默认）
+    SESSION_SAVE_EVERY_REQUEST = False               # 是否每次请求都保存Session，默认修改之后才保存（默认）
+    
 ```
 
 ### 练习
@@ -3880,7 +3808,7 @@ django.contrib.auth中提供了许多方法，这里主要介绍其中的三个�
 
 如果认证信息有效，会返回一个 User 对象。authenticate()会在User 对象上设置一个属性标识那种认证后端认证了该用户，且该信息在后面的登录过程中是需要的。当我们试图登陆一个从数据库中直接取出来不经过authenticate()的User对象会报错的！！
 
-```
+```python
 user = authenticate(username='someone',password='somepassword')
 ```
 
@@ -3890,7 +3818,7 @@ user = authenticate(username='someone',password='somepassword')
 
 此函数使用django的session框架给某个已认证的用户附加上session id等信息。
 
-```
+```python
 from django.contrib.auth import authenticate, login
    
 def my_view(request):
@@ -3908,7 +3836,7 @@ def my_view(request):
 
 ### **1.3 、logout(request) 注销用户**　　
 
-```
+```python
 from django.contrib.auth import logout
    
 def logout_view(request):
@@ -3937,7 +3865,7 @@ User 对象属性：username， password（必填项）password用哈希算法�
 
 方法1:
 
-```
+```python
 def my_view(request):
   if not request.user.is_authenticated():
     return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
@@ -3961,7 +3889,7 @@ def my_view(request):
 
 使用 create_user 辅助函数创建用户:
 
-```
+```python
 from django.contrib.auth.models import User
 user = User.objects.create_user（username='',password='',email=''）
 ```
@@ -3986,12 +3914,10 @@ user.save　
 
 **注册：**
 
-```
+```python
 def sign_up(request):
- 
     state = None
     if request.method == 'POST':
- 
         password = request.POST.get('password', '')
         repeat_password = request.POST.get('repeat_password', '')
         email=request.POST.get('email', '')
@@ -4014,7 +3940,7 @@ def sign_up(request):
 
 **修改密码：**
 
-```
+```python
 @login_required
 def set_password(request):
     user = request.user
@@ -4063,8 +3989,6 @@ Middleware is a framework of hooks into Django’s request/response processing. 
 可能你还想在view执行之前做一些操作，这种情况就可以用 middleware来实现。
 
 Django默认的`Middleware`：
-
-
 
 ```
 MIDDLEWARE = [
@@ -4185,8 +4109,6 @@ process_view(self, request, callback, callback_args, callback_kwargs)
 
  **Mymiddlewares.py**修改如下
 
-
-
 ```
 from django.utils.deprecation import MiddlewareMixin
 from django.shortcuts import HttpResponse
@@ -4284,8 +4206,6 @@ process_exception(``self``, request, exception)
 
 示例修改如下：
 
-
-
 ```
 class Md1(MiddlewareMixin):
 
@@ -4361,8 +4281,6 @@ Md1返回
 ```
 
 结果如下：
-
-
 
 ```
 Md1请求
