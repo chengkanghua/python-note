@@ -1,12 +1,11 @@
 
     用户认证组件：
-
+	
          功能：用session纪录登陆验证状态
 
          前提：用户表：dajngo自带的auth_user
          
          创建超级用户：python3 manage.py createsuperuser
-
 
          API:
             from django.contrib import auth :
