@@ -3894,6 +3894,25 @@ from django.contrib.auth.models import User
 user = User.objects.create_user（username='',password='',email=''）
 ```
 
+
+
+```
+小笔记: 命令行创建超级用户
+kanghuadeMacBook-Pro:authDemo kanghua$ python3.6 manage.py createsuperuser
+Username (leave blank to use 'kanghua'): alex
+Email address: aa@qq.com
+Password: 
+Password (again): 
+This password is too short. It must contain at least 8 characters.
+This password is too common.
+This password is entirely numeric.
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+
+```
+
+
+
 ### 2.3 、check_password(passwd)
 
 ```
@@ -4002,9 +4021,13 @@ MIDDLEWARE = [
 ]
 ```
 
-
-
 每一个中间件都有具体的功能。
+
+### 中间件实现流程
+
+![image-20211028095926926](assets/image-20211028095926926.png)
+
+
 
 ## 自定义中间件
 
@@ -4032,7 +4055,7 @@ process_response
 
 需要导入
 
-```
+```python
 from django.utils.deprecation import MiddlewareMixin
 ```
 
@@ -4040,7 +4063,7 @@ from django.utils.deprecation import MiddlewareMixin
 
 **in views:**
 
-```
+```python
 def index(request):
 
     print("view函数...")
@@ -4049,32 +4072,26 @@ def index(request):
 
 **in Mymiddlewares.py：**
 
-
-
-```
+```python
 from django.utils.deprecation import MiddlewareMixin
 from django.shortcuts import HttpResponse
 
 class Md1(MiddlewareMixin):
-
     def process_request(self,request):
         print("Md1请求")
- 
     def process_response(self,request,response):
         print("Md1返回")
         return response
 
 class Md2(MiddlewareMixin):
-
     def process_request(self,request):
         print("Md2请求")
         #return HttpResponse("Md2中断")
     def process_response(self,request,response):
         print("Md2返回")
         return response
+      
 ```
-
-
 
 **结果：**
 
@@ -4103,37 +4120,33 @@ Md1返回
 
 ### process_view
 
-```
+```python
 process_view(self, request, callback, callback_args, callback_kwargs)
 ```
 
  **Mymiddlewares.py**修改如下
 
-```
+```python
 from django.utils.deprecation import MiddlewareMixin
 from django.shortcuts import HttpResponse
 
 class Md1(MiddlewareMixin):
-
     def process_request(self,request):
         print("Md1请求")
         #return HttpResponse("Md1中断")
     def process_response(self,request,response):
         print("Md1返回")
         return response
-
     def process_view(self, request, callback, callback_args, callback_kwargs):
         print("Md1view")
 
 class Md2(MiddlewareMixin):
-
     def process_request(self,request):
         print("Md2请求")
         return HttpResponse("Md2中断")
     def process_response(self,request,response):
         print("Md2返回")
         return response
-
     def process_view(self, request, callback, callback_args, callback_kwargs):
         print("Md2view")
 ```
@@ -4166,7 +4179,7 @@ process_view可以用来调用视图函数：
 
 
 
-```
+```python
 class Md1(MiddlewareMixin):
 
     def process_request(self,request):
@@ -4201,14 +4214,14 @@ Md1返回
 ### process_exception
 
 ```
-process_exception(``self``, request, exception)
+process_exception(self, request, exception)
+
 ```
 
 示例修改如下：
 
-```
+```python
 class Md1(MiddlewareMixin):
-
     def process_request(self,request):
         print("Md1请求")
         #return HttpResponse("Md1中断")
@@ -4217,7 +4230,6 @@ class Md1(MiddlewareMixin):
         return response
 
     def process_view(self, request, callback, callback_args, callback_kwargs):
-
         # return HttpResponse("hello")
 
         # response=callback(request,*callback_args,**callback_kwargs)
@@ -4230,7 +4242,6 @@ class Md1(MiddlewareMixin):
 
 
 class Md2(MiddlewareMixin):
-
     def process_request(self,request):
         print("Md2请求")
         # return HttpResponse("Md2中断")
@@ -4239,7 +4250,6 @@ class Md2(MiddlewareMixin):
         return response
     def process_view(self, request, callback, callback_args, callback_kwargs):
         print("md2 process_view...")
-
     def process_exception(self):
         print("md1 process_exception...")
 ```
@@ -4265,7 +4275,7 @@ Md1返回
 
 流程图如下：
 
-当views出现错误时：
+**当views出现错误时：**
 
 ![img](assets/877318-20180523152523125-1475347796.png)
 
@@ -4306,6 +4316,10 @@ Md1返回
 如果用户访问的是login视图（放过）
 
 如果访问其他视图，需要检测是不是有session认证，已经有了放行，没有返回login，这样就省得在多个视图函数上写装饰器了！
+
+
+
+
 
 ## 源码试读
 
