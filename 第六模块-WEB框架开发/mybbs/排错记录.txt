@@ -1,0 +1,7 @@
+1 python3.6 manage.py makemigrations  报错 ModuleNotFoundError : No module named 'debug_toolbar'
+解决:
+pip3.6 install django-debug-toolbar
+
+2  python3.6 manage.py makemigrations  报错 Using legacy 'setup.py install' for geetest, since package 'wheel' is not installed.
+pip3.6 install wheel
+pip3.6 install requests

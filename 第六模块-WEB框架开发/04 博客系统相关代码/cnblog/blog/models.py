@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
-class UserInfo(AbstractUser):
+class UserInfo(AbstractUser):  # 继承默认auth_user的父对象,来替换auth_user表,settings也要配置下
     """
     用户信息
     """
@@ -18,7 +18,7 @@ class UserInfo(AbstractUser):
     blog = models.OneToOneField(to='Blog', to_field='nid', null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.username
+        return self.username   # 这里是在默认auth_user表上增加的字段,默认就有username
 
 
 class Blog(models.Model):
@@ -60,31 +60,31 @@ class Article(models.Model):
     title = models.CharField(max_length=50, verbose_name='文章标题')
     desc = models.CharField(max_length=255, verbose_name='文章描述')
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
-    content = models.TextField()
+    content = models.TextField()    # 文章内容
 
-    comment_count = models.IntegerField(default=0)
-    up_count = models.IntegerField(default=0)
-    down_count = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0) #评论数
+    up_count = models.IntegerField(default=0)    # 点赞数
+    down_count = models.IntegerField(default=0)  # 踩数
 
-    user = models.ForeignKey(verbose_name='作者', to='UserInfo', to_field='nid', on_delete=models.CASCADE)
-    category = models.ForeignKey(to='Category', to_field='nid', null=True, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(
+    user = models.ForeignKey(verbose_name='作者', to='UserInfo', to_field='nid', on_delete=models.CASCADE) # 文章用户
+    category = models.ForeignKey(to='Category', to_field='nid', null=True, on_delete=models.CASCADE)  # 分类关系
+    tags = models.ManyToManyField(       # 文章与标签
         to="Tag",
-        through='Article2Tag',
-        through_fields=('article', 'tag'),
+        through='Article2Tag',          # through 手动关联表名
+        through_fields=('article', 'tag'),  # 关联字段
     )
 
     def __str__(self):
         return self.title
 
 
-class Article2Tag(models.Model):
+class Article2Tag(models.Model):   # 文章与标签的多对多关联表
     nid = models.AutoField(primary_key=True)
     article = models.ForeignKey(verbose_name='文章', to="Article", to_field='nid', on_delete=models.CASCADE)
     tag = models.ForeignKey(verbose_name='标签', to="Tag", to_field='nid', on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = [
+        unique_together = [     # 联合唯一
             ('article', 'tag'),
         ]
 
@@ -104,23 +104,21 @@ class ArticleUpDown(models.Model):
     is_up = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = [
+        unique_together = [   # 联合唯一
             ('article', 'user'),
         ]
 
 
 class Comment(models.Model):
     """
-
     评论表
-
     """
     nid = models.AutoField(primary_key=True)
     article = models.ForeignKey(verbose_name='评论文章', to='Article', to_field='nid', on_delete=models.CASCADE)
     user = models.ForeignKey(verbose_name='评论者', to='UserInfo', to_field='nid', on_delete=models.CASCADE)
     content = models.CharField(verbose_name='评论内容', max_length=255)
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
-    parent_comment = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+    parent_comment = models.ForeignKey('self', null=True, on_delete=models.CASCADE)  # 自关联 评论的评论
 
     def __str__(self):
         return self.content

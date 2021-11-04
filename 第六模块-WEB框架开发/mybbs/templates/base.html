@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Title</title>
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/mystyle.css">
+</head>
+<body>
+
+<div class="header">
+  <p>{{ blog.title }}</p>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      {% load my_tags %}
+      {% show_panel username %}
+    </div>
+    <div class="col-md-9">
+      {% block page-main %}
+      
+      {% endblock %}
+    </div>
+  </div>
+</div>
+<script src="/static/jquery-3.2.1.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/setupajax.js"></script>
+{% block page-js %}
+
+{% endblock %}
+</body>
+</html>

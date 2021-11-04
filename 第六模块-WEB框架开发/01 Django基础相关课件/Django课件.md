@@ -2166,7 +2166,7 @@ yuan=Author.objects.filter(name="yuan").first() # 在Author表中主键为2的�
 egon=Author.objects.filter(name="alex").first() # 在Author表中主键为1的纪录
 
 # 绑定多对多关系,即向关系表book_authors中添加纪录
-book_obj.authors.add(yuan,egon)    #  将某些特定的 model 对象添加到被关联对象集合中。   =======    book_obj.authors.add(*[])
+book_obj.authors.add(yuan,egon)    #  将某些特定的 model 对象添加到被关联对象集合中。   ======= book_obj.authors.add(*[])
 ```
 
 

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block page-main %}
+  <div class="article" id="{{ article.pk }}">
+    <h1>{{ article.title }}</h1>
+
+    <p>{{ article.articledetail.content|safe }}</p>
+  </div>
+
+
+  <div class="article-footer clearfix">
+    <div id="div_digg">
+      <div class="diggit digg">
+        <span class="diggnum" id="digg_count">{{ article.up_count }}</span>
+      </div>
+      <div class="buryit digg">
+        <span class="burynum" id="bury_count">{{ article.down_count }}</span>
+      </div>
+      <div class="clearfix"></div>
+      <div class="diggword" id="digg_tips"></div>
+    </div>
+
+
+  </div>
+  <hr>
+  <div class="comment-list">
+    <p>评论楼：</p>
+    <div class="list-group">
+      {% for comment in comment_list %}
+        <div class="list-group-item">
+          <p class="list-group-item-heading">
+            <a href="#{{ forloop.counter }}" id="#{{ forloop.counter }}">#{{ forloop.counter }}楼</a>
+            <span>{{ comment.create_time|date:'Y-m-d H:i' }}</span>
+            <a href="">{{ comment.user.username }}</a>
+            <a class="pull-right reply" pk="{{ comment.pk }}">回复</a>
+          </p>
+
+          {% if comment.parent_comment %}
+            <p class="list-group-item-text well">
+              @{{ comment.parent_comment.user.username }} {{ comment.parent_comment.content }}
+            </p>
+          {% endif %}
+          <p class="list-group-item-text">
+            {{ comment.content }}
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <hr>
+  <div class="comment-box">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">发表评论</h3>
+      </div>
+      <div class="panel-body">
+        <p id="nickname" data-name="{{ request.user.username }}">昵称：{{ request.user.username }}</p>
+        <textarea class="form-control" rows="3" id="comment-info"></textarea>
+
+      </div>
+      <div class="padding15">
+        <button id="submit-comment" class="btn btn-success">发表评论</button>
+        <button class="btn btn-default">取消</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page-js %}
+  <script>
+    $("#div_digg").find(".digg").click(function () {
+      var isUp = $(this).hasClass("diggit");
+      if ("{{ request.user.username }}") {
+        // user.id
+        var userId = "{{ request.user.pk}}";
+        // article.id
+        var articleId = "{{ article.pk }}";
+        $.ajax({
+          url: "/blog/poll/",
+          type: "post",
+          data: {
+            is_up: isUp,
+            article_id: articleId,
+            user_id: userId
+          },
+          success: function (data) {
+            if (data.code) {
+              // 之前点过
+              $("#digg_tips").text(data.data).css("color", "red");
+            } else {
+              $("#digg_tips").text(data.data);
+              if (isUp) {
+                var $digg = $("#digg_count");
+                $digg.text(+$digg.text() + 1);  // +"1"+1
+              } else {
+                var $bury = $("#bury_count");
+                $bury.text(parseInt($bury.text()) + 1);
+              }
+            }
+          }
+        })
+
+      } else {
+        location.href = "/login/";
+      }
+    });
+
+    // 提交根评论
+    $("#submit-comment").click(function () {
+      // 点击发表评论的按钮
+      let articleId = $(".article").attr("id");
+      let pId = $(this).data("pid");
+      console.log(pId);
+      let v = $("#comment-info").val();
+      // 如果是子评论，提交的时候需要去掉 @xxx 的前缀
+      let content = pId ? v.slice(v.indexOf("\n") + 1) : v;
+      console.log(content);
+      // 清空pid标识
+      $(this).removeData("pid");
+      if (content.length >= 5) {
+        $.ajax({
+          url: "/blog/comment/",
+          type: "post",
+          data: {
+            article_id: articleId,
+            content: content,
+            pid: pId || "",
+            // 注意csrf token
+          },
+          success: function (data) {
+            console.log(data);
+            // 清空评论框
+            $("#comment-info").val("");
+            if (!data.code) {
+              // 利用JS将评论填充到页面上
+              let pk = data.data.pk;
+              let createTime = data.data.time;
+              let username = "{{ request.user.username }}";
+              let content = data.data.content;
+              let num = $(".comment-list .list-group-item").length + 1;
+              let commentHtml = `
+              <div class="list-group-item">
+                <p class="list-group-item-heading">
+                  <a href="#${num}" id="#${num}">#${num}楼</a>
+                  <span>${createTime}</span>
+                  <a href="">${username}</a>
+                  <a class="pull-right reply" pk="${pk}">回复</a>
+                </p>
+                <p class="list-group-item-text">
+                  ${content}
+                </p>
+              </div>
+              `;
+            $(".comment-list .list-group").append(commentHtml);
+            }
+          }
+        })
+      } else {
+        alert("五字起评，不讲价！");
+      }
+    });
+
+    // 回复评论
+    $(".comment-box").on("click", ".reply", function () {
+      // 取到回复的具体用户名
+      let replyPre = "@" + $(this).prev().text() + "\n";
+      // 取到当前回复的评论的pk值
+      let pid = $(this).attr("pk");
+      // 评论框获取焦点
+      $("#comment-info").focus().val(replyPre);
+      // 标记是回复别人的评论
+      $("#submit-comment").data("pid", pid);
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Title</title>
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/jquery-ui/jquery-ui.css">
+  <link rel="stylesheet" href="/static/tag_editor/jquery.tag-editor.css">
+</head>
+<body>
+
+<input type="text" class="form-control" id="qa-tag" placeholder="给该问题打个标签（最多五个，也可不填）">
+
+<script src="/static/jquery-3.2.1.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/jquery-ui/jquery-ui.js"></script>
+<script src="/static/tag_editor/jquery.caret.min.js"></script>
+<script src="/static/tag_editor/jquery.tag-editor.js"></script>
+<script>
+
+
+  $("#qa-tag").tagEditor({
+    // initialTags: ['Hello', 'World', 'Example', 'Tags'],  // 初始化
+    autocomplete: {
+      delay: 500,
+      position: {collision: 'flip'},
+      source: function (request, response) {
+        $.getJSON("/api/tags/", {
+          name_contains: request.term
+        }, function (data) {
+          let arr1 = data.code ? [] : $.map(data.data, function (m) {
+            return m.title;
+          });
+          response(arr1)
+        })
+      }
+    },
+    maxTags: 5,
+    placeholder: '请输入标签，回车确认，最多支持五个！'
+  });
+
+  // 添加标签
+  $("#qa-tag").tagEditor("addTag", ['Hello', 'World', 'Example', 'Tags'])
+</script>
+</body>
+</html>

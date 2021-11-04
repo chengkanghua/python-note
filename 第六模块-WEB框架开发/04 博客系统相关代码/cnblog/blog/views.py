@@ -23,9 +23,7 @@ def login(request):
     :param request:
     :return:
     """
-
     if request.method == "POST":
-
         response = {"user": None, "msg": None}
         user = request.POST.get("user")
         pwd = request.POST.get("pwd")
@@ -92,7 +90,7 @@ def register(request):
 
     if request.is_ajax():
         print(request.POST)
-        form = UserForm(request.POST)
+        form = UserForm(request.POST)  # 校验字段
 
         response = {"user": None, "msg": None}
         if form.is_valid():
@@ -128,7 +126,6 @@ def home_site(request, username, **kwargs):
     :param request:
     :return:
     """
-
     print("kwargs", kwargs)  # 区分访问是的站点页面还是站点下的跳转页面
     print("username", username)
     user = UserInfo.objects.filter(username=username).first()
@@ -137,7 +134,6 @@ def home_site(request, username, **kwargs):
         return render(request, "not_found.html")
 
     # 查询当前站点对象
-
     blog = user.blog
 
     # 1 当前用户或者当前站点对应所有文章
@@ -145,13 +141,10 @@ def home_site(request, username, **kwargs):
     # article_list=user.article_set.all()
     # 基于 __
 
-
     article_list = models.Article.objects.filter(user=user)
-
     if kwargs:
         condition = kwargs.get("condition")
         param = kwargs.get("param")  # 2012-12
-
         if condition == "category":
             article_list = article_list.filter(category__title=param)
         elif condition == "tag":
@@ -161,27 +154,22 @@ def home_site(request, username, **kwargs):
             article_list = article_list.filter(create_time__year=year, create_time__month=month)
 
     # 每一个后的表模型.objects.values("pk").annotate(聚合函数(关联表__统计字段)).values("表模型的所有字段以及统计字段")
-
     # 查询每一个分类名称以及对应的文章数
-
     # ret=models.Category.objects.values("pk").annotate(c=Count("article__title")).values("title","c")
     # print(ret)
 
 
     # 查询当前站点的每一个分类名称以及对应的文章数
-
     # cate_list=models.Category.objects.filter(blog=blog).values("pk").annotate(c=Count("article__title")).values_list("title","c")
     # print(cate_list)
 
 
     # 查询当前站点的每一个标签名称以及对应的文章数
-
     # tag_list=models.Tag.objects.filter(blog=blog).values("pk").annotate(c=Count("article")).values_list("title","c")
     # print(tag_list)
 
 
     # 查询当前站点每一个年月的名称以及对应的文章数
-
     # ret=models.Article.objects.extra(select={"is_recent":"create_time > '2018-09-05'"}).values("title","is_recent")
     # print(ret)
 
@@ -196,11 +184,6 @@ def home_site(request, username, **kwargs):
     #
     # ret=models.Article.objects.filter(user=user).annotate(month=TruncMonth("create_time")).values("month").annotate(c=Count("nid")).values_list("month","c")
     # print("ret----->",ret)
-
-
-
-
-
 
     return render(request, "home_site.html", {"username": username, "blog": blog, "article_list": article_list,})
 
@@ -230,11 +213,11 @@ def article_detail(request, username, article_id):
     :return:
     """
     user = UserInfo.objects.filter(username=username).first()
+    print(user)
     blog = user.blog
     article_obj = models.Article.objects.filter(pk=article_id).first()
-
     comment_list = models.Comment.objects.filter(article_id=article_id)
-
+    print(blog)
     return render(request, "article_detail.html", locals())
 
 
@@ -389,12 +372,15 @@ def upload(request):
     path=os.path.join(settings.MEDIA_ROOT,"add_article_img",img_obj.name)
 
     with open(path,"wb") as f:
-
         for line in img_obj:
             f.write(line)
+            
+    response = {
+        'error':0,
+        'url':'/media/add_article_img/%s'%img_obj.name
+    }
 
-
-    return HttpResponse("ok")
+    return HttpResponse(json.dumps(response))
 
 
 

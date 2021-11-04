@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/mystyle.css">
+  <title>管理后台首页</title>
+</head>
+<body>
+
+{% include "nav.html" %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Panel title</h3>
+        </div>
+        <div class="panel-body">
+          <a class="btn btn-success" href="/blog/add/">新增Blog</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div>
+        <table class="table">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>标题</th>
+              <th>评论数</th>
+              <th>点赞数</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for article in article_list %}
+              <tr>
+                <td><a href="/blog/{{ request.user.username }}/article/{{ article.pk }}/">{{ article.title }}</a></td>
+                <td>{{ article.comment_count }}</td>
+                <td>{{ article.up_count }}</td>
+                <td>
+                  <a href="/blog/delete/{{ article.pk }}">删除</a>
+                  <a href="/blog/edit/{{ article.pk }}">编辑</a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
