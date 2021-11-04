@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>添加新的文章</title>
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <form action="" method="post">
+    {% csrf_token %}
+      <div class="form-group">
+    <label for="article-title">标题</label>
+    <input type="text" name="title" class="form-control" id="article-title">
+  </div>
+      <div class="form-group">
+        <label for="article-content">内容
+          <textarea id="article-content" name="content" style="width:700px;height:300px;">
+</textarea>
+        </label>
+      </div>
+    <input type="submit" class="btn btn-success" value="发布">
+  </form>
+  </div>
+</div>
+
+<script src="/static/jquery-3.2.1.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/editor/kindeditor-all-min.js"></script>
+<script>
+  KindEditor.ready(function (K) {
+    window.editor = K.create('#article-content', {
+      width: 800,
+      height: 600,
+      uploadJson: '/upload_img/',
+      extraFileUploadParams: {"csrfmiddlewaretoken": $("[name=csrfmiddlewaretoken]").val()},
+      filePostName: 'img'
+    });
+  });
+</script>
+</body>
+</html>

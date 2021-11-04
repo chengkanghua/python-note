@@ -89,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'cnblog', # 要连接的数据库，连接前需要创建好
         'USER':'root',# 连接数据库的用户名
-        'PASSWORD':'',# 连接数据库的密码
+        'PASSWORD':'root123',# 连接数据库的密码
         'HOST':'127.0.0.1', # 连接主机，默认本级
         'PORT':3306 #  端口 默认3306
     }
@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-AUTH_USER_MODEL="blog.UserInfo"
+AUTH_USER_MODEL="blog.UserInfo"   # 认证数据库model更改.
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -143,13 +143,6 @@ STATICFILES_DIRS=[
 # 与用户上传相关的配置
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 MEDIA_URL="/media/"
-
-
-
-
-
-
-
 
 LOGGING = {
     'version': 1,

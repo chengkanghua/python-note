@@ -1,0 +1,3 @@
+
+# 已经修改成了 django2.0可以使用了 安装已以下模块即可
+pip3.6 install social-auth-app-django

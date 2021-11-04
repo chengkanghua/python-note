@@ -43,7 +43,7 @@
                     </label>
                     <input type="file" id="avatar" name="avatar">
                 </div>
-
+                
                 <input type="button" class="btn btn-default reg_btn" value="submit"><span class="error"></span>
 
             </form>
@@ -89,13 +89,11 @@
             data: formdata,
             success: function (data) {
                 //console.log(data);
-
                 if (data.user) {
                     // 注册成功
                     location.href="/login/"
                 }
                 else { // 注册失败
-
                     //console.log(data.msg)
                     // 清空错误信息
                     $("span.error").html("");
@@ -107,12 +105,10 @@
                         if (field=="__all__"){
                             $("#id_re_pwd").next().html(error_list[0]).parent().addClass("has-error");
                         }
-                        $("#id_" + field).next().html(error_list[0]);
-                        $("#id_" + field).parent().addClass("has-error");
-
+                        $("#id_" + field).next().html(error_list[0]);  // django渲染的input id是id_pwd,next()是span标签
+                        $("#id_" + field).parent().addClass("has-error");  // 输入框变红
 
                     })
-
                 }
             }
         })

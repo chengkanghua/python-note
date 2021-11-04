@@ -17,7 +17,7 @@
                 <div class="buryit action">
                     <span class="burynum" id="bury_count">{{ article_obj.down_count }}</span>
                 </div>
-                <div class="clear"></div>
+                <div class="clearfix"></div>
                 <div class="diggword" id="digg_tips" style="color: red;"></div>
             </div>
         </div>
@@ -31,44 +31,12 @@
 
             <script>
 
-                 $.ajax({
-                        url: "/get_comment_tree/",
-                        type: "get",
-                        data: {
-                            article_id: "{{ article_obj.pk }}"
-                        },
-                        success: function (comment_list) {
-                            console.log(comment_list);
-
-                            $.each(comment_list, function (index, comment_object) {
-
-                                var pk = comment_object.pk;
-                                var content = comment_object.content;
-                                var parent_comment_id = comment_object.parent_comment_id;
-                                var s = '<div class="comment_item" comment_id=' + pk + '><span>' + content + '</span></div>';
-
-                                if (!parent_comment_id) {
-
-                                    $(".comment_tree").append(s);
-                                } else {
-
-                                    $("[comment_id=" + parent_comment_id + "]").append(s);
-
-                                }
-
-                            })
-
-
-                        }
-                    })
-
             </script>
 
 
             <p>评论列表</p>
 
             <ul class="list-group comment_list">
-
                 {% for comment in comment_list %}
                     <li class="list-group-item">
                         <div>
@@ -111,10 +79,7 @@
             // 点赞请求
             $("#div_digg .action").click(function () {
                 var is_up = $(this).hasClass("diggit");
-
-
                 $obj = $(this).children("span");
-
                 $.ajax({
                     url: "/digg/",
                     type: "post",
@@ -125,7 +90,6 @@
                     },
                     success: function (data) {
                         console.log(data);
-
                         if (data.state) {
                             var val = parseInt($obj.text());
                             $obj.text(val + 1);
@@ -133,31 +97,22 @@
                         else {
                             var val = data.handled ? "您已经推荐过!" : "您已经反对过!";
                             $("#digg_tips").html(val);
-
                             setTimeout(function () {
                                 $("#digg_tips").html("")
                             }, 1000)
-
                         }
-
                     }
                 })
-
             })
 
             // 评论请求
             var pid = "";
-
             $(".comment_btn").click(function () {
-
                 var content = $("#comment_content").val();
-
                 if (pid) {
                     var index = content.indexOf("\n");
                     content = content.slice(index + 1)
                 }
-
-
                 $.ajax({
                     url: "/comment/",
                     type: "post",
@@ -168,32 +123,27 @@
                         pid: pid
                     },
                     success: function (data) {
-
                         console.log(data);
-
                         var create_time = data.create_time;
                         var username = data.username;
                         var content = data.content;
-
                         var s = `
                            <li class="list-group-item">
                               <div>
 
                                   <span>${create_time}</span>&nbsp;&nbsp;
                                   <a href=""><span>${username}</span></a>
-
                               </div>
                               <div class="comment_con">
                                   <p>${content}</p>
                               </div>
 
                             </li>`;
-
                         $("ul.comment_list").append(s);
 
                         // 清空评论框
-                        pid = "",
-                                $("#comment_content").val("");
+                        pid = "";
+                        $("#comment_content").val("");
 
                     }
                 })
@@ -202,18 +152,37 @@
             });
 
             // 回复按钮事件
-
             $(".reply_btn").click(function () {
-
                 $('#comment_content').focus();
                 var val = "@" + $(this).attr("username") + "\n";
                 $('#comment_content').val(val);
-
-
                 pid = $(this).attr("comment_pk");
-
-
             })
+
+            // 评论树
+                //$('.tree_btn').click(function(){
+             $.ajax({
+                    url: "/get_comment_tree/",
+                    type: "get",
+                    data: {
+                        article_id: "{{ article_obj.pk }}"
+                    },
+                    success: function (comment_list) {
+                        console.log(comment_list);
+                        $.each(comment_list, function (index, comment_object) {
+                            var pk = comment_object.pk;
+                            var content = comment_object.content;
+                            var parent_comment_id = comment_object.parent_comment_id;
+                            var s = '<div class="comment_item" comment_id=' + pk + '><span>' + content + '</span></div>';
+                            if (!parent_comment_id) {
+                                $(".comment_tree").append(s);
+                            } else {
+                                $("[comment_id=" + parent_comment_id + "]").append(s);
+                            }
+                        })
+                    }
+                })
+            //})
         </script>
 
     </div>

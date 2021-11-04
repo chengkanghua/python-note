@@ -1,9 +1,7 @@
-
 import random
 
 def get_random_color():
         return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-
 
 def get_valid_code_img(request):
 

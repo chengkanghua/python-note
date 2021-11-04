@@ -1,0 +1,22 @@
+1 Python3出现“No module named 'MySQLdb'“问题-以及使用PyMySQL连接数据库
+原因: 在 python3 中，改变了连接库，改为了 pymysql 库，使用pip install pymysql 进行安装，直接导入即可使用；
+但是在 Django 中， 连接数据库时使用的是 MySQLdb 库，这在与 python3 的合作中就会报以下错误了：
+django.core.exceptions.ImproperlyConfigured: Error loading MySQLdb module: No module named 'MySQLdb'
+
+解决方法：在应用的 __init__.py 文件中添加以下代码即可
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
+2- AttributeError: 'str' object has no attribute 'decode'
+数据库迁移的报错
+T1、直接去掉
+直接去掉decode('utf8')
+
+tips：str通过encode()方法可以编码为指定的bytes。反过来，当从网络或磁盘上读取了字节流，那么读到的数据就是bytes。要把bytes变为str，就需要用decode()方法。反之，则使用encode()方法即可！
+————————————————
+原文链接：https://blog.csdn.net/qq_41185868/article/details/82079079
+
+
+3- 缺少插件
+pip3.6 install bs4

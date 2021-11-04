@@ -1,6 +1,4 @@
 
-
-
 from django import forms
 
 from django.forms import widgets
@@ -29,9 +27,8 @@ class UserForm(forms.Form):
                             )
 
 
-    def clean_user(self):
+    def clean_user(self):  #局部钩子,第二次验证
         val=self.cleaned_data.get("user")
-
         user=UserInfo.objects.filter(username=val).first()
         if not user:
             return val
@@ -39,7 +36,7 @@ class UserForm(forms.Form):
             raise ValidationError("该用户已注册!")
 
 
-    def clean(self):
+    def clean(self): # 全局钩子,最后的验证
         pwd=self.cleaned_data.get("pwd")
         re_pwd=self.cleaned_data.get("re_pwd")
 

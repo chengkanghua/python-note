@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>欢迎登录</title>
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <style>
+    .login-error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" style="margin-top: 50px">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <form novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="{{ form_obj.username.id_for_label }}">{{ form_obj.username.label }}</label>
+          {{ form_obj.username }}
+        </div>
+        <div class="form-group">
+          <label for="{{ form_obj.password.id_for_label }}">{{ form_obj.password.label }}</label>
+          {{ form_obj.password }}
+        </div>
+        <div class="form-group">
+          <label for="id_valid_code" style="display: block">验证码</label>
+          <input type="text" class="form-control" style="width: 250px; display: inline" id="id_valid_code" name="valid_code">
+          <img src="/get_valid_pic/" alt="" style="height: 35px; width: 250px;float: right">
+          <span class="help-block"></span>
+        </div>
+        <div class="form-group">
+          <input type="button" class="btn btn-default" value="登录" id="login-button">
+          <span class="help-block login-error"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="/static/jquery-3.2.1.min.js"></script>
+<script>
+  $("#login-button").on("click", function () {
+    $.ajax({
+      url: "/login/",
+      type: "post",
+      data: {
+        csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+        username: $("#id_username").val(),
+        password: $("#id_password").val(),
+        valid_code: $("#id_valid_code").val()
+      },
+      success: function (data) {
+        if (data.status){
+          // 校验有错误
+          $(".login-error").text(data.msg);
+        }else {
+          location.href="/index/"
+        }
+      }
+    })
+  });
+
+  // 给每个input框绑定获取焦点之后清除之前错误提示的事件
+  $("input.form-control").on("focus", function () {
+    $(".login-error").text("");
+  });
+
+  // 点击图片刷新验证码
+  $("#id_valid_code+img").on("click", function () {
+    this.src += "?";
+  })
+</script>
+</body>
+</html>
