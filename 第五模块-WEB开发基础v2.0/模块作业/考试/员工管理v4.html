@@ -127,32 +127,34 @@
     //添加保存
     $(".modal .keep_btn").click(function (){
         if(ID == false){
-        $("#myModal").modal("hide")
-        var name = $("#name").val()
-        var age = $("#age").val()
-        var num = $("tbody").children().length+1
-        var tr = `
-            <tr>
-                <td>${num}</td>
-                <td>${name}</td>
-                <td>${age}</td>
-                <td>
-                    <button class="btn btn-default btn-danger btn-sm delete_btn">删除</button>
-                    <button class="btn btn-default btn-warning btn-sm edit_btn">编辑</button>
-                </td>
-            </tr>
-        `
-        $("tbody").append(tr)
+            $("#myModal").modal("hide")
+            var name = $("#name").val()
+            var age = $("#age").val()
+            var num = $("tbody").children().length+1
+            var tr = `
+                <tr>
+                    <td>${num}</td>
+                    <td>${name}</td>
+                    <td>${age}</td>
+                    <td>
+                        <button class="btn btn-default btn-danger btn-sm delete_btn">删除</button>
+                        <button class="btn btn-default btn-warning btn-sm edit_btn">编辑</button>
+                    </td>
+                </tr>
+            `
+            $("tbody").append(tr)
             }else{
                 var name = $(".modal-body #name").val()
                 var age = $(".modal-body #age").val()
-                $("tbody tr").eq(ID-1).children().eq(1).text(name)
+                $("tbody tr").eq(ID-1).children().eq(1).text(name)  //修改对应列表的值
                 $("tbody tr").eq(ID-1).children().eq(2).text(age)
+
+                // 清空模态框里数据
                 $(".modal-body #name").val("")
                 $(".modal-body #age").val("")
                 $("#myModal").modal("hide")
                 ID = false
-            }
+                }
         })
     //删除按钮
     $("tbody").on("click",".delete_btn",function(){

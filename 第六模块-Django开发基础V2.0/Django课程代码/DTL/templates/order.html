@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+    {{ block.super }}
+    <h3>我的订单</h3>
+    <ul>
+        {% for order in order_list %}
+            <li>{{ order }}</li>
+        {% endfor %}
+    </ul>
+    {% include "ad.html" %}
+{% endblock content %}
+
+
+{% block title %}
+    <title>订单页面</title>
+{% endblock title %}
