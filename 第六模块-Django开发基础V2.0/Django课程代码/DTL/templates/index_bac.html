@@ -1,0 +1,130 @@
+{% load my_filters %} <!-- 加载定义标签,  从templatetags文件夹里找my_gilters.py -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .active{
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>一、深度查询：句点符.</h3>
+
+    <p>姓名： {{ name }}</p>
+    <p>年龄： {{ age }}</p>
+    <p>婚否： {{ is_married }}</p>
+    <p>四大名著：{{ book_list }}</p>
+    <p>四大名著第一本：{{ book_list.0 }}</p>
+    <p>四大名著第二本：{{ book_list.1 }}</p>
+    <p>四大名著第三本：{{ book_list.2 }}</p>
+    <p>四大名著第四本：{{ book_list.3 }}</p>
+
+    <p>个人信息 {{ zhangsan }}</p>
+    <p>个人信息 {{ zhangsan.name }}</p>
+    <p>个人信息 {{ zhangsan.age }}</p>
+
+    <p>{{ book01 }}</p>
+    <p>{{ book01.title }}</p>
+    <p>{{ book01.price }}</p>
+
+    <p>books的第三本书的价格：{{ books.2.price }}</p>
+
+    <h3>二、过滤器</h3>
+
+    <p>books的最后一本书籍：{{ books|last }}</p>
+    <p>books的第一本书籍：{{ books|first }}</p>
+    <p>books的第一本书籍：{{ books.0 }}</p>
+    <p>books共有：{{ books|length }}本书籍</p>
+
+    <p>books2展示：{{ books2|default:"暂时没有符合条件的书籍" }}</p>
+
+    <p>日期：{{ now|date:"Y-m-d" }}</p>
+    <p>详细日期：{{ now|date:"Y/m/d" }}</p>
+    <p>文件大小：{{ fileSize|filesizeformat }}</p>
+
+    <p>{{ content|truncatechars:7 }}</p>
+    <p>链接：{{ link|safe }}</p>
+    <p>评论：{{ comment }}</p>
+    <p>{{ book01.price|add:100 }}</p>
+
+
+    <p>手机号：{{ my_tel|mobile_fmt }}</p>   <!-- 使用自定义过滤器mobile_fmt -->
+
+    <h3>三、标签语法</h3>
+
+    {% if age > 18 %}
+        <p>成年人电影</p>
+    {% else %}
+        <p>未成年人电影</p>
+    {% endif %}
+
+
+    <div>
+        成绩：
+        {% if score > 90 %}
+            <span>优秀</span>
+        {% elif score > 80 %}
+            <span>良好</span>
+        {% elif score > 60 %}
+            <span>及格</span>
+        {% else %}
+            <span>不及格</span>
+        {% endif %}
+    </div>
+
+
+    <div>
+        {% if name %}
+            <span>{{ name }}用户</span>
+        {% else %}
+            <span>请登录</span>
+        {% endif %}
+    </div>
+
+
+    <ul>
+        {% for book in book_list %}
+            <li>{{ book }}</li>
+        {% endfor %}
+    </ul>
+
+    <table width="800" border="1">
+        <tr>
+            <th>序号</th>
+            <th>书籍名称</th>
+            <th>价格</th>
+            <th>出版社</th>
+        </tr>
+        {% for book in books %}
+
+            {% if forloop.first %}
+                <tr class="active">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.price }}</td>
+                    <td>{{ book.publish }}</td>
+                </tr>
+
+            {% else %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.price }}</td>
+                    <td>{{ book.publish }}</td>
+                </tr>
+            {% endif %}
+
+        {% endfor %}
+
+    </table>
+
+
+    {% include "ad.html" %}
+
+
+</body>
+</html>

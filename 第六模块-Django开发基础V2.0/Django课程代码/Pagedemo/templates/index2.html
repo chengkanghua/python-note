@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+</head>
+<body>
+
+
+<ul>
+    {% for book in page %}
+        <li>{{ book.title }}:{{ book.price }}</li>
+    {% endfor %}
+</ul>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+
+        <li>
+            <a href="/books?page=1" aria-label="Next">
+                <span aria-hidden="true">第一页</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="#">
+                <span aria-hidden="true">...</span>
+            </a>
+        </li>
+
+
+
+        {% for i in page_range %}
+            {% if i == visit_page_num %}
+                <li class="active"><a href="/books?page={{ i }}">{{ i }}</a></li>
+            {% else %}
+                <li><a href="/books?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        <li>
+            <a href="#">
+                <span aria-hidden="true">...</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="/books?page={{ paginator.num_pages }}" aria-label="Next">
+                <span aria-hidden="true">最后一页</span>
+            </a>
+        </li>
+
+    </ul>
+</nav>
+
+
+</body>
+</html>

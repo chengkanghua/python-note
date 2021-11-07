@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <style>
+        .err {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h3>注册页面</h3>
+
+<form action="">
+    <p>用户名：<input type="text" class="user"> <span class="err"></span></p>
+</form>
+
+<hr>
+
+<input type="text" class="num1"> + <input class="num2" type="text"> = <input type="text" class="result">
+<button class="cal">计算</button>
+
+
+<script>
+    // 用户名的验证
+    $(".user").blur(function () {
+
+        // 基于jQuery发送Ajax请求
+        $.ajax({
+            url: "http://127.0.0.1:8000/users/username_auth/",
+            type: "post",
+            data: {
+                "username": $(".user").val()
+            },
+            // 当Ajax请求成功时响应回来的时候出发的回调函数
+            success: function (res) {
+                console.log(res);
+                // res = JSON.parse(res);
+                // console.log(res);
+
+                if (res.exist) {
+                    // 通过dom操作将响应渲染到页面中，发生局部变化
+                    $(".err").html(res.msg)
+                } else {
+                    $(".err").html("")
+                }
+
+
+            },
+            error: function (res) {
+
+            }
+
+        })
+
+    });
+    //  加法计算器
+
+    $(".cal").click(function () {
+
+        $.ajax({
+            url: "http://127.0.0.1:8000/cal/add/",
+            type: "post",
+            data: {
+                num1: $(".num1").val(),
+                num2: $(".num2").val(),
+            },
+            success: function (res) {
+                $(".result").val(res);
+            }
+
+        })
+
+    })
+
+</script>
+
+</body>
+</html>
