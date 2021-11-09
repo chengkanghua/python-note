@@ -31,9 +31,9 @@ urlpatterns = [
     re_path('books/$', views.books),
     re_path('books/(?P<condition>publish|author)/(?P<param>.*)/$', views.books),
     re_path('books/add/$', views.add_book),
-    re_path('book/edit/', views.book_edit),
+    re_path('book/edit/$', views.book_edit),
     re_path('books/change2/$', views.change_book2),
-    # re_path('books/(\d+)/change/$', views.change_book),
+    re_path('books/(\d+)/change/$', views.change_book),
     re_path('books/(\d+)/delete/$', views.delete_book),
 
 ]

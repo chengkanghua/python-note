@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-
+import json
 
 # Create your views here.
 
@@ -60,7 +60,19 @@ def register(request):
 
 def publish(request):
     publish_list = Publish.objects.all()
-    books = Book.objects.all()
+    # books = Book.objects.all()
+    if request.is_ajax():
+        response = {'state': None, 'msg': None}
+        name = request.POST.get('name')
+        city = request.POST.get('city')
+        email = request.POST.get('email')
+        reck = Publish.objects.create(name=name,city=city,email=email)
+        print(reck)
+        if reck:
+            response['state'] = True
+        else:
+            response['msg'] = '添加出错'
+        return JsonResponse(response)
 
     return render(request, 'publish.html', {'publish_list': publish_list})
 
@@ -73,6 +85,16 @@ def del_publish(request, id):
 
 def authors(request):
     author_list = Author.objects.all()
+    if request.is_ajax():
+        response = {'state':None,'msg':None}
+        name = request.POST.get('name')
+        age  = request.POST.get('age')
+        reck = Author.objects.create(name=name,age=age)
+        if reck:
+            response['state'] = True
+        else:
+            response['msg'] = '添加作者出错'
+        return JsonResponse(response)
     return render(request, 'authors.html', {'author_list': author_list})
 
 
@@ -86,6 +108,8 @@ def add_book(request):
     if request.method == "POST":
         title = request.POST.get("title")
         price = request.POST.get("price")
+        #price = float(price)
+        print(type(price))
         pub_date = request.POST.get("pub_date")
         publish_id = request.POST.get("publish_id")
         authors_id_list = request.POST.getlist("authors_id_list")  # checkbox,select
@@ -118,7 +142,8 @@ def books(request, **kwargs):
     else:
         book_list = Book.objects.all()
 
-    return render(request, "books.html", {"book_list": book_list, 'publish_list': publish_list,'author_list': author_list})
+    return render(request, "books.html",
+                  {"book_list": book_list, 'publish_list': publish_list, 'author_list': author_list})
 
 
 @login_required
@@ -147,17 +172,30 @@ def change_book(request, edit_book_id):
     return render(request, "editbook.html",
                   {"edit_book_obj": edit_book_obj, "publish_list": publish_list, "author_list": author_list})
 
+
 def book_edit(request):
     if request.is_ajax():
         # print(request.POST)
+        response = {'state': None, 'msg': None}
         title = request.POST.get('title')
         price = request.POST.get('price')
         pub_date = request.POST.get('pub_date')
         publish_pk = request.POST.get('publish_pk')
-        author_list = request.POST.get('author_list')
-        print(title,pub_date,publish_pk,author_list)
+        author_list = request.POST.get('author_list')  # json 字符串
+        author_list = json.loads(author_list)          # 反序列化成 list
+        print(title, pub_date, publish_pk, author_list)
+        # 更新价格 时间 出版社
+        reck = Book.objects.filter(title=title).update(price=price, publishDate=pub_date, publish_id=publish_pk)
 
-    return redirect('/books/')
+        # 更新作者
+        edit_book_obj = Book.objects.filter(title=title).first()
+        edit_book_obj.authors.set(author_list)
+        if reck:
+            response['state'] = True
+        else:
+            response['msg'] = '修改错误,请自行检查'
+    return JsonResponse(response)
+
 
 def change_book2(request):
     if request.is_ajax():
@@ -166,10 +204,11 @@ def change_book2(request):
         publish_list = Publish.objects.all()
         author_list = Author.objects.all()
 
-        print(request.POST)
+        # print(request.POST)
 
-        response = {'title':'aa','data':'1330-123','publish': '华夏出版社','publish_list':['北京出版社','华夏出版社']}
+        response = {'title': 'aa', 'data': '1330-123', 'publish': '华夏出版社', 'publish_list': ['北京出版社', '华夏出版社']}
     return JsonResponse(response)
+
 
 @login_required
 def delete_book(request, delete_book_id):

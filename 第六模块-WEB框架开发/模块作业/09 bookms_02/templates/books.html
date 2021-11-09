@@ -155,16 +155,18 @@
             //清楚模态框中所有选择的作者
             $("[name='authors_id_list']").children().attr('selected',false)
         })
-
+        // 保存修改
         $('#save_change').click(function () {
             var title = $("#title").val()
             var price = $("#price").val()
             var pub_date = $("#pub_date").val()
-            var publish_pk = $('#publish').find('option[selected="selected"]').val()
-            var author_list = new Array()  // 作者id数组
-            $('[name="authors_id_list"]').find("option[selected='selected']").each(function (i,oldelement) {
-                author_list[i] = $(this).val()
-            })
+            //var publish_pk = $('#publish').find('option[selected="selected"]').val()  // 这种取值是旧的
+            var publish_pk = $('#publish').val()   // 默认取的选中的 pushlish的value值
+            var author_list = $('[name="authors_id_list"]').val()
+            //var author_list = new Array()  // 作者id数组  这种取值方式是旧值
+            // $('[name="authors_id_list"]').find("option[selected='selected']").each(function (i,oldelement) {
+            //    author_list[i] = $(this).val()
+            //})
             console.log(title,price,pub_date,publish_pk,author_list)
 
             $.ajax({
@@ -175,11 +177,17 @@
                     price:price,
                     pub_date:pub_date,
                     publish_pk:publish_pk,
-                    author_list: author_list,
+                    author_list: JSON.stringify(author_list),
                     csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
                 },
                 success: function (data) {
-                    //console.log(data)
+                    console.log(data)
+                    if (data.state) {
+                        location.href='/books/'
+                    }else {
+                        alert('修改出错了')
+                    }
+
                 }
             })
         })
