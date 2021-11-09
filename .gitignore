@@ -148,3 +148,6 @@ Desktop.ini
 
 # pychram
 .idea/
+
+# 忽略虚拟环境目录
+/study/django3.2_orm/
