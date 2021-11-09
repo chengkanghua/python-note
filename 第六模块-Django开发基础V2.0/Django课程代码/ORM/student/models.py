@@ -26,18 +26,17 @@ class Student(models.Model):
     )
 
     # id = models.AutoField(primary_key=True)   # 这个不写会自动创建
-
     name = models.CharField(max_length=32, unique=True, verbose_name="姓名")
-    age = models.SmallIntegerField(verbose_name="年龄",default=18)  # 年龄
-    sex = models.SmallIntegerField(choices=sex_choices)
-    birthday = models.DateField()
+    age = models.SmallIntegerField(verbose_name="年龄",default=18)
+    sex = models.SmallIntegerField(choices=sex_choices)  # choices值从sex_choices里选择
+    birthday = models.DateField(verbose_name='生日')
 
     classmate = models.CharField(max_length=32,verbose_name="班级" ,default="python脱产12期")
 
     description = models.TextField(null=True,verbose_name="个性签名")
 
-    chinese_score = models.IntegerField(default=100)
-    math_score = models.IntegerField(default=100)
+    chinese_score = models.IntegerField(default=100,verbose_name='语文分数')
+    math_score = models.IntegerField(default=100,verbose_name='数学分数')
 
     class Meta:   # 数据库表名默认是 项目名_Student, 以下是修改了这个表名为db_student
         db_table = "db_student"
