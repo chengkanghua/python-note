@@ -2009,15 +2009,15 @@ Book.objects.filter(title__startswith="py").update(price=120)
 
 ```
 1 查询老男孩出版社出版过的价格大于200的书籍
- 
+ Book.objects.filter(publish__name='老男孩出版社',price__gt = 200)
 2 查询2017年8月出版的所有以py开头的书籍名称
- 
+ Book.objects.filter(pub_date__year=2017,pub_date__month=7).filter(title__startswith = py)
 3 查询价格为50,100或者150的所有书籍名称及其出版社名称
- 
+ Book.objects.filter(price__in=[50,100,150]).values(title,Book.publish.name)
 4 查询价格在100到200之间的所有书籍名称及其价格
- 
+ Book.objects.filter(price__range(100,200)).values(title,price)
 5 查询所有人民出版社出版的书籍的价格（从高到低排序，去重）
-
+Book.objects.values(publish__name = '人民出版社').distinct().order_by('-price')
 ```
 
 
@@ -2186,7 +2186,7 @@ book_authors表
 多对多关系其它常用API：
 
 ```
-book_obj.authors.remove()      # 将某个特定的对象从被关联对象集合中去除。    ======   book_obj.authors.remove(*[])
+book_obj.authors.remove()      # 将某个特定的对象从被关联对象集合中去除。 ======   book_obj.authors.remove(*[])
 book_obj.authors.clear()       #清空被关联对象集合
 book_obj.authors.set()         #先清空再设置　　
 ```
@@ -2615,14 +2615,10 @@ Book.objects.all().update(price=F("price")+30)　
 comment_sum = models.IntegerField(default=0)
 read_sum  = models.IntegerField(default=0)
 
-
 kanghuadeMacBook-Pro:08-ORM2 kanghua$  python3.9 manage.py makemigrations
 kanghuadeMacBook-Pro:08-ORM2 kanghua$ python3.9 manage.py migrate
 
-
 ```
-
-
 
 ### Q查询
 
@@ -2706,7 +2702,7 @@ class Pizza(models.Model):
 
 >>> b = Blog.objects.get(id=1)
 >>> e = Entry.objects.get(id=234)
->>> b.entry_set.add(e) # Associates Entry e with Blog b.
+>>> b.entry_set.add(e)    # Associates Entry e with Blog b.
 在上面的例子中，对于ForeignKey关系，e.save()由关联管理器调用，执行更新操作。然而，在多对多关系中使用add()并不会调用任何 save()方法，而是由QuerySet.bulk_create()创建关系。
 
 延伸：
