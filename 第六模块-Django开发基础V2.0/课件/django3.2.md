@@ -10,9 +10,19 @@ Python下有许多款不同的 Web 框架。Django是重量级选手中最有代
 
 目前我们学习和使用的版本是3.2LTS版本
 
-| `1 2 3 4 5 6 7 8 9 ` | `目前开源软件发布一般会有2个不同的分支版本: 1. 普通发行版本:                  经常用于一些新功能,新特性,但是维护周期短,不稳定. 2. 长线支持版本[LongTerm Supper]: 维护周期长,稳定  软件版本格式: 大版本.小版本.修订号 大版本一般是项目内容/软件的核心架构发生改动, 以前的代码已经不适用于新的版本 小版本一般是功能的删减, 删一个功能,小版本+1, 减一个功能,小版本+1 修订号一般就是原来的代码出现了bug, 会针对bug代码进行修复, 此时就会增加修订号的数值 ` |
-| -------------------- | ------------------------------------------------------------ |
-|                      |                                                              |
+```
+目前开源软件发布一般会有2个不同的分支版本:
+1. 普通发行版本:                  经常用于一些新功能,新特性,但是维护周期短,不稳定.
+2. 长线支持版本[LongTerm Supper]: 维护周期长,稳定
+
+
+软件版本格式: 大版本.小版本.修订号
+大版本一般是项目内容/软件的核心架构发生改动, 以前的代码已经不适用于新的版本
+小版本一般是功能的删减, 删一个功能,小版本+1, 减一个功能,小版本+1
+修订号一般就是原来的代码出现了bug, 会针对bug代码进行修复, 此时就会增加修订号的数值
+```
+
+
 
 ![image-20210525103556002](assets/image-20210525103556002-1626660206042.png)
 
@@ -22,13 +32,21 @@ Python下有许多款不同的 Web 框架。Django是重量级选手中最有代
 
 在本地安装
 
-| `1 2 ` | `pip install django pip install django==3.2 ` |
-| ------ | --------------------------------------------- |
-|        |                                               |
+```
+pip install django
+pip install django==3.2
 
-| `1 2 3 4 5 6 ` | `pip源:    https://pypi.douban.com/simple/  豆瓣源    https://pypi.tuna.tsinghua.edu.cn/simple   清华源         使用格式:    pip install django -i https://pypi.douban.com/simple/ ` |
-| -------------- | ------------------------------------------------------------ |
-|                |                                                              |
+------------------------------------------------------
+
+pip源:
+    https://pypi.douban.com/simple/  豆瓣源
+    https://pypi.tuna.tsinghua.edu.cn/simple   清华源
+        
+使用格式:
+    pip install django -i https://pypi.douban.com/simple/
+```
+
+
 
 当然在以后开发或者学习中,我们肯定都会遇到在一台开发机子中,运行多个项目的情况,有时候还会出现每个项目的python解析器或者依赖包的版本有差异.
 
@@ -48,15 +66,22 @@ Python下有许多款不同的 Web 框架。Django是重量级选手中最有代
 
 创建虚拟环境并在虚拟环境中下载安装django包
 
-| `1 2 3 ` | `pip install django==3.2 -i https://pypi.douban.com/simple/ cd ~/Desktop django-admin startproject demo ` |
-| -------- | ------------------------------------------------------------ |
-|          |                                                              |
+```
+pip install django==3.2 -i https://pypi.douban.com/simple/
+cd ~/Desktop
+django-admin startproject demo
+```
+
+
 
 完成了以后,直接直接下pycharm下面的终端terminal中使用命令运行django
 
-| `1 ` | `python manage.py runserver 8090 ` |
-| ---- | ---------------------------------- |
-|      |                                    |
+```
+python manage.py runserver 8090
+
+```
+
+
 
 ![image-20210723182232002](assets/image-20210723182232002.png)
 
@@ -76,9 +101,17 @@ Python下有许多款不同的 Web 框架。Django是重量级选手中最有代
 
 ## 2.1、目录结构
 
-| `1 2 3 4 5 6 7 ` | `│─ manage.py    # 终端脚本命令,提供了一系列用于生成文件或者目录的命令,也叫脚手架 └─ dome/        # 主应用开发目录,保存了项目中的所有开发人员编写的代码, 目录是生成项目时指定的    │- asgi.py      # django3.0以后新增的，用于让django运行在异步编程模式的一个web应用对象    │- settings.py  # 默认开发配置文件    │- urls.py      # 路由列表目录,用于绑定视图和url的映射关系    │- wsgi.py      # wsgi就是项目运行在wsgi服务器时的入口文件,相当于manage.py    └- __init__.py ` |
-| ---------------- | ------------------------------------------------------------ |
-|                  |                                                              |
+```python
+│─ manage.py    # 终端脚本命令,提供了一系列用于生成文件或者目录的命令,也叫脚手架
+└─ dome/        # 主应用开发目录,保存了项目中的所有开发人员编写的代码, 目录是生成项目时指定的
+    │- asgi.py      # django3.0以后新增的，用于让django运行在异步编程模式的一个web应用对象
+    │- settings.py  # 默认开发配置文件
+    │- urls.py      # 路由列表目录,用于绑定视图和url的映射关系
+    │- wsgi.py      # wsgi就是项目运行在wsgi服务器时的入口文件,相当于manage.py
+    └- __init__.py
+```
+
+
 
 ## 2.2、快速使用django
 
@@ -94,9 +127,12 @@ Python下有许多款不同的 Web 框架。Django是重量级选手中最有代
 
 #### （1）创建子应用
 
-| `1 ` | `python manage.py startapp 子应用名称 ` |
-| ---- | --------------------------------------- |
-|      |                                         |
+```
+python manage.py startapp 子应用名称
+
+```
+
+
 
 >   子应用的名称将来会作为目录名而存在,所以不能出现特殊符号,不能出现中文等多字节的字符.
 
@@ -104,23 +140,59 @@ Python下有许多款不同的 Web 框架。Django是重量级选手中最有代
 
 `demo/urls.py`代码:
 
-| `1 2 3 4 5 6 7 8 ` | `from django.contrib import admin from django.urls import path from home.views import index urlpatterns = [    path('admin/', admin.site.urls),    path("timer", timer), ] ` |
-| ------------------ | ------------------------------------------------------------ |
-|                    |                                                              |
+```python
+from django.contrib import admin
+from django.urls import path
+from home.views import index
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("timer", timer),
+]
+
+```
+
+
 
 #### （3）在子应用的视图文件中编写视图函数
 
 `home/view.py`,代码:
 
-| ` 1 2 3 4 5 6 7 8 9 10 ` | `from django.shortcuts import render,HttpResponse # Create your views here. import datetime def timer(request):        now=datetime.datetime.now().strftime("%Y-%m-%d %X")    #return HttpResponse(now)    return render(request,"timer.html",{"now":now}) ` |
-| ------------------------ | ------------------------------------------------------------ |
-|                          |                                                              |
+```python
+
+from django.shortcuts import render,HttpResponse
+
+# Create your views here.
+import datetime
+
+def timer(request):
+    
+    now=datetime.datetime.now().strftime("%Y-%m-%d %X")
+    #return HttpResponse(now)
+    return render(request,"timer.html",{"now":now})
+```
+
+
 
 #### （4）在templates中构建模板：timer.html:
 
-| ` 1 2 3 4 5 6 7 8 9 10 11 12 ` | `<!DOCTYPE html> <html lang="en"> <head>    <meta charset="UTF-8">    <title>Title</title> </head> <body> <p>当前时间:{{ now }}</p> </body> </html> ` |
-| ------------------------------ | ------------------------------------------------------------ |
-|                                |                                                              |
+```html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<p>当前时间:{{ now }}</p>
+
+</body>
+</html>
+
+```
+
+
 
 因为上面我们绑定index视图函数的url地址是index,所以我们可以通过`http://127.0.0.1:8000/`拼接url地址`index`来访问视图函数
 
