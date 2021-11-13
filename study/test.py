@@ -1,24 +1,9 @@
-
-# 1 注册 已存在的用户报错
-
-
-
-# 2 博客列表 显示 浏览数 点赞数 踩数,
-
-
-# 3 文章详情 里显示 评论信息.
-
-
-name = '中国北京昌平'
-
-
-
-# i = 0
-# while i < len(name):
-#     print(name[i],end='')
-#     i += 1
-
-# for i in name:
-#     print(i,end='')
-# for i in range(len(name)):
-#     print(name[i],end='')
+def clean(self):
+    print("---",self.cleaned_data)
+    # if self.cleaned_data["password"]==self.cleaned_data["repeat_password"]:     
+    # 报错原因：self.cleaned_data是干净数据，如果页面没有输入内容，则self.cleaned_data没有password。
+    # 改如下：
+    if self.cleaned_data.get("password")==self.cleaned_data.get("repeat_password"):
+        return self.cleaned_data
+    ​else:
+        raise ValidationError("两次密码不一致")
