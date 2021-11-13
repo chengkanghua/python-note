@@ -3067,7 +3067,7 @@ settings.py 文件  注释 MIDDLEWARE=[] 里
 
 # [11 Django组件-分页器](https://www.cnblogs.com/yuanchenqi/articles/9036515.html)
 
-# Django的分页器（paginator）
+## Django的分页器（paginator）
 
 ### view
 
@@ -4327,6 +4327,3560 @@ Md1返回
 ```
 
  
+
+[![返回主页](assets/logo.gif)](https://www.cnblogs.com/yuanchenqi/)
+
+
+
+# [Django-form表单](https://www.cnblogs.com/yuanchenqi/articles/7614921.html)
+
+
+
+*知识预览*
+
+-   [构建一个表单](https://www.cnblogs.com/yuanchenqi/articles/7614921.html#_label0)
+-   [在Django 中构建一个表单](https://www.cnblogs.com/yuanchenqi/articles/7614921.html#_label1)
+-   [Django Form 类详解](https://www.cnblogs.com/yuanchenqi/articles/7614921.html#_label2)
+-   [使用表单模板](https://www.cnblogs.com/yuanchenqi/articles/7614921.html#_label3)
+
+
+
+## 构建一个表单
+
+假设你想在你的网站上创建一个简单的表单，以获得用户的名字。你需要类似这样的模板：
+
+```html
+<form action="/your-name/" method="post">
+    <label for="your_name">Your name: </label>
+    <input id="your_name" type="text" name="your_name">
+    <input type="submit" value="OK">
+</form>
+```
+
+这是一个非常简单的表单。实际应用中，一个表单可能包含几十上百个字段，其中大部分需要预填充，而且我们预料到用户将来回编辑-提交几次才能完成操作。
+
+我们可能需要在表单提交之前，在浏览器端作一些验证。我们可能想使用非常复杂的字段，以允许用户做类似从日历中挑选日期这样的事情，等等。
+
+这个时候，让Django 来为我们完成大部分工作是很容易的。
+
+so,两个突出优点：
+
+  1 form表单提交时，数据出现错误，返回的页面中仍可以保留之前输入的数据。
+
+  2 方便地限制字段条件
+
+
+
+## 在Django 中构建一个表单
+
+### Form 类
+
+我们已经计划好了我们的 HTML 表单应该呈现的样子。在Django 中，我们的起始点是这里：
+
+```python
+#forms.py
+ 
+from django import forms
+ 
+class NameForm(forms.Form):
+    your_name = forms.CharField(label='Your name', max_length=100)
+```
+
+ 它定义一个`Form` 类，只带有一个字段（`your_name`）。
+
+字段允许的最大长度通过`max_length` 定义。它完成两件事情。首先，它在HTML 的`<input>` 上放置一个`maxlength="100"`（这样浏览器将在第一时间阻止用户输入多于这个数目的字符）。它还意味着当Django 收到浏览器发送过来的表单时，它将验证数据的长度。
+
+`Form` 的实例具有一个`is_valid()` 方法，它为所有的字段运行验证的程序。当调用这个方法时，如果所有的字段都包含合法的数据，它将：
+
+-   返回`True`
+-   将表单的数据放到`cleaned_data`属性中。
+
+完整的表单，第一次渲染时，看上去将像：
+
+```html
+<label for="your_name">Your name: </label>
+<input id="your_name" type="text" name="your_name" maxlength="100">
+```
+
+ 注意它不包含 `<form>` 标签和提交按钮。我们必须自己在模板中提供它们。
+
+## 视图
+
+发送给Django 网站的表单数据通过一个视图处理，一般和发布这个表单的是同一个视图。这允许我们重用一些相同的逻辑。
+
+当处理表单时，我们需要在视图中实例化它：
+
+
+
+```python
+#views.py
+
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+
+from .forms import NameForm
+
+def get_name(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/thanks/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = NameForm()
+
+    return render(request, 'name.html', {'form': form})
+```
+
+
+
+如果访问视图的是一个`GET` 请求，它将创建一个空的表单实例并将它放置到要渲染的模板的上下文中。这是我们在第一个访问该URL 时预期发生的情况。
+
+如果表单的提交使用`POST` 请求，那么视图将再次创建一个表单实例并使用请求中的数据填充它：`form = NameForm(request.POST)`。这叫做”绑定数据至表单“（它现在是一个绑定的表单）。
+
+我们调用表单的`is_valid()`方法；如果它不为`True`，我们将带着这个表单返回到模板。这时表单不再为空（未绑定），所以HTML 表单将用之前提交的数据填充，然后可以根据要求编辑并改正它。
+
+如果`is_valid()`为`True`，我们将能够在`cleaned_data` 属性中找到所有合法的表单数据。在发送HTTP 重定向给浏览器告诉它下一步的去向之前，我们可以用这个数据来更新数据库或者做其它处理。
+
+## 模板
+
+我们不需要在name.html 模板中做很多工作。最简单的例子是：
+
+```html
+<form action="/your-name/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
+```
+
+ 根据`{{ form }}`，所有的表单字段和它们的属性将通过Django 的模板语言拆分成HTML 标记 。
+
+注：Django 原生支持一个简单易用的[跨站请求伪造的防护](http://python.usyiyi.cn/django/ref/csrf.html)。当提交一个启用CSRF 防护的`POST` 表单时，你必须使用上面例子中的`csrf_token` 模板标签。
+
+现在我们有了一个可以工作的网页表单，它通过Django Form 描述、通过视图处理并渲染成一个HTML `<form>`。
+
+
+
+## Django Form 类详解
+
+## 绑定的和未绑定的表单实例
+
+绑定的和未绑定的表单 之间的区别非常重要：
+
+-   未绑定的表单没有关联的数据。当渲染给用户时，它将为空或包含默认的值。
+-   绑定的表单具有提交的数据，因此可以用来检验数据是否合法。如果渲染一个不合法的绑定的表单，它将包含内联的错误信息，告诉用户如何纠正数据。
+
+## 字段详解
+
+考虑一个比上面的迷你示例更有用的一个表单，我们完成一个更加有用的注册表单：
+
+
+
+```python
+#forms.py
+
+from django import forms
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(max_length=100,
+                               error_messages={"min_length":"最短为5个字符","required":"该字段不能为空"},
+                               )
+    password = forms.CharField(max_length=100,
+                               widget=widgets.PasswordInput(attrs={"placeholder":"password"})
+                                )
+
+    telephone=forms.IntegerField(
+        error_messages={
+            "invalid":"格式错误"
+        }
+
+                                )
+
+
+    gender=forms.CharField(
+          initial=2,
+          widget=widgets.Select(choices=((1,'上海'),(2,'北京'),))
+             )
+
+    email = forms.EmailField()
+    is_married = forms.BooleanField(required=False)
+```
+
+
+
+### Widgets
+
+每个表单字段都有一个对应的`Widget` 类，它对应一个HTML 表单`Widget`，例如`<input type="text">`。
+
+在大部分情况下，字段都具有一个合理的默认Widget。例如，默认情况下，`CharField` 具有一个`TextInput Widget`，它在HTML 中生成一个`<input type="text">`。
+
+### 字段的数据
+
+不管表单提交的是什么数据，一旦通过调用`is_valid()` 成功验证（`is_valid()` 返回`True`），验证后的表单数据将位于`form.cleaned_data` 字典中。这些数据已经为你转换好为Python 的类型。
+
+注：此时，你依然可以从`request.POST` 中直接访问到未验证的数据，但是访问验证后的数据更好一些。
+
+在上面的联系表单示例中，is_married将是一个布尔值。类似地，`IntegerField` 和`FloatField` 字段分别将值转换为Python 的`int` 和`float`。
+
+[回到顶部](https://www.cnblogs.com/yuanchenqi/articles/7614921.html#_labelTop)
+
+## 使用表单模板
+
+你需要做的就是将表单实例放进模板的上下文。如果你的表单在`Contex`t 中叫做`form`，那么`{{ form }}`将正确地渲染它的`<label>` 和 `<input>`元素。
+
+## 表单渲染的选项
+
+对于`<label>/<input>` 对，还有几个输出选项：
+
+-   `{{ form.as_table }}` 以表格的形式将它们渲染在`<tr>` 标签中
+-   `{{ form.as_p }}` 将它们渲染在`<p>` 标签中
+-   `{{ form.as_ul }}` 将它们渲染在`<li>` 标签中
+
+注意，你必须自己提供`<table>` 或`<ul>` 元素。
+
+`{{ form.as_p }}`会渲染如下：
+
+```html
+<form action="">
+    <p>
+        <label for="id_username">Username:</label>
+        <input id="id_username" maxlength="100" name="username" type="text" required="">
+    </p>
+ 
+ 
+    <p>
+        <label for="id_password">Password:</label>
+        <input id="id_password" maxlength="100" name="password" placeholder="password" type="password" required="">
+    </p>
+ 
+ 
+    <p>
+        <label for="id_telephone">Telephone:</label> <input id="id_telephone" name="telephone" type="number" required="">
+    </p>
+ 
+ 
+    <p>
+        <label for="id_email">Email:</label> <input id="id_email" name="email" type="email" required="">
+    </p>
+ 
+ 
+    <p>
+        <label for="id_is_married">Is married:</label> <input id="id_is_married" name="is_married" type="checkbox">
+    </p>
+ 
+ 
+    <input type="submit" value="注册">
+</form>
+```
+
+## 手工渲染字段
+
+我们没有必要非要让Django 来分拆表单的字段；如果我们喜欢，我们可以手工来做（例如，这样允许重新对字段排序）。每个字段都是表单的一个属性，可以使用`{{ form.name_of_field }}` 访问，并将在Django 模板中正确地渲染。例如：
+
+```html
+<div class="fieldWrapper">
+    {{ form.Username.errors }}
+    {{ form.Username.label_tag }}
+    {{ form.Username }}
+</div>
+```
+
+## 渲染表单的错误信息
+
+1、
+
+```python
+registerForm=RegisterForm(request.POST)
+print(type(registerForm.errors))                      #<class 'django.forms.utils.ErrorDict'>
+print(type(registerForm.errors["username"]))          #<class 'django.forms.utils.ErrorList'>
+
+```
+
+2、
+
+使用`{{ form.name_of_field.errors }}` 显示表单错误的一个清单，并渲染成一个`ul`。看上去可能像：
+
+```html
+<ul class="errorlist">
+    <li>Sender is required.</li>
+</ul>
+```
+
+##  form组件的钩子
+
+
+
+```python
+def foo(request):
+
+
+    if request.method=="POST":
+
+        regForm=RegForm(request.POST)
+
+        if regForm.is_valid():
+            pass
+            # 可用数据: regForm.cleaned_data,
+            # 将数据插入数据库表中
+
+
+        else:
+            pass
+            # 可用数据: regForm.errors
+            # 可以利用模板渲染讲errors嵌套到页面中返回
+            # 也可以打包到一个字典中,用于ajax返回
+
+    else:
+        regForm=RegForm()
+    return render(request,"register.html",{"regForm":regForm})
+
+    
+
+    '''
+    实例化时:
+
+        self.fields={
+            "username":"字段规则对象",
+            "password":"字段规则对象",
+
+        }
+
+
+    is_valid时:
+
+        self._errors = {}
+        self.cleaned_data = {}
+
+
+        #局部钩子:
+
+        for name, field in self.fields.items():
+              try:
+
+                    value = field.clean(value)
+                    self.cleaned_data[name] = value
+                    if hasattr(self, 'clean_%s' % name):
+                        value = getattr(self, 'clean_%s' % name)()
+                        self.cleaned_data[name] = value
+              except ValidationError as e:
+                    self.add_error(name, e)
+
+        # 全局钩子:
+
+        self.clean()     # def self.clean():return self.cleaned_data
+
+        return  not self.errors    # True或者False
+
+
+    '''
+```
+
+
+
+## form组件补充
+
+1、Django内置字段如下：
+
+
+
+```django
+Field
+    required=True,               是否允许为空
+    widget=None,                 HTML插件
+    label=None,                  用于生成Label标签或显示内容
+    initial=None,                初始值
+    help_text='',                帮助信息(在标签旁边显示)
+    error_messages=None,         错误信息 {'required': '不能为空', 'invalid': '格式错误'}
+    show_hidden_initial=False,   是否在当前插件后面再加一个隐藏的且具有默认值的插件（可用于检验两次输入是否一直）
+    validators=[],               自定义验证规则
+    localize=False,              是否支持本地化
+    disabled=False,              是否可以编辑
+    label_suffix=None            Label内容后缀
+ 
+ 
+CharField(Field)
+    max_length=None,             最大长度
+    min_length=None,             最小长度
+    strip=True                   是否移除用户输入空白
+ 
+IntegerField(Field)
+    max_value=None,              最大值
+    min_value=None,              最小值
+ 
+FloatField(IntegerField)
+    ...
+ 
+DecimalField(IntegerField)
+    max_value=None,              最大值
+    min_value=None,              最小值
+    max_digits=None,             总长度
+    decimal_places=None,         小数位长度
+ 
+BaseTemporalField(Field)
+    input_formats=None          时间格式化   
+ 
+DateField(BaseTemporalField)    格式：2015-09-01
+TimeField(BaseTemporalField)    格式：11:12
+DateTimeField(BaseTemporalField)格式：2015-09-01 11:12
+ 
+DurationField(Field)            时间间隔：%d %H:%M:%S.%f
+    ...
+ 
+RegexField(CharField)
+    regex,                      自定制正则表达式
+    max_length=None,            最大长度
+    min_length=None,            最小长度
+    error_message=None,         忽略，错误信息使用 error_messages={'invalid': '...'}
+ 
+EmailField(CharField)      
+    ...
+ 
+FileField(Field)
+    allow_empty_file=False     是否允许空文件
+ 
+ImageField(FileField)      
+    ...
+    注：需要PIL模块，pip3 install Pillow
+    以上两个字典使用时，需要注意两点：
+        - form表单中 enctype="multipart/form-data"
+        - view函数中 obj = MyForm(request.POST, request.FILES)
+ 
+URLField(Field)
+    ...
+ 
+ 
+BooleanField(Field)  
+    ...
+ 
+NullBooleanField(BooleanField)
+    ...
+ 
+ChoiceField(Field)
+    ...
+    choices=(),                选项，如：choices = ((0,'上海'),(1,'北京'),)
+    required=True,             是否必填
+    widget=None,               插件，默认select插件
+    label=None,                Label内容
+    initial=None,              初始值
+    help_text='',              帮助提示
+ 
+ 
+ModelChoiceField(ChoiceField)
+    ...                        django.forms.models.ModelChoiceField
+    queryset,                  # 查询数据库中的数据
+    empty_label="---------",   # 默认空显示内容
+    to_field_name=None,        # HTML中value的值对应的字段
+    limit_choices_to=None      # ModelForm中对queryset二次筛选
+     
+ModelMultipleChoiceField(ModelChoiceField)
+    ...                        django.forms.models.ModelMultipleChoiceField
+ 
+ 
+     
+TypedChoiceField(ChoiceField)
+    coerce = lambda val: val   对选中的值进行一次转换
+    empty_value= ''            空值的默认值
+ 
+MultipleChoiceField(ChoiceField)
+    ...
+ 
+TypedMultipleChoiceField(MultipleChoiceField)
+    coerce = lambda val: val   对选中的每一个值进行一次转换
+    empty_value= ''            空值的默认值
+ 
+ComboField(Field)
+    fields=()                  使用多个验证，如下：即验证最大长度20，又验证邮箱格式
+                               fields.ComboField(fields=[fields.CharField(max_length=20), fields.EmailField(),])
+ 
+MultiValueField(Field)
+    PS: 抽象类，子类中可以实现聚合多个字典去匹配一个值，要配合MultiWidget使用
+ 
+SplitDateTimeField(MultiValueField)
+    input_date_formats=None,   格式列表：['%Y--%m--%d', '%m%d/%Y', '%m/%d/%y']
+    input_time_formats=None    格式列表：['%H:%M:%S', '%H:%M:%S.%f', '%H:%M']
+ 
+FilePathField(ChoiceField)     文件选项，目录下文件显示在页面中
+    path,                      文件夹路径
+    match=None,                正则匹配
+    recursive=False,           递归下面的文件夹
+    allow_files=True,          允许文件
+    allow_folders=False,       允许文件夹
+    required=True,
+    widget=None,
+    label=None,
+    initial=None,
+    help_text=''
+ 
+GenericIPAddressField
+    protocol='both',           both,ipv4,ipv6支持的IP格式
+    unpack_ipv4=False          解析ipv4地址，如果是::ffff:192.0.2.1时候，可解析为192.0.2.1， PS：protocol必须为both才能启用
+ 
+SlugField(CharField)           数字，字母，下划线，减号（连字符）
+    ...
+ 
+UUIDField(CharField)           uuid类型
+    ...
+```
+
+[![复制代码](assets/copycode.gif)](javascript:void(0);)
+
+2、Django内置插件：
+
+2、Django内置插件：
+
+
+
+2、Django内置插件：
+
+```
+TextInput(Input)
+NumberInput(TextInput)
+EmailInput(TextInput)
+URLInput(TextInput)
+PasswordInput(TextInput)
+HiddenInput(TextInput)
+Textarea(Widget)
+DateInput(DateTimeBaseInput)
+DateTimeInput(DateTimeBaseInput)
+TimeInput(DateTimeBaseInput)
+CheckboxInput
+Select
+NullBooleanSelect
+SelectMultiple
+RadioSelect
+CheckboxSelectMultiple
+FileInput
+ClearableFileInput
+MultipleHiddenInput
+SplitDateTimeWidget
+SplitHiddenDateTimeWidget
+SelectDateWidget
+```
+
+
+
+3、常用选择插件：
+
+
+
+```
+# 单radio，值为字符串
+# user = fields.CharField(
+#     initial=2,
+#     widget=widgets.RadioSelect(choices=((1,'上海'),(2,'北京'),))
+# )
+ 
+# 单radio，值为字符串
+# user = fields.ChoiceField(
+#     choices=((1, '上海'), (2, '北京'),),
+#     initial=2,
+#     widget=widgets.RadioSelect
+# )
+ 
+# 单select，值为字符串
+# user = fields.CharField(
+#     initial=2,
+#     widget=widgets.Select(choices=((1,'上海'),(2,'北京'),))
+# )
+ 
+# 单select，值为字符串
+# user = fields.ChoiceField(
+#     choices=((1, '上海'), (2, '北京'),),
+#     initial=2,
+#     widget=widgets.Select
+# )
+ 
+# 多选select，值为列表
+# user = fields.MultipleChoiceField(
+#     choices=((1,'上海'),(2,'北京'),),
+#     initial=[1,],
+#     widget=widgets.SelectMultiple
+# )
+ 
+ 
+# 单checkbox
+# user = fields.CharField(
+#     widget=widgets.CheckboxInput()
+# )
+ 
+ 
+# 多选checkbox,值为列表
+# user = fields.MultipleChoiceField(
+#     initial=[2, ],
+#     choices=((1, '上海'), (2, '北京'),),
+#     widget=widgets.CheckboxSelectMultiple
+# )
+```
+
+[引入](https://www.cnblogs.com/wupeiqi/articles/6144178.html)
+
+
+
+# [Django_form补充](https://www.cnblogs.com/yuanchenqi/articles/7487059.html)
+
+问题1: 注册页面输入为空，报错：keyError：找不到password
+
+```django
+def clean(self):
+    print("---",self.cleaned_data)
+    # if self.cleaned_data["password"]==self.cleaned_data["repeat_password"]:     
+    # 报错原因：self.cleaned_data是干净数据，如果页面没有输入内容，则self.cleaned_data没有password。
+    # 改如下：
+    if self.cleaned_data.get("password")==self.cleaned_data.get("repeat_password"):
+        return self.cleaned_data
+    else:
+        raise ValidationError("两次密码不一致")
+```
+
+
+
+ 
+
+ 2 为什么要用全局clean():
+
+![img](assets/877318-20170906212010491-1082705771.png)
+
+![img](assets/877318-20170906212037694-1695702959.png)
+
+![img](assets/877318-20170906212110788-2023823254.png)
+
+![img](assets/877318-20170906212214163-120707747.png)
+
+按子段顺序一一校验，即校验到username时，你无法使用self.cleaned_data.get("password")。
+
+而局部钩子使用完，到全局时，已经可以使用所有的self.cleaned_data
+
+3
+
+![img](assets/877318-20170906212732116-1993581374.png)
+
+ 
+
+
+
+# [Django-组件拾遗](https://www.cnblogs.com/yuanchenqi/articles/8034442.html)
+
+
+
+*知识预览*
+
+-   [一 Django的form组件](https://www.cnblogs.com/yuanchenqi/articles/8034442.html#_label0)
+-   [二 Django的model form组件](https://www.cnblogs.com/yuanchenqi/articles/8034442.html#_label1)
+-   [三 Django的缓存机制](https://www.cnblogs.com/yuanchenqi/articles/8034442.html#_label2)
+-   [四 Django的信号](https://www.cnblogs.com/yuanchenqi/articles/8034442.html#_label3)
+-   [五 Django的序列化](https://www.cnblogs.com/yuanchenqi/articles/8034442.html#_label4)
+
+
+
+## 一 Django的form组件
+
+[forms组件](http://www.cnblogs.com/yuanchenqi/articles/7614921.html)
+
+
+
+## 二 Django的model form组件
+
+这是一个神奇的组件，通过名字我们可以看出来，这个组件的功能就是把model和form组合起来，先来一个简单的例子来看一下这个东西怎么用：比如我们的数据库中有这样一张学生表，字段有姓名，年龄，爱好，邮箱，电话，住址，注册时间等等一大堆信息，现在让你写一个创建学生的页面，你的后台应该怎么写呢？首先我们会在前端一个一个罗列出这些字段，让用户去填写，然后我们从后天一个一个接收用户的输入，创建一个新的学生对象，保存其实，重点不是这些，而是合法性验证，我们需要在前端判断用户输入是否合法，比如姓名必须在多少字符以内，电话号码必须是多少位的数字，邮箱必须是邮箱的格式这些当然可以一点一点手动写限制，各种判断，这毫无问题，除了麻烦我们现在有个更优雅（以后在Python相关的内容里，要多用“优雅”这个词，并且养成习惯）的方法：ModelForm先来简单的，生硬的把它用上，再来加验证条件。
+
+## 创建modelform
+
+
+
+```python
+#首先导入ModelForm
+
+from django.forms import ModelForm
+#在视图函数中，定义一个类，比如就叫StudentList，这个类要继承ModelForm，在这个类中再写一个原类Meta（规定写法，并注意首字母是大写的）
+#在这个原类中，有以下属性（部分）：
+
+class StudentList(ModelForm):
+    class Meta:
+        model =Student #对应的Model中的类
+        fields = "__all__" #字段，如果是__all__,就是表示列出所有的字段
+        exclude = None #排除的字段
+        #error_messages用法：
+        error_messages = {
+        'name':{'required':"用户名不能为空",},
+        'age':{'required':"年龄不能为空",},
+        }
+        #widgets用法,比如把输入用户名的input框给为Textarea
+        #首先得导入模块
+        from django.forms import widgets as wid #因为重名，所以起个别名
+        widgets = {
+        "name":wid.Textarea(attrs={"class":"c1"}) #还可以自定义属性
+        }
+        #labels，自定义在前端显示的名字
+        labels= {
+        "name":"用户名"
+        }
+        
+```
+
+
+
+然后在url对应的视图函数中实例化这个类，把这个对象传给前端
+
+```python
+def student(request):
+
+    if request.method == 'GET':
+        student_list = StudentList()
+        return render(request,'student.html',{'student_list':student_list})
+        
+```
+
+然后前端只需要 {{ student_list.as_p }} 一下，所有的字段就都出来了，可以用as_p显示全部，也可以通过for循环这
+student_list，拿到的是一个个input框，现在我们就不用as_p，手动把这些input框搞出来，as_p拿到的页面太丑。
+首先 for循环这个student_list，拿到student对象，直接在前端打印这个student，是个input框student.label ，拿到数据库中每个字段的verbose_name ,如果没有设置这个属性，拿到的默认就是字段名，还可以通过student.errors.0 拿到错误信息有了这些，我们就可以通过bootstrap，自己拼出来想要的样式了，比如：
+
+
+
+```html
+<body>
+<div class="container">
+    <h1>student</h1>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        {# {{ student_list.as_p }}#}
+        {% for student in student_list %}
+            <div class="form-group col-md-6">
+                {# 拿到数据字段的verbose_name,没有就默认显示字段名 #}
+                <label class="col-md-3 control-label">{{ student.label }}</label>
+                <div class="col-md-9" style="position: relative;">{{ student }}</div>
+            </div>
+        {% endfor %}
+        <div class="col-md-2 col-md-offset-10">
+            <input type="submit" value="提交" class="btn-primary">
+        </div>
+    </form>
+</div>
+</body>
+```
+
+
+
+现在还缺一个input框的form-contral样式，可以考虑在后台的widget里面添加
+比如这样：
+
+```python
+from django.forms import widgets as wid #因为重名，所以起个别名
+widgets = {
+"name":wid.TextInput(attrs={'class':'form-control'}),
+"age":wid.NumberInput(attrs={'class':'form-control'}),
+"email":wid.EmailInput(attrs={'class':'form-control'})
+}
+```
+
+当然也可以在js中，找到所有的input框，加上这个样式，也行。
+
+## 添加纪录
+
+保存数据的时候，不用挨个取数据了，只需要save一下
+
+
+
+```python
+def student(request):
+
+    if request.method == 'GET':
+         student_list = StudentList()
+         return render(request,'student.html',{'student_list':student_list})
+    else:
+         student_list = StudentList(request.POST)
+         if student_list.is_valid():
+         		student_list.save()
+         return redirect(request,'student_list.html',{'student_list':student_list})
+        
+```
+
+
+
+## 编辑数据
+
+如果不用ModelForm，编辑的时候得显示之前的数据吧，还得挨个取一遍值，如果ModelForm，只需要加一个instance=obj（obj是要修改的数据库的一条数据的对象）就可以得到同样的效果
+保存的时候要注意，一定要注意有这个对象（instance=obj），否则不知道更新哪一个数据
+代码示例：
+
+
+
+```python
+from django.shortcuts import render,HttpResponse,redirect
+from django.forms import ModelForm
+# Create your views here.
+from app01 import models
+def test(request):
+    # model_form = models.Student
+    model_form = models.Student.objects.all()
+    return render(request,'test.html',{'model_form':model_form})
+
+class StudentList(ModelForm):
+    class Meta:
+        model = models.Student #对应的Model中的类
+        fields = "__all__" #字段，如果是__all__,就是表示列出所有的字段
+        exclude = None #排除的字段
+        labels = None #提示信息
+        help_texts = None #帮助提示信息
+        widgets = None #自定义插件
+        error_messages = None #自定义错误信息
+        #error_messages用法：
+        error_messages = {
+        'name':{'required':"用户名不能为空",},
+        'age':{'required':"年龄不能为空",},
+        }
+        #widgets用法,比如把输入用户名的input框给为Textarea
+        #首先得导入模块
+        from django.forms import widgets as wid #因为重名，所以起个别名
+        widgets = {
+        "name":wid.Textarea
+        }
+        #labels，自定义在前端显示的名字
+        labels= {
+        "name":"用户名"
+        }
+def student(request):
+    if request.method == 'GET':
+        student_list = StudentList()
+        return render(request,'student.html',{'student_list':student_list})
+    else:
+        student_list = StudentList(request.POST)
+        if student_list.is_valid():
+            student_list.save()
+            return render(request,'student.html',{'student_list':student_list})
+
+def student_edit(request,pk):
+    obj = models.Student.objects.filter(pk=pk).first()
+    if not obj:
+        return redirect('test')
+    if request.method == "GET":
+        student_list = StudentList(instance=obj)
+        return render(request,'student_edit.html',{'student_list':student_list})
+    else:
+        student_list = StudentList(request.POST,instance=obj)
+        if student_list.is_valid():
+            student_list.save()
+            return render(request,'student_edit.html',{'student_list':student_list})
+```
+
+
+
+总结： 从上边可以看到ModelForm用起来是非常方便的，比如增加修改之类的操作。但是也带来额外不好的地方，model和form之间耦合了。如果不耦合的话，mf.save()方法也无法直接提交保存。 但是耦合的话使用场景通常局限用于小程序，写大程序就最好不用了。
+
+
+
+## 三 Django的缓存机制
+
+## 1.1 缓存介绍
+
+### **1.缓存的简介**
+
+在动态网站中,用户所有的请求,服务器都会去数据库中进行相应的增,删,查,改,渲染模板,执行业务逻辑,最后生成用户看到的页面.
+
+当一个网站的用户访问量很大的时候,每一次的的后台操作,都会消耗很多的服务端资源,所以必须使用缓存来减轻后端服务器的压力.
+
+缓存是将一些常用的数据保存内存或者memcache中,在一定的时间内有人来访问这些数据时,则不再去执行数据库及渲染等操作,而是直接从内存或memcache的缓存中去取得数据,然后返回给用户.
+
+### **2.Django提供了6种缓存方式**
+
+-   开发调试缓存
+-   内存缓存
+-   文件缓存
+-   数据库缓存
+-   Memcache缓存(使用python-memcached模块)
+-   Memcache缓存(使用pylibmc模块)
+
+经常使用的有文件缓存和Mencache缓存
+
+## 1.2 各种缓存配置
+
+1.2.1 开发调试(此模式为开发调试使用,实际上不执行任何操作)
+
+settings.py文件配置
+
+
+
+```python
+CACHES = {
+ 'default': {
+  'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # 缓存后台使用的引擎
+  'TIMEOUT': 300,            # 缓存超时时间（默认300秒，None表示永不过期，0表示立即过期）
+  'OPTIONS':{
+   'MAX_ENTRIES': 300,          # 最大缓存记录的数量（默认300）
+   'CULL_FREQUENCY': 3,          # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+  },
+ }
+}
+```
+
+
+
+1.2.2 内存缓存(将缓存内容保存至内存区域中)
+
+settings.py文件配置
+
+
+
+```python
+CACHES = {
+ 'default': {
+  'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # 指定缓存使用的引擎
+  'LOCATION': 'unique-snowflake',         # 写在内存中的变量的唯一值 
+  'TIMEOUT':300,             # 缓存超时时间(默认为300秒,None表示永不过期)
+  'OPTIONS':{
+   'MAX_ENTRIES': 300,           # 最大缓存记录的数量（默认300）
+   'CULL_FREQUENCY': 3,          # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+  }  
+ }
+}
+```
+
+
+
+1.2.3 文件缓存(把缓存数据存储在文件中)
+
+settings.py文件配置
+
+
+
+```python
+CACHES = {
+ 'default': {
+  'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache', #指定缓存使用的引擎
+  'LOCATION': '/var/tmp/django_cache',        #指定缓存的路径
+  'TIMEOUT':300,              #缓存超时时间(默认为300秒,None表示永不过期)
+  'OPTIONS':{
+   'MAX_ENTRIES': 300,            # 最大缓存记录的数量（默认300）
+   'CULL_FREQUENCY': 3,           # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+  }
+ }   
+}
+```
+
+
+
+1.2.4 数据库缓存(把缓存数据存储在数据库中)
+
+settings.py文件配置
+
+
+
+```python
+CACHES = {
+ 'default': {
+  'BACKEND': 'django.core.cache.backends.db.DatabaseCache',  # 指定缓存使用的引擎
+  'LOCATION': 'cache_table',          # 数据库表    
+  'OPTIONS':{
+   'MAX_ENTRIES': 300,           # 最大缓存记录的数量（默认300）
+   'CULL_FREQUENCY': 3,          # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+  }  
+ }   
+}
+```
+
+
+
+注意,创建缓存的数据库表使用的语句:
+
+```
+python manage.py createcachetable
+```
+
+1.2.5 Memcache缓存(使用python-memcached模块连接memcache)
+
+Memcached是Django原生支持的缓存系统.要使用Memcached,需要下载Memcached的支持库python-memcached或pylibmc.
+
+settings.py文件配置
+
+```python
+CACHES = {
+ 'default': {
+  'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache', # 指定缓存使用的引擎
+  'LOCATION': '192.168.10.100:11211',         # 指定Memcache缓存服务器的IP地址和端口
+  'OPTIONS':{
+   'MAX_ENTRIES': 300,            # 最大缓存记录的数量（默认300）
+   'CULL_FREQUENCY': 3,           # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+  }
+ }
+}
+```
+
+
+
+LOCATION也可以配置成如下:
+
+```python
+'LOCATION': 'unix:/tmp/memcached.sock',   # 指定局域网内的主机名加socket套接字为Memcache缓存服务器
+'LOCATION': [         # 指定一台或多台其他主机ip地址加端口为Memcache缓存服务器
+ '192.168.10.100:11211',
+ '192.168.10.101:11211',
+ '192.168.10.102:11211',
+]
+```
+
+1.2.6 Memcache缓存(使用pylibmc模块连接memcache)
+
+
+
+```python
+settings.py文件配置
+ CACHES = {
+  'default': {
+   'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',  # 指定缓存使用的引擎
+   'LOCATION':'192.168.10.100:11211',         # 指定本机的11211端口为Memcache缓存服务器
+   'OPTIONS':{
+    'MAX_ENTRIES': 300,            # 最大缓存记录的数量（默认300）
+    'CULL_FREQUENCY': 3,           # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+   },  
+  }
+ }
+```
+
+
+
+LOCATION也可以配置成如下:
+
+```python
+'LOCATION': '/tmp/memcached.sock',  # 指定某个路径为缓存目录
+'LOCATION': [       # 分布式缓存,在多台服务器上运行Memcached进程,程序会把多台服务器当作一个单独的缓存,而不会在每台服务器上复制缓存值
+ '192.168.10.100:11211',
+ '192.168.10.101:11211',
+ '192.168.10.102:11211',
+]
+```
+
+Memcached是基于内存的缓存,数据存储在内存中.所以如果服务器死机的话,数据就会丢失,所以Memcached一般与其他缓存配合使用
+
+## **1.3 Django中的缓存应用**
+
+Django提供了不同粒度的缓存,可以缓存某个页面,可以只缓存一个页面的某个部分,甚至可以缓存整个网站.
+
+数据库：
+
+```python
+class Book(models.Model):
+    name=models.CharField(max_length=32)
+    price=models.DecimalField(max_digits=6,decimal_places=1)
+```
+
+![img](assets/877318-20171213193539004-1037954462.png)
+
+视图：
+
+```python
+from django.views.decorators.cache import cache_page
+import time
+from .models import *
+
+@cache_page(15)          #超时时间为15秒
+def index(request):
+
+ t=time.time()      #获取当前时间
+ bookList=Book.objects.all()
+ return render(request,"index.html",locals())
+```
+
+
+
+模板(index.html):
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>当前时间:-----{{ t }}</h3>
+
+<ul>
+    {% for book in bookList %}
+       <li>{{ book.name }}--------->{{ book.price }}$</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
+```
+
+
+
+上面的例子是基于内存的缓存配置,基于文件的缓存该怎么配置呢??
+
+更改settings.py的配置
+
+```python
+CACHES = {
+ 'default': {
+  'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache', # 指定缓存使用的引擎
+  'LOCATION': 'E:\django_cache',          # 指定缓存的路径
+  'TIMEOUT': 300,              # 缓存超时时间(默认为300秒,None表示永不过期)
+  'OPTIONS': {
+   'MAX_ENTRIES': 300,            # 最大缓存记录的数量（默认300）
+   'CULL_FREQUENCY': 3,           # 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）
+  }
+ }
+}
+```
+
+
+
+然后再次刷新浏览器,可以看到在刚才配置的目录下生成的缓存文件
+
+通过实验可以知道,Django会以自己的形式把缓存文件保存在配置文件中指定的目录中. 
+
+**1.3.2 全站使用缓存**
+
+既然是全站缓存,当然要使用Django中的中间件.
+
+用户的请求通过中间件,经过一系列的认证等操作,如果请求的内容在缓存中存在,则使用FetchFromCacheMiddleware获取内容并返回给用户
+
+当返回给用户之前,判断缓存中是否已经存在,如果不存在,则UpdateCacheMiddleware会将缓存保存至Django的缓存之中,以实现全站缓存
+
+
+
+```
+缓存整个站点，是最简单的缓存方法
+
+在 MIDDLEWARE_CLASSES 中加入 “update” 和 “fetch” 中间件
+MIDDLEWARE_CLASSES = (
+    ‘django.middleware.cache.UpdateCacheMiddleware’, #第一
+    'django.middleware.common.CommonMiddleware',
+    ‘django.middleware.cache.FetchFromCacheMiddleware’, #最后
+)
+“update” 必须配置在第一个
+“fetch” 必须配置在最后一个
+```
+
+
+
+修改settings.py配置文件
+
+```
+MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',   #响应HttpResponse中设置几个headers
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',   #用来缓存通过GET和HEAD方法获取的状态码为200的响应
+
+)
+
+
+CACHE_MIDDLEWARE_SECONDS=10
+```
+
+
+
+视图函数：
+
+```
+from django.views.decorators.cache import cache_page
+import time
+from .models import *
+
+
+def index(request):
+
+     t=time.time()      #获取当前时间
+     bookList=Book.objects.all()
+     return render(request,"index.html",locals())
+
+def foo(request):
+    t=time.time()      #获取当前时间
+    return HttpResponse("HELLO:"+str(t))
+```
+
+
+
+模板(index.html)：
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3 style="color: green">当前时间:-----{{ t }}</h3>
+
+<ul>
+    {% for book in bookList %}
+       <li>{{ book.name }}--------->{{ book.price }}$</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
+```
+
+
+
+其余代码不变,刷新浏览器是10秒,页面上的时间变化一次,这样就实现了全站缓存.
+
+**1.3.3 局部视图缓存**
+
+例子,刷新页面时,整个网页有一部分实现缓存
+
+views视图函数
+
+```
+from django.views.decorators.cache import cache_page
+import time
+from .models import *
+
+
+def index(request):
+
+     t=time.time()      #获取当前时间
+     bookList=Book.objects.all()
+
+     return render(request,"index.html",locals())
+```
+
+
+
+模板(index.html):
+
+```
+{% load cache %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+ <h3 style="color: green">不缓存:-----{{ t }}</h3>
+
+{% cache 2 'name' %}
+ <h3>缓存:-----:{{ t }}</h3>
+{% endcache %}
+
+</body>
+</html> 
+```
+
+
+
+## 四 Django的信号
+
+Django提供一种信号机制。其实就是观察者模式，又叫发布-订阅(Publish/Subscribe) 。当发生一些动作的时候，发出信号，然后监听了这个信号的函数就会执行。
+
+通俗来讲，就是一些动作发生的时候，信号允许特定的发送者去提醒一些接受者。用于在框架执行操作时解耦。
+
+### 2.1、Django内置信号 
+
+
+
+```
+Model signals
+    pre_init                    # django的modal执行其构造方法前，自动触发
+    post_init                   # django的modal执行其构造方法后，自动触发
+    pre_save                    # django的modal对象保存前，自动触发
+    post_save                   # django的modal对象保存后，自动触发
+    pre_delete                  # django的modal对象删除前，自动触发
+    post_delete                 # django的modal对象删除后，自动触发
+    m2m_changed                 # django的modal中使用m2m字段操作第三张表（add,remove,clear）前后，自动触发
+    class_prepared              # 程序启动时，检测已注册的app中modal类，对于每一个类，自动触发
+Management signals
+    pre_migrate                 # 执行migrate命令前，自动触发
+    post_migrate                # 执行migrate命令后，自动触发
+Request/response signals
+    request_started             # 请求到来前，自动触发
+    request_finished            # 请求结束后，自动触发
+    got_request_exception       # 请求异常后，自动触发
+Test signals
+    setting_changed             # 使用test测试修改配置文件时，自动触发
+    template_rendered           # 使用test测试渲染模板时，自动触发
+Database Wrappers
+    connection_created          # 创建数据库连接时，自动触发
+```
+
+
+
+```
+Django 提供了一系列的内建信号，允许用户的代码获得DJango的特定操作的通知。这包含一些有用的通知：
+django.db.models.signals.pre_save & django.db.models.signals.post_save
+
+在模型 save()方法调用之前或之后发送。
+django.db.models.signals.pre_delete & django.db.models.signals.post_delete
+
+在模型delete()方法或查询集的delete() 方法调用之前或之后发送。
+django.db.models.signals.m2m_changed
+
+模型上的 ManyToManyField 修改时发送。
+django.core.signals.request_started & django.core.signals.request_finished
+
+Django建立或关闭HTTP 请求时发送。
+```
+
+
+
+对于Django内置的信号，仅需注册指定信号，当程序执行相应操作时，自动触发注册函数：
+
+方式1:	
+
+```python
+from django.core.signals import request_finished
+    from django.core.signals import request_started
+    from django.core.signals import got_request_exception
+
+    from django.db.models.signals import class_prepared
+    from django.db.models.signals import pre_init, post_init
+    from django.db.models.signals import pre_save, post_save
+    from django.db.models.signals import pre_delete, post_delete
+    from django.db.models.signals import m2m_changed
+    from django.db.models.signals import pre_migrate, post_migrate
+
+    from django.test.signals import setting_changed
+    from django.test.signals import template_rendered
+
+    from django.db.backends.signals import connection_created
+
+
+    def callback(sender, **kwargs):
+        print("pre_save_callback")
+        print(sender,kwargs)
+
+    pre_save.connect(callback)      ＃ 该脚本代码需要写到app或者项目的初始化文件中，当项目启动时执行注册代码
+```
+
+
+
+方式2:
+
+```python
+from django.core.signals import request_finished
+from django.dispatch import receiver
+
+@receiver(request_finished)
+def my_callback(sender, **kwargs):
+    print("Request finished!")
+```
+
+### 2.2、自定义信号 
+
+a. 定义信号
+
+```
+import django.dispatch
+pizza_done = django.dispatch.Signal(providing_args=["toppings", "size"])
+
+```
+
+b. 注册信号
+
+```
+def callback(sender, **kwargs):
+    print("callback")
+    print(sender,kwargs)
+  
+pizza_done.connect(callback)
+```
+
+c. 触发信号
+
+```
+from 路径 import pizza_done
+  
+pizza_done.send(sender='seven',toppings=123, size=456)
+```
+
+由于内置信号的触发者已经集成到Django中，所以其会自动调用，而对于自定义信号则需要开发者在任意位置触发。 
+
+练习：数据库添加一条记录时生成一个日志记录。
+
+
+
+## 五 Django的序列化
+
+关于Django中的序列化主要应用在将数据库中检索的数据返回给客户端用户，特别的Ajax请求一般返回的为Json格式。
+
+1、serializers
+
+```
+from django.core import serializers
+  
+ret = models.BookType.objects.all()
+  
+data = serializers.serialize("json", ret)
+```
+
+2、json.dumps
+
+```
+import json
+  
+#ret = models.BookType.objects.all().values('caption')
+ret = models.BookType.objects.all().values_list('caption')
+  
+ret=list(ret)
+  
+result = json.dumps(ret)
+```
+
+由于json.dumps时无法处理datetime日期，所以可以通过自定义处理器来做扩展，如：
+
+```python
+import json
+from datetime import date
+from datetime import datetime
+
+d=datetime.now()
+
+class JsonCustomEncoder(json.JSONEncoder):
+
+    def default(self, field):
+
+        if isinstance(field, datetime):
+            return field.strftime('%Y-%m-%d %H:%M---%S')
+        elif isinstance(field, date):
+            return field.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, field)
+
+
+ds = json.dumps(d, cls=JsonCustomEncoder)
+
+print(ds)
+print(type(ds))
+
+
+'''
+Supports the following objects and types by default:
+
+    +-------------------+---------------+
+    | Python            | JSON          |
+    +===================+===============+
+    | dict              | object        |
+    +-------------------+---------------+
+    | list, tuple       | array         |
+    +-------------------+---------------+
+    | str               | string        |
+    +-------------------+---------------+
+    | int, float        | number        |
+    +-------------------+---------------+
+    | True              | true          |
+    +-------------------+---------------+
+    | False             | false         |
+    +-------------------+---------------+
+    | None              | null          |
+    +-------------------+---------------+
+
+'''
+```
+
+
+
+# [Django-认证系统](https://www.cnblogs.com/yuanchenqi/articles/7609586.html)
+
+
+
+*知识预览*
+
+-   [COOKIE 与 SESSION](https://www.cnblogs.com/yuanchenqi/articles/7609586.html#_label0)
+-   [用户认证　](https://www.cnblogs.com/yuanchenqi/articles/7609586.html#_label1)
+
+
+
+## COOKIE 与 SESSION
+
+## 概念
+
+cookie不属于http协议范围，由于http协议无法保持状态，但实际情况，我们却又需要“保持状态”，因此cookie就是在这样一个场景下诞生。
+
+cookie的工作原理是：由服务器产生内容，浏览器收到请求后保存在本地；当浏览器再次访问时，浏览器会自动带上cookie，这样服务器就能通过cookie的内容来判断这个是“谁”了。
+
+cookie虽然在一定程度上解决了“保持状态”的需求，但是由于cookie本身最大支持4096字节，以及cookie本身保存在客户端，可能被拦截或窃取，因此就需要有一种新的东西，它能支持更多的字节，并且他保存在服务器，有较高的安全性。这就是session。
+
+问题来了，基于http协议的无状态特征，服务器根本就不知道访问者是“谁”。那么上述的cookie就起到桥接的作用。
+
+我们可以给每个客户端的cookie分配一个唯一的id，这样用户在访问时，通过cookie，服务器就知道来的人是“谁”。然后我们再根据不同的cookie的id，在服务器上保存一段时间的私密资料，如“账号密码”等等。
+
+总结而言：cookie弥补了http无状态的不足，让服务器知道来的人是“谁”；但是cookie以文本的形式保存在本地，自身安全性较差；所以我们就通过cookie识别不同的用户，对应的在session里保存私密的信息以及超过4096字节的文本。
+
+另外，上述所说的cookie和session其实是共通性的东西，不限于语言和框架
+
+## 登陆应用
+
+前几节的介绍中我们已经有能力制作一个登陆页面，在验证了用户名和密码的正确性后跳转到后台的页面。但是测试后也发现，如果绕过登陆页面。直接输入后台的url地址也可以直接访问的。这个显然是不合理的。其实我们缺失的就是cookie和session配合的验证。有了这个验证过程，我们就可以实现和其他网站一样必须登录才能进入后台页面了。
+
+   先说一下这种认证的机制。每当我们使用一款浏览器访问一个登陆页面的时候，一旦我们通过了认证。服务器端就会发送一组随机唯一的字符串（假设是123abc）到浏览器端，这个被存储在浏览端的东西就叫cookie。而服务器端也会自己存储一下用户当前的状态，比如login=true，username=hahaha之类的用户信息。但是这种存储是以字典形式存储的，字典的唯一key就是刚才发给用户的唯一的cookie值。那么如果在服务器端查看session信息的话，理论上就会看到如下样子的字典
+
+{'123abc':{'login':true,'username:hahaha'}}
+
+因为每个cookie都是唯一的，所以我们在电脑上换个浏览器再登陆同一个网站也需要再次验证。那么为什么说我们只是理论上看到这样子的字典呢？因为处于安全性的考虑，其实对于上面那个大字典不光key值123abc是被加密的，value值{'login':true,'username:hahaha'}在服务器端也是一样被加密的。所以我们服务器上就算打开session信息看到的也是类似与以下样子的东西
+
+{'123abc':dasdasdasd1231231da1231231}
+
+知道了原理，下面就来用代码实现。
+
+## Django实现的COOKIE
+
+### **1、获取Cookie**
+
+```
+request.COOKIES['key']
+request.get_signed_cookie(key, default=RAISE_ERROR, salt='', max_age=None)
+    #参数：
+        default: 默认值
+           salt: 加密盐
+        max_age: 后台控制过期时间
+```
+
+### **2、设置Cookie**
+
+```
+rep = HttpResponse(...) 或 rep ＝ render(request, ...) 或 rep ＝ redirect()
+ 
+rep.set_cookie(key,value,...)
+rep.set_signed_cookie(key,value,salt='加密盐',...)　
+```
+
+ **参数：**
+
+```
+'''
+
+def set_cookie(self, key,                 键
+　　　　　　　　　　　　 value='',            值
+　　　　　　　　　　　　 max_age=None,        超长时间
+　　　　　　　　　　　　 expires=None,        超长时间
+　　　　　　　　　　　　 path='/',           Cookie生效的路径，
+                                         浏览器只会把cookie回传给带有该路径的页面，这样可以避免将
+                                         cookie传给站点中的其他的应用。
+                                         / 表示根路径，特殊的：根路径的cookie可以被任何url的页面访问
+　　　　　　　　　　　　 
+                     domain=None,         Cookie生效的域名
+                                        
+                                          你可用这个参数来构造一个跨站cookie。
+                                          如， domain=".example.com"
+                                          所构造的cookie对下面这些站点都是可读的：
+                                          www.example.com 、 www2.example.com 　　　　　　　　　　　　　　　　　　　　　　　　　和an.other.sub.domain.example.com 。
+                                          如果该参数设置为 None ，cookie只能由设置它的站点读取。
+
+　　　　　　　　　　　　 secure=False,        如果设置为 True ，浏览器将通过HTTPS来回传cookie。
+　　　　　　　　　　　　 httponly=False       只能http协议传输，无法被JavaScript获取
+                                         （不是绝对，底层抓包可以获取到也可以被覆盖）
+　　　　　　　　　　): pass
+
+'''
+
+
+```
+
+[![复制代码](assets/copycode-20211113232840780.gif)](javascript:void(0);)
+
+由于cookie保存在客户端的电脑上，所以，JavaScript和jquery也可以操作cookie。
+
+```
+<script src='/static/js/jquery.cookie.js'>
+ 
+</script> $.cookie("key", value,{ path: '/' });
+```
+
+### **3 删除cookie**
+
+```
+response.delete_cookie("cookie_key",path="/",domain=name)
+	
+```
+
+ cookie存储到客户端
+    优点：
+      数据存在在客户端，减轻服务器端的压力，提高网站的性能。
+    缺点：
+      安全性不高：在客户端机很容易被查看或破解用户会话信息
+
+## Django实现的SESSION
+
+### **1、 基本操作**
+
+```
+1、设置Sessions值
+          request.session['session_name'] ="admin"
+2、获取Sessions值
+          session_name = request.session["session_name"]
+3、删除Sessions值
+          del request.session["session_name"]
+4、检测是否操作session值
+          if "session_name" is request.session :
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+5、get(key, default=None)
+ 
+fav_color = request.session.get('fav_color', 'red')
+ 
+6、pop(key)
+ 
+fav_color = request.session.pop('fav_color')
+ 
+7、keys()
+ 
+8、items()
+ 
+9、setdefault()
+ 
+10、flush() 删除当前的会话数据并删除会话的Cookie。
+            这用于确保前面的会话数据不可以再次被用户的浏览器访问
+            例如，django.contrib.auth.logout() 函数中就会调用它。
+ 
+ 
+11 用户session的随机字符串
+        request.session.session_key
+  
+        # 将所有Session失效日期小于当前日期的数据删除
+        request.session.clear_expired()
+  
+        # 检查 用户session的随机字符串 在数据库中是否
+        request.session.exists("session_key")
+  
+        # 删除当前用户的所有Session数据
+        request.session.delete("session_key")
+  
+        request.session.set_expiry(value)
+            * 如果value是个整数，session会在些秒数后失效。
+            * 如果value是个datatime或timedelta，session就会在这个时间后失效。
+            * 如果value是0,用户关闭浏览器session就会失效。
+            * 如果value是None,session会依赖全局session失效策略。
+```
+
+### **2、 流程解析图**
+
+![img](assets/877318-20170929173142981-2106190717.png)
+
+###  **3、 示例**
+
+**views:**
+
+```
+def log_in(request):
+
+    if request.method=="POST":
+        username=request.POST['user']
+        password=request.POST['pwd']
+
+        user=UserInfo.objects.filter(username=username,password=password)
+
+        if user:
+            #设置session内部的字典内容
+            request.session['is_login']='true'
+            request.session['username']=username
+
+            #登录成功就将url重定向到后台的url
+            return redirect('/backend/')
+
+    #登录不成功或第一访问就停留在登录页面
+    return render(request,'login.html')
+
+def backend(request):
+    print(request.session,"------cookie")
+    print(request.COOKIES,'-------session')
+    """
+    这里必须用读取字典的get()方法把is_login的value缺省设置为False，
+    当用户访问backend这个url先尝试获取这个浏览器对应的session中的
+    is_login的值。如果对方登录成功的话，在login里就已经把is_login
+    的值修改为了True,反之这个值就是False的
+    """
+
+    is_login=request.session.get('is_login',False)
+    #如果为真，就说明用户是正常登陆的
+    if is_login:
+        #获取字典的内容并传入页面文件
+        cookie_content=request.COOKIES
+        session_content=request.session
+
+        username=request.session['username']
+
+        return render(request,'backend.html',locals())
+    else:
+        """
+        如果访问的时候没有携带正确的session，
+        就直接被重定向url回login页面
+        """
+        return redirect('/login/')
+
+def log_out(request):
+    """
+    直接通过request.session['is_login']回去返回的时候，
+    如果is_login对应的value值不存在会导致程序异常。所以
+    需要做异常处理
+    """
+    try:
+        #删除is_login对应的value值
+        del request.session['is_login']
+        
+        # OR---->request.session.flush() # 删除django-session表中的对应一行记录
+
+    except KeyError:
+        pass
+    #点击注销之后，直接重定向回登录页面
+    return redirect('/login/')
+```
+
+
+
+**template:**
+
+```html
+===================================login.html==================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="/login/" method="post">
+    <p>用户名: <input type="text" name="user"></p>
+    <p>密码: <input type="password" name="pwd"></p>
+    <p><input type="submit"></p>
+</form>
+
+
+</body>
+</html>
+
+
+===================================backend.html==================
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h3>hello {{ username }}</h3>
+<a href="/logout/">注销</a>
+
+</body>
+</html>
+```
+
+
+
+### **4、session存储的相关配置**
+
+**（1）数据库配置（默认）：**
+
+```
+Django默认支持Session，并且默认是将Session数据存储在数据库中，即：django_session 表中。
+  
+a. 配置 settings.py
+  
+    SESSION_ENGINE = 'django.contrib.sessions.backends.db'   # 引擎（默认）
+      
+    SESSION_COOKIE_NAME ＝ "sessionid"                       # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
+    SESSION_COOKIE_PATH ＝ "/"                               # Session的cookie保存的路径（默认）
+    SESSION_COOKIE_DOMAIN = None                             # Session的cookie保存的域名（默认）
+    SESSION_COOKIE_SECURE = False                            # 是否Https传输cookie（默认）
+    SESSION_COOKIE_HTTPONLY = True                           # 是否Session的cookie只支持http传输（默认）
+    SESSION_COOKIE_AGE = 1209600                             # Session的cookie失效日期（2周）（默认）
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = False                  # 是否关闭浏览器使得Session过期（默认）
+    SESSION_SAVE_EVERY_REQUEST = False                       # 是否每次请求都保存Session，默认修改之后才保存（默认）
+
+```
+
+**（2）缓存配置**　
+
+```
+a. 配置 settings.py
+  
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # 引擎
+    SESSION_CACHE_ALIAS = 'default'                            # 使用的缓存别名（默认内存缓存，也可以是memcache），此处别名依赖缓存的设置
+  
+  
+    SESSION_COOKIE_NAME ＝ "sessionid"                        # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串
+    SESSION_COOKIE_PATH ＝ "/"                                # Session的cookie保存的路径
+    SESSION_COOKIE_DOMAIN = None                              # Session的cookie保存的域名
+    SESSION_COOKIE_SECURE = False                             # 是否Https传输cookie
+    SESSION_COOKIE_HTTPONLY = True                            # 是否Session的cookie只支持http传输
+    SESSION_COOKIE_AGE = 1209600                              # Session的cookie失效日期（2周）
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = False                   # 是否关闭浏览器使得Session过期
+    SESSION_SAVE_EVERY_REQUEST = False                        # 是否每次请求都保存Session，默认修改之后才保存
+
+```
+
+（3）文件配置
+
+```
+a. 配置 settings.py
+  
+    SESSION_ENGINE = 'django.contrib.sessions.backends.file'    # 引擎
+    SESSION_FILE_PATH = None                                    # 缓存文件路径，如果为None，则使用tempfile模块获取一个临时地址tempfile.gettempdir()        
+    SESSION_COOKIE_NAME ＝ "sessionid"                          # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串
+    SESSION_COOKIE_PATH ＝ "/"                                  # Session的cookie保存的路径
+    SESSION_COOKIE_DOMAIN = None                                # Session的cookie保存的域名
+    SESSION_COOKIE_SECURE = False                               # 是否Https传输cookie
+    SESSION_COOKIE_HTTPONLY = True                              # 是否Session的cookie只支持http传输
+    SESSION_COOKIE_AGE = 1209600                                # Session的cookie失效日期（2周）
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = False                     # 是否关闭浏览器使得Session过期
+    SESSION_SAVE_EVERY_REQUEST = False                          # 是否每次请求都保存Session，默认修改之后才保存
+
+```
+
+
+
+## 用户认证　
+
+## auth模块
+
+```
+from django.contrib import auth
+```
+
+django.contrib.auth中提供了许多方法，这里主要介绍其中的三个：
+
+### **1 、authenticate()**  
+
+提供了用户认证，即验证用户名以及密码是否正确,一般需要username password两个关键字参数
+
+如果认证信息有效，会返回一个 User 对象。authenticate()会在User 对象上设置一个属性标识那种认证后端认证了该用户，且该信息在后面的登录过程中是需要的。当我们试图登陆一个从数据库中直接取出来不经过authenticate()的User对象会报错的！！
+
+```
+user = authenticate(username='someone',password='somepassword')
+```
+
+### **2 、login(HttpRequest, user)**　　
+
+该函数接受一个HttpRequest对象，以及一个认证了的User对象
+
+此函数使用django的session框架给某个已认证的用户附加上session id等信息。
+
+```
+from django.contrib.auth import authenticate, login
+   
+def my_view(request):
+  username = request.POST['username']
+  password = request.POST['password']
+  user = authenticate(username=username, password=password)
+  if user is not None:
+    login(request, user)
+    # Redirect to a success page.
+    ...
+  else:
+    # Return an 'invalid login' error message.
+    ...
+```
+
+### **3 、logout(request) 注销用户**　　
+
+```
+from django.contrib.auth import logout
+   
+def logout_view(request):
+  logout(request)
+  # Redirect to a success page.
+```
+
+该函数接受一个HttpRequest对象，无返回值。当调用该函数时，当前请求的session信息会全部清除。该用户即使没有登录，使用该函数也不会报错。
+
+### 4 、user对象的 is_authenticated()
+
+要求：
+
+1 用户登陆后才能访问某些页面，
+
+2 如果用户没有登录就访问该页面的话直接跳到登录页面
+
+3 用户在跳转的登陆界面中完成登陆后，自动访问跳转到之前访问的地址
+
+方法1:
+
+```
+def my_view(request):
+  if not request.user.is_authenticated():
+    return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+```
+
+方法2:
+
+**django已经为我们设计好了一个用于此种情况的装饰器：login_requierd()**
+
+```
+from django.contrib.auth.decorators import login_required
+      
+@login_required
+def my_view(request):
+  ...
+
+```
+
+若用户没有登录，则会跳转到django默认的 登录URL '/accounts/login/ ' (这个值可以在settings文件中通过LOGIN_URL进行修改)。并传递 当前访问url的绝对路径 (登陆成功后，会重定向到该路径)。
+
+## User对象
+
+User 对象属性：username， password（必填项）password用哈希算法保存到数据库
+
+is_staff ： 用户是否拥有网站的管理权限.
+
+is_active ： 是否允许用户登录, 设置为``False``，可以不用删除用户来禁止 用户登录
+
+ 
+
+### 2.1 、is_authenticated()
+
+如果是真正的 User 对象，返回值恒为 True 。 用于检查用户是否已经通过了认证。
+通过认证并不意味着用户拥有任何权限，甚至也不检查该用户是否处于激活状态，这只是表明用户成功的通过了认证。 这个方法很重要, 在后台用request.user.is_authenticated()判断用户是否已经登录，如果true则可以向前台展示request.user.name
+
+### 2.2 、创建用户
+
+使用 create_user 辅助函数创建用户:
+
+```
+from django.contrib.auth.models import User
+user = User.objects.create_user（username='',password='',email=''）
+```
+
+### 2.3 、check_password(passwd)
+
+```
+用户需要修改密码的时候 首先要让他输入原来的密码 ，如果给定的字符串通过了密码检查，返回 ``True
+```
+
+### 2.4 、修改密码
+
+使用 set_password() 来修改密码
+
+```
+user = User.objects.get(username='')
+user.set_password(password='')
+user.save　
+
+```
+
+### 2.5 、简单示例
+
+**注册：**
+
+```python
+def sign_up(request):
+ 
+    state = None
+    if request.method == 'POST':
+ 
+        password = request.POST.get('password', '')
+        repeat_password = request.POST.get('repeat_password', '')
+        email=request.POST.get('email', '')
+        username = request.POST.get('username', '')
+        if User.objects.filter(username=username):
+                state = 'user_exist'
+        else:
+                new_user = User.objects.create_user(username=username, password=password,email=email)
+                new_user.save()
+ 
+                return redirect('/book/')
+    content = {
+        'state': state,
+        'user': None,
+    }
+    return render(request, 'sign_up.html', content)　　
+    
+```
+
+**修改密码：**
+
+```python
+@login_required
+def set_password(request):
+    user = request.user
+    state = None
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password', '')
+        new_password = request.POST.get('new_password', '')
+        repeat_password = request.POST.get('repeat_password', '')
+        if user.check_password(old_password):
+            if not new_password:
+                state = 'empty'
+            elif new_password != repeat_password:
+                state = 'repeat_error'
+            else:
+                user.set_password(new_password)
+                user.save()
+                return redirect("/log_in/")
+        else:
+            state = 'password_error'
+    content = {
+        'user': user,
+        'state': state,
+    }
+    return render(request, 'set_password.html', content)
+```
+
+　　
+
+# [Django-Ajax](https://www.cnblogs.com/yuanchenqi/articles/7638956.html)
+
+*知识预览*
+
+-   [Ajax准备知识：json](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label0)
+-   [Ajax简介](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label1)
+-   [jquery实现的ajax](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label2)
+-   [JS实现的ajax](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label3)
+-   [jQuery.serialize()](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label4)
+-   [上传文件](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label5)
+-   [同源策略与Jsonp](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label6)
+-   [CORS](https://www.cnblogs.com/yuanchenqi/articles/7638956.html#_label7)
+
+
+
+## Ajax准备知识：json
+
+## 什么是json？
+
+定义：
+
+```
+JSON(JavaScript Object Notation, JS 对象标记) 是一种轻量级的数据交换格式。
+它基于 ECMAScript (w3c制定的js规范)的一个子集，采用完全独立于编程语言的文本格式来存储和表示数据。
+简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于人阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。
+```
+
+讲json对象，不得不提到JS对象：
+
+ 
+
+![img](assets/877318-20170825211200714-1635996938.png)
+
+ 
+
+合格的json对象：
+
+```
+["one", "two", "three"]
+
+{ "one": 1, "two": 2, "three": 3 }
+
+{"names": ["张三", "李四"] }
+
+[ { "name": "张三"}, {"name": "李四"} ]
+```
+
+
+
+ 不合格的json对象：
+
+```
+{ name: "张三", 'age': 32 }                     // 属性名必须使用双引号
+
+[32, 64, 128, 0xFFF] // 不能使用十六进制值
+
+{ "name": "张三", "age": undefined }            // 不能使用undefined
+
+{ "name": "张三",
+  "birthday": new Date('Fri, 26 Aug 2011 07:13:10 GMT'),
+  "getName":  function() {return this.name;}    // 不能使用函数和日期对象
+}
+```
+
+
+
+## stringify与parse方法
+
+
+
+```javascript
+JSON.parse():     用于将一个 JSON 字符串转换为 JavaScript 对象　
+eg:
+console.log(JSON.parse('{"name":"Yuan"}'));
+console.log(JSON.parse('{name:"Yuan"}')) ;   // 错误
+console.log(JSON.parse('[12,undefined]')) ;   // 错误
+
+
+
+JSON.stringify(): 用于将 JavaScript 值转换为 JSON 字符串。　
+eg:  console.log(JSON.stringify({'name':"egon"})) ; 
+```
+
+
+
+## 和XML的比较
+
+JSON 格式于2001年由 Douglas Crockford 提出，目的就是取代繁琐笨重的 XML 格式。
+
+JSON 格式有两个显著的优点：书写简单，一目了然；符合 JavaScript 原生语法，可以由解释引擎直接处理，不用另外添加解析代码。所以，JSON迅速被接受，已经成为各大网站交换数据的标准格式，并被写入ECMAScript 5，成为标准的一部分。
+
+XML和JSON都使用结构化方法来标记数据，下面来做一个简单的比较。
+
+用XML表示中国部分省市数据如下：
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<country>
+    <name>中国</name>
+    <province>
+        <name>黑龙江</name>
+        <cities>
+            <city>哈尔滨</city>
+            <city>大庆</city>
+        </cities>
+    </province>
+    <province>
+        <name>广东</name>
+        <cities>
+            <city>广州</city>
+            <city>深圳</city>
+            <city>珠海</city>
+        </cities>
+    </province>
+    <province>
+        <name>台湾</name>
+        <cities>
+            <city>台北</city>
+            <city>高雄</city>
+        </cities>
+    </province>
+    <province>
+        <name>新疆</name>
+        <cities>
+            <city>乌鲁木齐</city>
+        </cities>
+    </province>
+</country>
+```
+
+
+
+用JSON表示如下：
+
+```json
+{
+    "name": "中国",
+    "province": [{
+        "name": "黑龙江",
+        "cities": {
+            "city": ["哈尔滨", "大庆"]
+        }
+    }, {
+        "name": "广东",
+        "cities": {
+            "city": ["广州", "深圳", "珠海"]
+        }
+    }, {
+        "name": "台湾",
+        "cities": {
+            "city": ["台北", "高雄"]
+        }
+    }, {
+        "name": "新疆",
+        "cities": {
+            "city": ["乌鲁木齐"]
+        }
+    }]
+}
+
+```
+
+
+
+　　可以看到，JSON 简单的语法格式和清晰的层次结构明显要比 XML 容易阅读，并且在数据交换方面，由于 JSON 所使用的字符要比 XML 少得多，可以大大得节约传输数据所占用得带宽。
+
+**注意：**
+
+JSON格式取代了xml给网络传输带来了很大的便利,但是却没有了xml的一目了然,尤其是json数据很长的时候,我们会陷入繁琐复杂的数据节点查找中。
+
+但是国人的一款在线工具 BeJson 、SoJson在线工具让众多程序员、新接触JSON格式的程序员更快的了解JSON的结构，更快的精确定位JSON格式错误。
+
+
+
+## Ajax简介
+
+AJAX（Asynchronous Javascript And XML）翻译成中文就是“异步Javascript和XML”。即使用Javascript语言与服务器进行异步交互，传输的数据为XML（当然，传输的数据不只是XML）。
+
+-   同步交互：客户端发出一个请求后，需要等待服务器响应结束后，才能发出第二个请求；
+-   异步交互：客户端发出一个请求后，无需等待服务器响应结束，就可以发出第二个请求。
+
+AJAX除了**异步**的特点外，还有一个就是：浏览器页面**局部刷新**；（这一特点给用户的感受是在不知不觉中完成请求和响应过程）
+
+**js实现的局部刷新:**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .error{
+            color:red
+        }
+    </style>
+</head>
+<body>
+
+
+<form class="Form">
+
+    <p>姓名  <input class="v1" type="text" name="username" mark="用户名"></p>
+    <p>密码  <input class="v1" type="text" name="email" mark="邮箱"></p>
+    <p><input type="submit" value="submit"></p>
+
+</form>
+
+<script src="jquery-3.1.1.js"></script>
+
+<script>
+
+    $(".Form :submit").click(function(){
+
+        flag=true;
+
+        $("Form .v1").each(function(){
+
+            var value=$(this).val();
+            if (value.trim().length==0){
+                 var mark=$(this).attr("mark");
+                 var $span=$("<span>");
+                 $span.html(mark+"不能为空!");
+                 $span.prop("class","error");
+                 $(this).after($span);
+
+                 setTimeout(function(){
+                      $span.remove();
+                 },800);
+
+                 flag=false;
+                 return flag;
+
+            }
+        });
+        return flag
+    });
+
+</script>
+</body>
+</html>
+```
+
+
+
+## **AJAX常见应用情景**
+
+当我们在百度中输入一个“老”字后，会马上出现一个下拉列表！列表中显示的是包含“传”字的4个关键字。
+
+其实这里就使用了AJAX技术！当文件框发生了输入变化时，浏览器会使用AJAX技术向服务器发送一个请求，查询包含“传”字的前10个关键字，然后服务器会把查询到的结果响应给浏览器，最后浏览器把这4个关键字显示在下拉列表中。
+
+-   整个过程中页面没有刷新，只是刷新页面中的局部位置而已！
+-   当请求发出后，浏览器还可以进行其他操作，无需等待服务器的响应！
+
+​    ![img](assets/877318-20161025165534625-1155566124.png)
+
+ 
+
+当输入用户名后，把光标移动到其他表单项上时，浏览器会使用AJAX技术向服务器发出请求，服务器会查询名为zhangSan的用户是否存在，最终服务器返回true表示名为lemontree7777777的用户已经存在了，浏览器在得到结果后显示“用户名已被注册！”。
+
+-   整个过程中页面没有刷新，只是局部刷新了；
+-   在请求发出后，浏览器不用等待服务器响应结果就可以进行其他操作；
+
+## **AJAX的优缺点**
+
+#### 优点：
+
+-   AJAX使用Javascript技术向服务器发送异步请求；
+-   AJAX无须刷新整个页面；
+-   因为服务器响应内容不再是整个页面，而是页面中的局部，所以AJAX性能高；
+
+
+
+## jquery实现的ajax
+
+
+
+```js
+{% load staticfiles %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'JS/jquery-3.1.1.js' %}"></script>
+</head>
+<body>
+
+<button class="send_Ajax">send_Ajax</button>
+
+<script>
+      //$.ajax的两种使用方式:
+
+      //$.ajax(settings);
+      //$.ajax(url,[settings]);
+
+
+       $(".send_Ajax").click(function(){
+
+           $.ajax({
+               url:"/handle_Ajax/",
+               type:"POST",
+               data:{username:"Yuan",password:123},
+
+               success:function(data){
+                   alert(data)
+               },
+
+                 //=================== error============
+
+                error: function (jqXHR, textStatus, err) {
+
+                        // jqXHR: jQuery增强的xhr
+                        // textStatus: 请求完成状态
+                        // err: 底层通过throw抛出的异常对象，值与错误类型有关
+                        console.log(arguments);
+                    },
+
+                 //=================== complete============
+
+                complete: function (jqXHR, textStatus) {
+                    // jqXHR: jQuery增强的xhr
+                    // textStatus: 请求完成状态 success | error
+                    console.log('statusCode: %d, statusText: %s', jqXHR.status, jqXHR.statusText);
+                    console.log('textStatus: %s', textStatus);
+                },
+
+                //=================== statusCode============
+                statusCode: {
+                    '403': function (jqXHR, textStatus, err) {
+                        console.log(arguments);  //注意：后端模拟errror方式：HttpResponse.status_code=500
+                     },
+
+                    '400': function () {
+                    }
+                }
+
+           })
+
+       })
+
+</script>
+</body>
+</html>
+```
+
+
+
+## view：
+
+```python
+import json,time
+ 
+def index(request):
+ 
+    return render(request,"index.html")
+ 
+def handle_Ajax(request):
+ 
+    username=request.POST.get("username")
+    password=request.POST.get("password")
+ 
+    print(username,password)
+    time.sleep(10)
+ 
+    return HttpResponse(json.dumps("Error Data!"))
+```
+
+
+
+## $.ajax参数
+
+### 请求参数
+
+
+
+```text
+######################------------data---------################
+
+       data: 当前ajax请求要携带的数据，是一个json的object对象，ajax方法就会默认地把它编码成某种格式
+             (urlencoded:?a=1&b=2)发送给服务端；此外，ajax默认以get方式发送请求。
+
+             function testData() {
+               $.ajax("/test",{     //此时的data是一个json形式的对象
+                  data:{
+                    a:1,
+                    b:2
+                  }
+               });                   //?a=1&b=2
+######################------------processData---------################
+
+processData：声明当前的data数据是否进行转码或预处理，默认为true，即预处理；if为false，
+             那么对data：{a:1,b:2}会调用json对象的toString()方法，即{a:1,b:2}.toString()
+             ,最后得到一个［object，Object］形式的结果。
+            
+######################------------contentType---------################
+
+contentType：默认值: "application/x-www-form-urlencoded"。发送信息至服务器时内容编码类型。
+             用来指明当前请求的数据编码格式；urlencoded:?a=1&b=2；如果想以其他方式提交数据，
+             比如contentType:"application/json"，即向服务器发送一个json字符串：
+               $.ajax("/ajax_get",{
+             
+                  data:JSON.stringify({
+                       a:22,
+                       b:33
+                   }),
+                   contentType:"application/json",
+                   type:"POST",
+             
+               });                          //{a: 22, b: 33}
+
+             注意：contentType:"application/json"一旦设定，data必须是json字符串，不能是json对象             views.py:   json.loads(request.body.decode("utf8"))
+
+
+######################------------traditional---------################
+
+traditional：一般是我们的data数据有数组时会用到 ：data:{a:22,b:33,c:["x","y"]},
+              traditional为false会对数据进行深层次迭代；
+```
+
+
+
+### 响应参数
+
+```
+/*
+
+dataType：  预期服务器返回的数据类型,服务器端返回的数据会根据这个值解析后，传递给回调函数。
+            默认不需要显性指定这个属性，ajax会根据服务器返回的content Type来进行转换；
+            比如我们的服务器响应的content Type为json格式，这时ajax方法就会对响应的内容
+            进行一个json格式的转换，if转换成功，我们在success的回调函数里就会得到一个json格式
+            的对象；转换失败就会触发error这个回调函数。如果我们明确地指定目标类型，就可以使用
+            data Type。
+            dataType的可用值：html｜xml｜json｜text｜script
+            见下dataType实例
+
+*/
+```
+
+
+
+示例：
+
+```python
+from django.shortcuts import render,HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+# Create your views here.
+
+import json
+
+def login(request):
+
+    return render(request,'Ajax.html')
+
+
+def ajax_get(request):
+
+    l=['alex','little alex']
+    dic={"name":"alex","pwd":123}
+
+    #return HttpResponse(l)      #元素直接转成字符串alexlittle alex
+    #return HttpResponse(dic)    #字典的键直接转成字符串namepwd
+    return HttpResponse(json.dumps(l))
+    return HttpResponse(json.dumps(dic))# 传到前端的是json字符串,要想使用,需要JSON.parse(data)
+
+//---------------------------------------------------
+    function testData() {
+
+        $.ajax('ajax_get', {
+           success: function (data) {
+           console.log(data);
+           console.log(typeof(data));
+           //console.log(data.name);
+           //JSON.parse(data);
+           //console.log(data.name);
+                                     },
+           //dataType:"json",
+                            }
+                       )}
+
+注解:Response Headers的content Type为text/html,所以返回的是String;但如果我们想要一个json对象
+    设定dataType:"json"即可,相当于告诉ajax方法把服务器返回的数据转成json对象发送到前端.结果为object
+    当然，
+        return HttpResponse(json.dumps(a),content_type="application/json")
+
+    这样就不需要设定dataType:"json"了。
+    content_type="application/json"和content_type="json"是一样的！
+```
+
+
+
+## csrf跨站请求伪造
+
+### 方式1
+
+```
+$.ajaxSetup({
+    data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+});
+```
+
+### 方式2
+
+```
+<form>
+{% csrf_token %}
+</form>
+
+<script>
+$.ajax({
+	...
+  data:{
+  "csrfmiddlewaretoken":$("[name='csrfmiddlewaretoken']").val();
+  	}
+  })
+</script>
+```
+
+### 方式3：
+
+```
+<script src="{% static 'js/jquery.cookie.js' %}"></script>
+
+
+$.ajax({
+ 
+headers:{"X-CSRFToken":$.cookie('csrftoken')},
+ 
+})
+```
+
+
+
+# JS实现的ajax
+
+## **AJAX核心（**XMLHttpRequest）
+
+   其实AJAX就是在Javascript中多添加了一个对象：XMLHttpRequest对象。所有的异步交互都是使用XMLHttpServlet对象完成的。也就是说，我们只需要学习一个Javascript的新对象即可。
+
+```
+var xmlHttp = new XMLHttpRequest()；（大多数浏览器都支持DOM2规范）
+```
+
+注意，各个浏览器对XMLHttpRequest的支持也是不同的！为了处理浏览器兼容问题，给出下面方法来创建XMLHttpRequest对象：
+
+```js
+function createXMLHttpRequest() {
+        var xmlHttp;
+        // 适用于大多数浏览器，以及IE7和IE更高版本
+        try{
+            xmlHttp = new XMLHttpRequest();
+        } catch (e) {
+            // 适用于IE6
+            try {
+                xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (e) {
+                // 适用于IE5.5，以及IE更早版本
+                try{
+                    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                } catch (e){}
+            }
+        }            
+        return xmlHttp;
+    }
+```
+
+
+
+## 使用流程
+
+### 步骤1:  打开与服务器的连接（open方法）
+
+当得到XMLHttpRequest对象后，就可以调用该对象的open()方法打开与服务器的连接了。open()方法的参数如下：
+
+open(method, url, async)：
+
+-   method：请求方式，通常为GET或POST；
+-   url：请求的服务器地址，例如：/ajaxdemo1/AServlet，若为GET请求，还可以在URL后追加参数；
+-   async：这个参数可以不给，默认值为true，表示异步请求；
+
+```
+var xmlHttp = createXMLHttpRequest();
+xmlHttp.open("GET", "/ajax_get/?a=1", true);　
+```
+
+### **步骤2:  发送请求**
+
+当使用open打开连接后，就可以调用XMLHttpRequest对象的send()方法发送请求了。send()方法的参数为POST请求参数，即对应HTTP协议的请求体内容，若是GET请求，需要在URL后连接参数。
+
+注意：若没有参数，需要给出null为参数！若不给出null为参数，可能会导致FireFox浏览器不能正常发送请求！
+
+```
+xmlHttp.send(null);
+
+```
+
+### 步骤3:  接收服务器响应
+
+当请求发送出去后，服务器端就开始执行了，但服务器端的响应还没有接收到。接下来我们来接收服务器的响应。
+
+XMLHttpRequest对象有一个onreadystatechange事件，它会在XMLHttpRequest对象的状态发生变化时被调用。下面介绍一下XMLHttpRequest对象的5种状态：
+
+-   0：初始化未完成状态，只是创建了XMLHttpRequest对象，还未调用open()方法；
+-   1：请求已开始，open()方法已调用，但还没调用send()方法；
+-   2：请求发送完成状态，send()方法已调用；
+-   3：开始读取服务器响应；
+-   4：读取服务器响应结束。 
+
+onreadystatechange事件会在状态为1、2、3、4时引发。
+
+　　下面代码会被执行四次！对应XMLHttpRequest的四种状态！
+
+```
+xmlHttp.onreadystatechange = function() {
+            alert('hello');
+        };
+```
+
+但通常我们只关心最后一种状态，即读取服务器响应结束时，客户端才会做出改变。我们可以通过XMLHttpRequest对象的readyState属性来得到XMLHttpRequest对象的状态。
+
+```
+xmlHttp.onreadystatechange = function() {
+            if(xmlHttp.readyState == 4) {
+                alert('hello');    
+            }
+        };
+```
+
+其实我们还要关心服务器响应的状态码是否为200，其服务器响应为404，或500，那么就表示请求失败了。我们可以通过XMLHttpRequest对象的status属性得到服务器的状态码。
+
+最后，我们还需要获取到服务器响应的内容，可以通过XMLHttpRequest对象的responseText得到服务器响应内容。
+
+```
+xmlHttp.onreadystatechange = function() {
+            if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                alert(xmlHttp.responseText);    
+            }
+        };
+```
+
+##  if 发送POST请求
+
+<1>需要设置请求头：xmlHttp.setRequestHeader(“Content-Type”, “application/x-www-form-urlencoded”)；注意 :form表单会默认这个键值对不设定，Web服务器会忽略请求体的内容。
+
+<2>在发送时可以指定请求体了：xmlHttp.send(“username=yuan&password=123”)
+
+## JS实现ajax小结
+
+
+
+```
+/*
+    创建XMLHttpRequest对象；
+    调用open()方法打开与服务器的连接；
+    调用send()方法发送请求；
+    为XMLHttpRequest对象指定onreadystatechange事件函数，这个函数会在
+
+    XMLHttpRequest的1、2、3、4，四种状态时被调用；
+
+    XMLHttpRequest对象的5种状态，通常我们只关心4状态。
+
+    XMLHttpRequest对象的status属性表示服务器状态码，它只有在readyState为4时才能获取到。
+
+    XMLHttpRequest对象的responseText属性表示服务器响应内容，它只有在
+    readyState为4时才能获取到！
+
+*/
+```
+
+
+
+测试代码：
+
+```html
+<h1>AJAX</h1>
+<button onclick="send()">测试</button>
+<div id="div1"></div>
+
+
+<script>
+       function createXMLHttpRequest() {
+            try {
+                return new XMLHttpRequest();//大多数浏览器
+            } catch (e) {
+                try {
+                    return new ActiveXObject("Msxml2.XMLHTTP");
+                } catch (e) {
+                    return new ActiveXObject("Microsoft.XMLHTTP");
+                }
+            }
+        }
+
+        function send() {
+            var xmlHttp = createXMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    var div = document.getElementById("div1");
+                    div.innerText = xmlHttp.responseText;
+                    div.textContent = xmlHttp.responseText;
+                }
+            };
+
+            xmlHttp.open("POST", "/ajax_post/", true);
+            //post: xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xmlHttp.send(null);  //post: xmlHttp.send("b=B");
+        }
+
+
+</script>
+       
+#--------------------------------views.py 
+from django.views.decorators.csrf import csrf_exempt
+
+def login(request):
+    print('hello ajax')
+    return render(request,'index.html')
+
+@csrf_exempt   ＃csrf防御
+def ajax_post(request):
+    print('ok')
+    return HttpResponse('helloyuanhao')
+```
+
+
+
+## 实例（用户名是否已被注册）
+
+### **7.1**　**功能介绍**
+
+在注册表单中，当用户填写了用户名后，把光标移开后，会自动向服务器发送异步请求。服务器返回true或false，返回true表示这个用户名已经被注册过，返回false表示没有注册过。
+
+客户端得到服务器返回的结果后，确定是否在用户名文本框后显示“用户名已被注册”的错误信息！
+
+### **7.2**　**案例分析**
+
+-   页面中给出注册表单；
+-   在username表单字段中添加onblur事件，调用send()方法；
+-   send()方法获取username表单字段的内容，向服务器发送异步请求，参数为username；
+-   django 的视图函数：获取username参数，判断是否为“yuan”，如果是响应true，否则响应false
+
+参考代码：
+
+```html
+<script type="text/javascript">
+        function createXMLHttpRequest() {
+            try {
+                return new XMLHttpRequest();
+            } catch (e) {
+                try {
+                    return new ActiveXObject("Msxml2.XMLHTTP");
+                } catch (e) {
+                    return new ActiveXObject("Microsoft.XMLHTTP");
+                }
+            }
+        }
+
+        function send() {
+            var xmlHttp = createXMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    if(xmlHttp.responseText == "true") {
+                        document.getElementById("error").innerText = "用户名已被注册！";
+                        document.getElementById("error").textContent = "用户名已被注册！";
+                    } else {
+                        document.getElementById("error").innerText = "";
+                        document.getElementById("error").textContent = "";
+                    }
+                }
+            };
+            xmlHttp.open("POST", "/ajax_check/", true, "json");
+            xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            var username = document.getElementById("username").value;
+            xmlHttp.send("username=" + username);
+        }
+</script>
+
+//--------------------------------------------------index.html
+
+<h1>注册</h1>
+<form action="" method="post">
+用户名：<input id="username" type="text" name="username" onblur="send()"/><span id="error"></span><br/>
+密　码：<input type="text" name="password"/><br/>
+<input type="submit" value="注册"/>
+</form>
+
+
+//--------------------------------------------------views.py
+from django.views.decorators.csrf import csrf_exempt
+
+def login(request):
+    print('hello ajax')
+    return render(request,'index.html')
+    # return HttpResponse('helloyuanhao')
+
+@csrf_exempt
+def ajax_check(request):
+    print('ok')
+
+    username=request.POST.get('username',None)
+    if username=='yuan':
+        return HttpResponse('true')
+    return HttpResponse('false')
+```
+
+
+
+
+
+## jQuery.serialize()
+
+`serialize()`函数用于**序列化一组表单元素，将表单内容编码为用于提交的字符串**。
+
+`serialize()`函数常用于将表单内容序列化，以便用于AJAX提交。
+
+该函数主要根据**用于提交**的**有效**表单控件的name和value，将它们拼接为一个可直接用于表单提交的文本字符串，该字符串已经过标准的URL编码处理(字符集编码为UTF-8)。
+
+该函数不会序列化不需要提交的表单控件，这和常规的表单提交行为是一致的。例如：不在<form>标签内的表单控件不会被提交、没有name属性的表单控件不会被提交、带有disabled属性的表单控件不会被提交、没有被选中的表单控件不会被提交。
+
+```
+与常规表单提交不一样的是：常规表单一般会提交带有name的按钮控件，而serialize()函数不会序列化带有name的按钮控件。更多详情请点击这里。
+
+```
+
+### 语法
+
+jQuery 1.0 新增该函数。
+
+```
+jQueryObject.serialize( )
+
+```
+
+### 返回值
+
+`serialize()`函数的返回值为String类型，返回将表单元素编码后的可用于表单提交的文本字符串。
+
+请参考下面这段初始HTML代码：
+
+
+
+```html
+<form name="myForm" action="http://www.365mini.com" method="post">
+    <input name="uid" type="hidden" value="1" />
+    <input name="username" type="text" value="张三" />
+    <input name="password" type="text" value="123456" />
+    <select name="grade" id="grade">
+        <option value="1">一年级</option>
+        <option value="2">二年级</option>
+        <option value="3" selected="selected">三年级</option>
+        <option value="4">四年级</option>
+        <option value="5">五年级</option>
+        <option value="6">六年级</option>
+    </select>
+    <input name="sex" type="radio" checked="checked" value="1" />男
+    <input name="sex" type="radio" value="0" />女
+    <input name="hobby" type="checkbox" checked="checked" value="1" />游泳
+    <input name="hobby" type="checkbox" checked="checked" value="2" />跑步
+    <input name="hobby" type="checkbox" value="3" />羽毛球
+    <input name="btn" id="btn" type="button" value="点击" />
+```
+
+
+
+对<form>元素进行序列化可以直接序列化其内部的所有表单元素。
+
+```
+// 序列化<form>内的所有表单元素
+// 序列化后的结果：uid=1&username=%E5%BC%A0%E4%B8%89&password=123456&grade=3&sex=1&hobby=1&hobby=2
+alert( $("form").serialize() );
+```
+
+我们也可以直接对部分表单元素进行序列化。
+
+```
+// 序列化所有的text、select、checkbox表单元素
+// 序列化后的结果：username=%E5%BC%A0%E4%B8%89&password=123456&grade=3&hobby=1&hobby=2
+alert( $(":text, select, :checkbox").serialize() );
+```
+
+`serialize()`函数通常用于将表单内容序列化，以便通过AJAX方式提交。
+
+```
+$("#btn").click( function(){
+
+    // 将当前表单内容以POST请求的AJAX方式提交到"http://www.365mini.com"
+    $.post( "http://www.365mini.com", $("form").serialize(), function( data, textStatus, jqXHR ){
+        alert( "AJAX提交成功!" );       
+    } );
+        
+} );
+```
+
+
+
+## 上传文件
+
+## form表单上传文件
+
+### html
+
+```html
+<h3>form表单上传文件</h3>
+
+
+<form action="/upload_file/" method="post" enctype="multipart/form-data">
+    <p><input type="file" name="upload_file_form"></p>
+    <input type="submit">
+</form>
+```
+
+
+
+### view
+
+```python
+def index(request):
+
+    return render(request,"index.html")
+
+
+def upload_file(request):
+    print("FILES:",request.FILES)
+    print("POST:",request.POST)
+    return HttpResponse("上传成功!")
+```
+
+
+
+## Ajax(FormData)
+
+FormData是什么呢？
+
+ 
+
+XMLHttpRequest Level 2添加了一个新的接口`FormData`.利用`FormData对象`,我们可以通过JavaScript用一些键值对来模拟一系列表单控件,我们还可以使用XMLHttpRequest的`send()`方法来异步的提交这个"表单".比起普通的ajax,使用`FormData`的最大优点就是我们可以异步上传一个二进制文件.
+
+所有主流浏览器的较新版本都已经支持这个对象了，比如Chrome 7+、Firefox 4+、IE 10+、Opera 12+、Safari 5+。
+
+### **html**
+
+```html
+<h3>Ajax上传文件</h3>
+
+<p><input type="text" name="username" id="username" placeholder="username"></p>
+<p><input type="file" name="upload_file_ajax" id="upload_file_ajax"></p>
+
+<button id="upload_button">提交</button>
+{#注意button标签不要用在form表单中使用#}
+
+<script>
+    $("#upload_button").click(function(){
+        var username=$("#username").val();
+        var upload_file=$("#upload_file_ajax")[0].files[0];
+
+        var formData=new FormData();
+        formData.append("username",username);
+        formData.append("upload_file_ajax",upload_file);
+
+
+        $.ajax({
+            url:"/upload_file/",
+            type:"POST",
+            data:formData,
+            contentType:false,
+            processData:false,
+
+            success:function(){
+                alert("上传成功!")
+            }
+        });
+
+
+    })
+</script>
+```
+
+
+
+### views
+
+```python
+def index(request):
+  
+    return render(request,"index.html")
+  
+  
+def upload_file(request):
+    print("FILES:",request.FILES)
+    print("POST:",request.POST)
+    return HttpResponse("上传成功!")
+```
+
+
+
+## 伪造Ajax上传文件
+
+### iframe标签
+
+< iframe >标签规定一个内联框架。
+
+一个内联框架被用来在当前 HTML 文档中嵌入另一个文档。
+
+示例：
+
+```text
+<iframe src="http://www.baidu.com" width="1000px" height="600px"></iframe>
+
+```
+
+
+
+### iframe+form
+
+
+
+```html
+<h3>伪造Ajax上传文件</h3>
+<form action="/upload_file/" method="post" id="form2" target="ifr" enctype="multipart/form-data">
+    <p>
+        <iframe name="ifr" id="ifr"></iframe></p>
+    <p><input type="file" name="upload_file"></p>
+    <p><input type="text" name="user"></p>
+
+    <input type="button" value="提交" id="submitBtn">
+</form>
+
+<script>
+
+
+
+    $("#submitBtn").click(function(){
+
+        $("#ifr").load(iframeLoaded);
+        $("#form2").submit();
+
+
+    });
+
+    function iframeLoaded(){
+        alert(123)
+    }
+
+</script>
+```
+
+
+
+**views**
+
+```python
+def index(request):
+ 
+    return render(request,"index.html")
+ 
+def upload_file(request):
+    print("FILES:",request.FILES)
+    print("POST:",request.POST)
+    return HttpResponse("上传成功!")
+```
+
+
+
+## 同源策略与Jsonp
+
+## 同源策略
+
+同源策略（Same origin policy）是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，则浏览器的正常功能可能都会受到影响。可以说Web是构建在同源策略基础之上的，浏览器只是针对同源策略的一种实现。
+
+同源策略，它是由Netscape提出的一个著名的安全策略。现在所有支持JavaScript 的浏览器都会使用这个策略。所谓同源是指，域名，协议，端口相同。当一个浏览器的两个tab页中分别打开来 百度和谷歌的页面当浏览器的百度tab页执行一个脚本的时候会检查这个脚本是属于哪个页面的，即检查是否同源，只有和百度同源的脚本才会被执行。如果非同源，那么在请求数据时，浏览器会在控制台中报一个异常，提示拒绝访问。
+
+ 
+
+### 示例：
+
+**项目1:**
+
+```html
+==================================http://127.0.0.1:8001项目的index
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+
+
+<button>ajax</button>
+{% csrf_token %}
+
+<script>
+    $("button").click(function(){
+
+
+        $.ajax({
+            url:"http://127.0.0.1:7766/SendAjax/",
+            type:"POST",
+            data:{"username":"yuan","csrfmiddlewaretoken":$("[name='csrfmiddlewaretoken']").val()},
+            success:function(data){
+                alert(123);
+                alert(data)
+            }
+        })
+    })
+</script>
+</body>
+</html>
+
+
+==================================http://127.0.0.1:8001项目的views
+
+def index(request):
+
+
+    return render(request,"index.html")
+
+
+def ajax(request):
+    import json
+    print(request.POST,"+++++++++++")
+    return HttpResponse(json.dumps("hello"))
+```
+
+
+
+**项目2:**
+
+```html
+==================================http://127.0.0.1:8001项目的index
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+
+
+<button>ajax</button>
+{% csrf_token %}
+
+<script>
+    $("button").click(function(){
+
+
+        $.ajax({
+            url:"http://127.0.0.1:7766/SendAjax/",
+            type:"POST",
+            data:{"username":"yuan","csrfmiddlewaretoken":$("[name='csrfmiddlewaretoken']").val()},
+            success:function(data){
+                alert(123);
+                alert(data)
+            }
+        })
+    })
+</script>
+</body>
+</html>
+
+
+==================================http://127.0.0.1:8001项目的views
+
+def index(request):
+
+
+    return render(request,"index.html")
+
+
+def ajax(request):
+    import json
+    print(request.POST,"+++++++++++")
+    return HttpResponse(json.dumps("hello"))
+```
+
+
+
+ 当点击项目1的按钮时，发送了请求，但是会发现报错如下：
+
+```
+已拦截跨源请求：同源策略禁止读取位于 http://127.0.0.1:7766/SendAjax/ 的远程资源。
+（原因：CORS 头缺少 'Access-Control-Allow-Origin'）。
+
+
+```
+
+但是注意，项目2中的访问已经发生了，说明是浏览器对非同源请求返回的结果做了拦截。
+
+## Jsonp
+
+jsonp是json用来跨域的一个东西。原理是通过script标签的跨域特性来绕过同源策略。
+
+思考：这算怎么回事？
+
+```text
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+```
+
+
+
+ 借助script标签，实现跨域请求，示例：
+
+```html
+# =============================http://127.0.0.1:8001/index
+
+
+<button>ajax</button>
+{% csrf_token %}
+
+<script>
+    function func(name){
+        alert(name)
+    }
+</script>
+
+<script src="http://127.0.0.1:7766/SendAjax/"></script>
+
+
+# =============================http://127.0.0.1:8002/
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+
+
+def SendAjax(request):
+
+    import json
+
+    print("++++++++")
+    # dic={"k1":"v1"}
+    return HttpResponse("func('yuan')")  # return HttpResponse("func('%s')"%json.dumps(dic))
+```
+
+
+
+这其实就是JSONP的简单实现模式，或者说是JSONP的原型：创建一个回调函数，然后在远程服务上调用这个函数并且将JSON 数据形式作为参数传递，完成回调。
+
+将JSON数据填充进回调函数，这就是JSONP的JSON+Padding的含义。
+
+   一般情况下，我们希望这个script标签能够动态的调用，而不是像上面因为固定在html里面所以没等页面显示就执行了，很不灵活。我们可以通过javascript动态的创建script标签，这样我们就可以灵活调用远程服务了。
+
+
+
+```
+<button onclick="f()">sendAjax</button>
+
+<script>
+    function addScriptTag(src){
+         var script = document.createElement('script');
+         script.setAttribute("type","text/javascript");
+         script.src = src;
+         document.body.appendChild(script);
+         document.body.removeChild(script);
+    }
+
+
+    function func(name){
+        alert("hello"+name)
+    }
+
+    function f(){
+         addScriptTag("http://127.0.0.1:7766/SendAjax/")
+    }
+</script>
+```
+
+
+
+为了更加灵活，现在将你自己在客户端定义的回调函数的函数名传送给服务端，服务端则会返回以你定义的回调函数名的方法，将获取的json数据传入这个方法完成回调：
+
+将8001的f()改写为：
+
+```
+function f(){
+         addScriptTag("http://127.0.0.1:7766/SendAjax/?callbacks=func")
+    }
+
+```
+
+
+
+8002的views改为：
+
+```
+def SendAjax(request):
+ 
+    import json
+ 
+    dic={"k1":"v1"}
+ 
+    print("callbacks:",request.GET.get("callbacks"))
+    callbacks=request.GET.get("callbacks")
+ 
+    return HttpResponse("%s('%s')"%(callbacks,json.dumps(dic)))
+```
+
+
+
+## jQuery对JSONP的实现
+
+### getJSON
+
+jQuery框架也当然支持JSONP，可以使用$.getJSON(url,[data],[callback])方法
+
+8001的html改为：
+
+```
+<button onclick="f()">sendAjax</button>
+
+<script>
+
+    function f(){
+          $.getJSON("http://127.0.0.1:7766/SendAjax/?callbacks=?",function(arg){
+            alert("hello"+arg)
+        });
+    }
+    
+</script>
+```
+
+
+
+8002的views不改动。
+
+结果是一样的，要注意的是在url的后面必须添加一个callback参数，这样getJSON方法才会知道是用JSONP方式去访问服务，callback后面的那个问号是内部自动生成的一个回调函数名。
+
+   此外，如果说我们想指定自己的回调函数名，或者说服务上规定了固定回调函数名该怎么办呢？我们可以使用$.ajax方法来实现
+
+###  $.ajax
+
+8001的html改为：
+
+
+
+```
+<script>
+
+    function f(){
+          $.ajax({
+                url:"http://127.0.0.1:7766/SendAjax/",
+                dataType:"jsonp",
+                jsonp: 'callbacks',
+                jsonpCallback:"SayHi"
+           });
+
+       }
+
+    function SayHi(arg){
+                alert(arg);
+            }
+
+</script>
+```
+
+
+
+8002的views不改动。
+
+**当然，最简单的形式还是通过回调函数来处理：**
+
+
+
+```js
+<script>
+
+    function f(){
+
+            $.ajax({
+               url:"http://127.0.0.1:7766/SendAjax/",
+               dataType:"jsonp",            //必须有，告诉server，这次访问要的是一个jsonp的结果。
+               jsonp: 'callbacks',          //jQuery帮助随机生成的：callbacks="wner"
+               success:function(data){
+                   alert("hi "+data)
+              }
+         });
+
+       }
+
+</script>
+```
+
+
+
+ jsonp: 'callbacks'就是定义一个存放回调函数的键，jsonpCallback是前端定义好的回调函数方法名'SayHi'，server端接受callback键对应值后就可以在其中填充数据打包返回了; 
+
+jsonpCallback参数可以不定义，jquery会自动定义一个随机名发过去，那前端就得用回调函数来处理对应数据了。利用jQuery可以很方便的实现JSONP来进行跨域访问。　　
+
+注意 JSONP一定是GET请求
+
+###  应用
+
+```js
+<input type="button" onclick="AjaxRequest()" value="跨域Ajax" />
+
+
+<div id="container"></div>
+
+
+    <script type="text/javascript">
+        function AjaxRequest() {
+            $.ajax({
+                url: 'http://www.jxntv.cn/data/jmd-jxtv2.html?callback=list&_=1454376870403',
+                type: 'GET',
+                dataType: 'jsonp',
+                jsonp: 'callback',
+                jsonpCallback: 'list',
+                success: function (data) {
+                    
+                    $.each(data.data,function(i){
+                        var item = data.data[i];
+                        var str = "<p>"+ item.week +"</p>";
+                        $('#container').append(str);
+                        $.each(item.list,function(j){
+                            var temp = "<a href='" + item.list[j].link +"'>" + item.list[j].name +" </a><br/>";
+                            $('#container').append(temp);
+                        });
+                        $('#container').append("<hr/>");
+                    })
+
+                }
+            });
+        }
+</script>
+```
+
+
+
+
+
+# CORS
+
+## 一、简介
+
+CORS需要浏览器和服务器同时支持。目前，所有浏览器都支持该功能，IE浏览器不能低于IE10。
+
+整个CORS通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。
+
+因此，实现CORS通信的关键是服务器。只要服务器实现了CORS接口，就可以跨源通信。
+
+## 二、两种请求
+
+浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。
+
+只要同时满足以下两大条件，就属于简单请求。
+
+
+
+```
+（1) 请求方法是以下三种方法之一：
+HEAD
+GET
+POST
+（2）HTTP的头信息不超出以下几种字段：
+Accept
+Accept-Language
+Content-Language
+Last-Event-ID
+Content-Type：只限于三个值application/x-www-form-urlencoded、multipart/form-data、text/plain
+```
+
+
+
+凡是不同时满足上面两个条件，就属于非简单请求。
+
+浏览器对这两种请求的处理，是不一样的。
+
+
+
+```
+* 简单请求和非简单请求的区别？
+
+   简单请求：一次请求
+   非简单请求：两次请求，在发送数据之前会先发一次请求用于做“预检”，只有“预检”通过后才再发送一次请求用于数据传输。
+* 关于“预检”
+
+- 请求方式：OPTIONS
+- “预检”其实做检查，检查如果通过则允许传输数据，检查不通过则不再发送真正想要发送的消息
+- 如何“预检”
+     => 如果复杂请求是PUT等请求，则服务端需要设置允许某请求，否则“预检”不通过
+        Access-Control-Request-Method
+     => 如果复杂请求设置了请求头，则服务端需要设置允许某请求头，否则“预检”不通过
+        Access-Control-Request-Headers
+```
+
+
+
+ 
+
+**支持跨域，简单请求**
+
+服务器设置响应头：Access-Control-Allow-Origin = '域名' 或 '*'
+
+**支持跨域，复杂请求**
+
+由于复杂请求时，首先会发送“预检”请求，如果“预检”成功，则发送真实数据。
+
+-   “预检”请求时，允许请求方式则需服务器设置响应头：Access-Control-Request-Method
+-   “预检”请求时，允许请求头则需服务器设置响应头：Access-Control-Request-Headers
+
+ 
+
+ 
+
+ 
+
+
+
+
+
+ 
+
+　　
+
+　　
+
+　　
 
  
 
