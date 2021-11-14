@@ -4830,14 +4830,6 @@ UUIDField(CharField)           uuid类型
     ...
 ```
 
-[![复制代码](assets/copycode.gif)](javascript:void(0);)
-
-2、Django内置插件：
-
-2、Django内置插件：
-
-
-
 2、Django内置插件：
 
 ```
