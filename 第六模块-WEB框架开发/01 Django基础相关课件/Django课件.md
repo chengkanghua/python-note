@@ -6897,7 +6897,7 @@ headers:{"X-CSRFToken":$.cookie('csrftoken')},
 
 
 
-# JS实现的ajax
+## JS实现的ajax
 
 ## **AJAX核心（**XMLHttpRequest）
 
@@ -7866,15 +7866,2900 @@ Content-Type：只限于三个值application/x-www-form-urlencoded、multipart/f
 
  
 
+#  [Django-model基础](https://www.cnblogs.com/yuanchenqi/articles/7552333.html)
+
+
+
+*知识预览*
+
+-   [ORM](https://www.cnblogs.com/yuanchenqi/articles/7552333.html#_label0)
+-   [创建表(建立模型)](https://www.cnblogs.com/yuanchenqi/articles/7552333.html#_label1)
+-   [添加表记录](https://www.cnblogs.com/yuanchenqi/articles/7552333.html#_label2)
+-   [查询表记录](https://www.cnblogs.com/yuanchenqi/articles/7552333.html#_label3)
+-   [修改表记录](https://www.cnblogs.com/yuanchenqi/articles/7552333.html#_label4)
+-   [删除表记录](https://www.cnblogs.com/yuanchenqi/articles/7552333.html#_label5)
+
+
+
+## ORM
+
+**映射关系：**
+
+```
+　　　  表名  <－－－－－－－> 类名
+
+       字段  <－－－－－－－> 属性
+
+　　　　表记录 <－－－－－－－>类实例对象
+```
+
+
+
+## 创建表(建立模型)
+
+实例：我们来假定下面这些概念，字段和关系
+
+作者模型：一个作者有姓名和年龄。
+
+作者详细模型：把作者的详情放到详情表，包含生日，手机号，家庭住址等信息。作者详情模型和作者模型之间是一对一的关系（one-to-one）
+
+出版商模型：出版商有名称，所在城市以及email。
+
+书籍模型： 书籍有书名和出版日期，一本书可能会有多个作者，一个作者也可以写多本书，所以作者和书籍的关系就是多对多的关联关系(many-to-many);一本书只应该由一个出版商出版，所以出版商和书籍是一对多关联关系(one-to-many)。
+
+模型建立如下：
+
+```
+class Author(models.Model):
+    nid = models.AutoField(primary_key=True)
+    name=models.CharField( max_length=32)
+    age=models.IntegerField()
+ 
+    # 与AuthorDetail建立一对一的关系
+    authorDetail=models.OneToOneField(to="AuthorDetail")
+ 
+class AuthorDetail(models.Model):
+ 
+    nid = models.AutoField(primary_key=True)
+    birthday=models.DateField()
+    telephone=models.BigIntegerField()
+    addr=models.CharField( max_length=64)
+    
+class Publish(models.Model):
+    nid = models.AutoField(primary_key=True)
+    name=models.CharField( max_length=32)
+    city=models.CharField( max_length=32)
+    email=models.EmailField()
+ 
+ 
+class Book(models.Model):
+ 
+    nid = models.AutoField(primary_key=True)
+    title = models.CharField( max_length=32)
+    publishDate=models.DateField()
+    price=models.DecimalField(max_digits=5,decimal_places=2)
+    keepNum=models.IntegerField()<br>    commentNum=models.IntegerField()
+ 
+    # 与Publish建立一对多的关系,外键字段建立在多的一方
+    publish=models.ForeignKey(to="Publish",to_field="nid")
+ 
+    # 与Author表建立多对多的关系,ManyToManyField可以建在两个模型中的任意一个，自动创建第三张表
+    authors=models.ManyToManyField(to='Author')　　
+```
+
+通过logging可以查看翻译成的sql语句
+
+```
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+    }
+}　　
+```
+
+
+
+注意事项：
+
+1、 表的名称`myapp_modelName`，是根据 模型中的元数据自动生成的，也可以覆写为别的名称　　
+
+2、`id` 字段是自动添加的
+
+3、对于外键字段，Django 会在字段名上添加`"_id"` 来创建数据库中的列名
+
+4、这个例子中的`CREATE TABLE` SQL 语句使用PostgreSQL 语法格式，要注意的是Django 会根据settings 中指定的数据库类型来使用相应的SQL 语句。
+
+5、定义好模型之后，你需要告诉Django _使用_这些模型。你要做的就是修改配置文件中的INSTALL_APPSZ中设置，在其中添加`models.py`所在应用的名称。
+
+6、外键字段 ForeignKey 有一个 null=True 的设置(它允许外键接受空值 NULL)，你可以赋给它空值 None 。
+
+## 字段选项
+
+每个字段有一些特有的参数，例如，CharField需要max_length参数来指定`VARCHAR`数据库字段的大小。还有一些适用于所有字段的通用参数。 这些参数在文档中有详细定义，这里我们只简单介绍一些最常用的：
+
+
+
+```
+(1)null
+
+如果为True，Django 将用NULL 来在数据库中存储空值。 默认值是 False.
+
+(1)blank
+
+如果为True，该字段允许不填。默认为False。
+要注意，这与 null 不同。null纯粹是数据库范畴的，而 blank 是数据验证范畴的。
+如果一个字段的blank=True，表单的验证将允许该字段是空值。如果字段的blank=False，该字段就是必填的。
+
+(2)default
+
+字段的默认值。可以是一个值或者可调用对象。如果可调用 ，每有新对象被创建它都会被调用。
+
+(3)primary_key
+
+如果为True，那么这个字段就是模型的主键。如果你没有指定任何一个字段的primary_key=True，
+Django 就会自动添加一个IntegerField字段做为主键，所以除非你想覆盖默认的主键行为，
+否则没必要设置任何一个字段的primary_key=True。
+
+(4)unique
+
+如果该值设置为 True, 这个数据字段的值在整张表中必须是唯一的
+
+(5)choices
+由二元组组成的一个可迭代对象（例如，列表或元组），用来给字段提供选择项。 如果设置了choices ，默认的表单将是一个选择框而不是标准的文本框，而且这个选择框的选项就是choices 中的选项。
+
+这是一个关于 choices 列表的例子：
+
+YEAR_IN_SCHOOL_CHOICES = (
+    ('FR', 'Freshman'),
+    ('SO', 'Sophomore'),
+    ('JR', 'Junior'),
+    ('SR', 'Senior'),
+    ('GR', 'Graduate'),
+)
+每个元组中的第一个元素，是存储在数据库中的值；第二个元素是在管理界面或 ModelChoiceField 中用作显示的内容。 在一个给定的 model 类的实例中，想得到某个 choices 字段的显示值，就调用 get_FOO_display 方法(这里的 FOO 就是 choices 字段的名称 )。例如：
+
+from django.db import models
+
+class Person(models.Model):
+    SHIRT_SIZES = (
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+    )
+    name = models.CharField(max_length=60)
+    shirt_size = models.CharField(max_length=1, choices=SHIRT_SIZES)
+
+
+>>> p = Person(name="Fred Flintstone", shirt_size="L")
+>>> p.save()
+>>> p.shirt_size
+'L'
+>>> p.get_shirt_size_display()
+'Large'   
+```
+
+
+
+更多详见[模型字段参考](http://python.usyiyi.cn/documents/django_182/ref/models/fields.html#manytomany-arguments)
+
+一旦你建立好数据模型之后，django会自动生成一套数据库抽象的API，可以让你执行关于表记录的增删改查的操作。
+
+
+
+## 添加表记录
+
+## 普通字段
+
+```
+方式1
+publish_obj=Publish(name="人民出版社",city="北京",email="renMin@163.com")
+publish_obj.save() # 将数据保存到数据库
+
+方式2 
+# 返回值publish_obj是添加的记录对象
+publish_obj=Publish.objects.create(name="人民出版社",city="北京",email="renMin@163.com")
+
+方式3
+表.objects.create(**request.POST.dict())
+
+```
+
+## 外键字段
+
+```
+方式1:
+   publish_obj=Publish.objects.get(nid=1)
+   Book.objects.create(title="金瓶眉",publishDate="2012-12-12",price=665,pageNum=334,publish=publish_obj)
+ 
+方式2:
+   Book.objects.create(title="金瓶眉",publishDate="2012-12-12",price=665,pageNum=334,publish_id=1)　　
+```
+
+关键点：book_obj.publish是什么？
+
+## 多对多字段
+
+```
+book_obj=Book.objects.create(title="追风筝的人",publishDate="2012-11-12",price=69,pageNum=314,publish_id=1)
+ 
+author_yuan=Author.objects.create(name="yuan",age=23,authorDetail_id=1)
+author_egon=Author.objects.create(name="egon",age=32,authorDetail_id=2)
+ 
+book_obj.authors.add(author_egon,author_yuan)  # 将某个特定的 model 对象添加到被关联对象集合中。 ======= book_obj.authors.add(*[])
+ 
+book_obj.authors.create()  #创建并保存一个新对象，然后将这个对象加被关联对象的集合中，然后返回这个新对象。
+
+```
+
+关键点：book_obj.authors是什么？　　
+
+解除关系：
+
+```
+book_obj.authors.remove()     # 将某个特定的对象从被关联对象集合中去除。====== book_obj.authors.remove(*[])
+book_obj.authors.clear()       #清空被关联对象集合。
+```
+
+### class RelatedManager
+
+"关联管理器"是在一对多或者多对多的关联上下文中使用的管理器。它存在于下面两种情况：
+
+ForeignKey关系的“另一边”。像这样：
+
+```
+from django.db import models
+ 
+class Reporter(models.Model):
+    # ...
+    pass
+ 
+class Article(models.Model):
+    reporter = models.ForeignKey(Reporter)
+```
+
+在上面的例子中，管理器reporter.article_set拥有下面的方法。
+
+ManyToManyField关系的两边：
+
+```
+class Topping(models.Model):
+    # ...
+    pass
+ 
+class Pizza(models.Model):
+    toppings = models.ManyToManyField(Topping)
+```
+
+这个例子中，topping.pizza_set 和pizza.toppings都拥有下面的方法。
+
+**add(obj1[, obj2, ...])**
+
+```
+把指定的模型对象添加到关联对象集中。
+
+例如：
+
+>>> b = Blog.objects.get(id=1)
+>>> e = Entry.objects.get(id=234)
+>>> b.entry_set.add(e) # Associates Entry e with Blog b.
+在上面的例子中，对于ForeignKey关系，e.save()由关联管理器调用，执行更新操作。然而，在多对多关系中使用add()并不会调用任何 save()方法，而是由QuerySet.bulk_create()创建关系。
+
+延伸：
+
+# 1 *[]的使用
+>>> book_obj = Book.objects.get(id=1)
+>>> author_list = Author.objects.filter(id__gt=2)
+>>> book_obj.authors.add(*author_list)
+
+
+# 2 直接绑定主键
+book_obj.authors.add(*[1,3])  # 将id=1和id=3的作者对象添加到这本书的作者集合中
+                              # 应用: 添加或者编辑时,提交作者信息时可以用到.  
+```
+
+
+
+**create(\**kwargs)**
+
+
+
+```
+创建一个新的对象，保存对象，并将它添加到关联对象集之中。返回新创建的对象：
+
+>>> b = Blog.objects.get(id=1)
+>>> e = b.entry_set.create(
+...     headline='Hello',
+...     body_text='Hi',
+...     pub_date=datetime.date(2005, 1, 1)
+... )
+
+# No need to call e.save() at this point -- it's already been saved.
+这完全等价于（不过更加简洁于）：
+
+>>> b = Blog.objects.get(id=1)
+>>> e = Entry(
+...     blog=b,
+...     headline='Hello',
+...     body_text='Hi',
+...     pub_date=datetime.date(2005, 1, 1)
+... )
+>>> e.save(force_insert=True)
+要注意我们并不需要指定模型中用于定义关系的关键词参数。在上面的例子中，我们并没有传入blog参数给create()。Django会明白新的 Entry对象blog 应该添加到b中。
+```
+
+
+
+**remove(obj1[, obj2, ...])**
+
+```
+从关联对象集中移除执行的模型对象：
+
+>>> b = Blog.objects.get(id=1)
+>>> e = Entry.objects.get(id=234)
+>>> b.entry_set.remove(e) # Disassociates Entry e from Blog b.
+对于ForeignKey对象，这个方法仅在null=True时存在。
+```
+
+**clear()**
+
+```
+从关联对象集中移除一切对象。
+
+>>> b = Blog.objects.get(id=1)
+>>> b.entry_set.clear()
+注意这样不会删除对象 —— 只会删除他们之间的关联。
+
+就像 remove() 方法一样，clear()只能在 null=True的ForeignKey上被调用。
+```
+
+
+
+**set()方法**
+
+先清空，在设置，编辑书籍时即可用到
+
+![img](assets/877318-20171119170926484-683145874-6881349.png)
+
+**注意**
+
+对于所有类型的关联字段，add()、create()、remove()和clear(),set()都会马上更新数据库。换句话说，在关联的任何一端，都不需要再调用save()方法。
+
+**直接赋值：**
+
+通过赋值一个新的可迭代的对象，关联对象集可以被整体替换掉。
+
+```
+>>> new_list = [obj1, obj2, obj3]
+>>> e.related_set = new_list
+```
+
+如果外键关系满足null=True，关联管理器会在添加new_list中的内容之前，首先调用clear()方法来解除关联集中一切已存在对象的关联。否则， new_list中的对象会在已存在的关联的基础上被添加。　　
+
+
+
+## 查询表记录
+
+## 查询相关API
+
+```
+<1> all():                 查询所有结果
+ 
+<2> filter(**kwargs):      它包含了与所给筛选条件相匹配的对象
+ 
+<3> get(**kwargs):         返回与所给筛选条件相匹配的对象，返回结果有且只有一个，
+                           如果符合筛选条件的对象超过一个或者没有都会抛出错误。
+ 
+<5> exclude(**kwargs):     它包含了与所给筛选条件不匹配的对象
+ 
+<4> values(*field):        返回一个ValueQuerySet——一个特殊的QuerySet，运行后得到的并不是一系列
+                           model的实例化对象，而是一个可迭代的字典序列
+ 
+<9> values_list(*field):   它与values()非常相似，它返回的是一个元组序列，values返回的是一个字典序列
+ 
+<6> order_by(*field):      对查询结果排序
+ 
+<7> reverse():             对查询结果反向排序
+ 
+<8> distinct():            从返回结果中剔除重复纪录
+ 
+<10> count():              返回数据库中匹配查询(QuerySet)的对象数量。
+ 
+<11> first():              返回第一条记录
+ 
+<12> last():               返回最后一条记录
+ 
+<13> exists():             如果QuerySet包含数据，就返回True，否则返回False
+```
+
+注意：一定区分object与querySet的区别 ！！！
+
+## 双下划线之单表查询
+
+```
+models.Tb1.objects.filter(id__lt=10, id__gt=1)   # 获取id大于1 且 小于10的值
+ 
+models.Tb1.objects.filter(id__in=[11, 22, 33])   # 获取id等于11、22、33的数据
+models.Tb1.objects.exclude(id__in=[11, 22, 33])  # not in
+ 
+models.Tb1.objects.filter(name__contains="ven")
+models.Tb1.objects.filter(name__icontains="ven") # icontains大小写不敏感
+ 
+models.Tb1.objects.filter(id__range=[1, 2])      # 范围bettwen and
+ 
+startswith，istartswith, endswith, iendswith　
+```
+
+## 基于对象的跨表查询 
+
+### 一对多查询（Publish 与 Book）
+
+正向查询(按字段：publish)：
+
+```
+# 查询nid=1的书籍的出版社所在的城市<br>
+book_obj=Book.objects.get(nid=1)<br>print(book_obj.publish.city) # book_obj.publish 是nid=1的书籍对象关联的出版社对象　　
+
+```
+
+反向查询(按表名：book_set)：
+
+```
+# 查询 人民出版社出版过的所有书籍
+ 
+    publish=Publish.objects.get(name="人民出版社")
+ 
+    book_list=publish.book_set.all()  # 与人民出版社关联的所有书籍对象集合
+ 
+    for book_obj in book_list:
+        print(book_obj.title)
+```
+
+### 一对一查询(Author 与 AuthorDetail)
+
+正向查询(按字段：authorDetail)：
+
+```
+# 查询egon作者的手机号
+ 
+    author_egon=Author.objects.get(name="egon")
+    print(author_egon.authorDetail.telephone)
+```
+
+反向查询(按表名：author)：
+
+```
+# 查询所有住址在北京的作者的姓名
+ 
+    authorDetail_list=AuthorDetail.objects.filter(addr="beijing")
+ 
+    for obj in authorDetail_list:
+        print(obj.author.name)
+```
+
+### 多对多查询 (Author 与 Book)
+
+正向查询(按字段：authors)：
+
+```
+# 金瓶眉所有作者的名字以及手机号
+ 
+    book_obj=Book.objects.filter(title="金瓶眉").first()
+ 
+    authors=book_obj.authors.all()
+ 
+    for author_obj in authors:
+ 
+        print(author_obj.name,author_obj.authorDetail.telephone)
+```
+
+反向查询(按表名：book_set)：
+
+```
+# 查询egon出过的所有书籍的名字
+ 
+    author_obj=Author.objects.get(name="egon")
+    book_list=author_obj.book_set.all() #与egon作者相关的所有书籍
+ 
+    for book_obj in book_list:
+        print(book_obj.title)
+```
+
+**注意：**
+
+你可以通过在 ForeignKey() 和ManyToManyField的定义中设置 related_name 的值来覆写 FOO_set 的名称。例如，如果 Article model 中做一下更改： publish = ForeignKey(Blog, related_name='bookList')，那么接下来就会如我们看到这般：
+
+```
+# 查询 人民出版社出版过的所有书籍
+ 
+   publish=Publish.objects.get(name="人民出版社")
+ 
+   book_list=publish.bookList.all()  # 与人民出版社关联的所有书籍对象集合
+```
+
+## 基于双下划线的跨表查询 
+
+Django 还提供了一种直观而高效的方式在查询(lookups)中表示关联关系，它能自动确认 SQL JOIN 联系。要做跨关系查询，就使用两个下划线来链接模型(model)间关联字段的名称，直到最终链接到你想要的 model 为止。
+
+关键点：正向查询按字段，反向查询按表明。
+
+
+
+```
+# 练习1:  查询人民出版社出版过的所有书籍的名字与价格(一对多)
+
+    # 正向查询 按字段:publish
+
+    queryResult=Book.objects　　　　　　　　　　　　.filter(publish__name="人民出版社")　　　　　　　　　　　　.values_list("title","price")
+
+    # 反向查询 按表名:book
+
+    queryResult=Publish.objects　　　　　　　　　　　　　　.filter(name="人民出版社")　　　　　　　　　　　　　　.values_list("book__title","book__price")
+
+
+
+# 练习2: 查询egon出过的所有书籍的名字(多对多)
+
+    # 正向查询 按字段:authors:
+    queryResult=Book.objects　　　　　　　　　　　　.filter(authors__name="yuan")　　　　　　　　　　　　.values_list("title")
+
+    # 反向查询 按表名:book
+    queryResult=Author.objects　　　　　　　　　　　　　　.filter(name="yuan")　　　　　　　　　　　　　　.values_list("book__title","book__price")
+
+
+# 练习3: 查询人民出版社出版过的所有书籍的名字以及作者的姓名
+
+
+    # 正向查询
+    queryResult=Book.objects　　　　　　　　　　　　.filter(publish__name="人民出版社")　　　　　　　　　　　　.values_list("title","authors__name")
+    # 反向查询
+    queryResult=Publish.objects　　　　　　　　　　　　　　.filter(name="人民出版社")　　　　　　　　　　　　　　.values_list("book__title","book__authors__age","book__authors__name")
+
+
+# 练习4: 手机号以151开头的作者出版过的所有书籍名称以及出版社名称
+
+    queryResult=Book.objects　　　　　　　　　　　　.filter(authors__authorDetail__telephone__regex="151")　　　　　　　　　　　　.values_list("title","publish__name")
+    
+    
+```
+
+
+
+ 注意：
+
+反向查询时，如果定义了related_name ，则用related_name替换表名，例如： publish = ForeignKey(Blog, related_name='bookList')：
+
+```
+# 练习1:  查询人民出版社出版过的所有书籍的名字与价格(一对多)
+ 
+    # 反向查询 不再按表名:book,而是related_name:bookList
+ 
+    queryResult=Publish.objects
+　　　　　　　　　　　　　　.filter(name="人民出版社")
+　　　　　　　　　　　　　　.values_list("bookList__title","bookList__price")
+```
+
+
+
+## 聚合查询与分组查询
+
+先了解sql中的聚合与分组概念
+
+### `聚合：aggregate`(*args, **kwargs)
+
+```
+# 计算所有图书的平均价格
+    >>> from django.db.models import Avg
+    >>> Book.objects.all().aggregate(Avg('price'))
+    {'price__avg': 34.35}
+```
+
+`aggregate()`是`QuerySet` 的一个终止子句，意思是说，它返回一个包含一些键值对的字典。键的名称是聚合值的标识符，值是计算出来的聚合值。键的名称是按照字段和聚合函数的名称自动生成出来的。如果你想要为聚合值指定一个名称，可以向聚合子句提供它。
+
+```
+>>> Book.objects.aggregate(average_price=Avg('price'))
+{'average_price': 34.35}
+```
+
+如果你希望生成不止一个聚合，你可以向`aggregate()`子句中添加另一个参数。所以，如果你也想知道所有图书价格的最大值和最小值，可以这样查询：
+
+```
+>>> from django.db.models import Avg, Max, Min
+>>> Book.objects.aggregate(Avg('price'), Max('price'), Min('price'))
+{'price__avg': 34.35, 'price__max': Decimal('81.20'), 'price__min': Decimal('12.99')}
+
+```
+
+### 分组：annotate()　
+
+为调用的`QuerySet`中每一个对象都生成一个独立的统计值（统计方法用聚合函数）。　
+
+(1) 练习：统计每一本书的作者个数
+
+```
+bookList=Book.objects.annotate(authorsNum=Count('authors'))
+for book_obj in bookList:
+    print(book_obj.title,book_obj.authorsNum)
+```
+
+
+
+```
+SELECT 
+"app01_book"."nid", 
+"app01_book"."title", 
+"app01_book"."publishDate", 
+"app01_book"."price", 
+"app01_book"."pageNum", 
+"app01_book"."publish_id", 
+COUNT("app01_book_authors"."author_id") AS "authorsNum" 
+FROM "app01_book" LEFT OUTER JOIN "app01_book_authors" 
+ON ("app01_book"."nid" = "app01_book_authors"."book_id") 
+GROUP BY 
+"app01_book"."nid", 
+"app01_book"."title", 
+"app01_book"."publishDate", 
+"app01_book"."price", 
+"app01_book"."pageNum", 
+"app01_book"."publish_id"
+
+
+```
+
+
+
+解析：
+
+```
+'''
+Book.objects.annotate(authorsNum=Count('authors'))
+拆分解析：
+Book.objects等同于Book.objects.all(),翻译成的sql类似于： select id,name,..  from Book
+这样得到的对象一定是每一本书对象，有n本书籍记录，就分n个组，不会有重复对象，每一组再由annotate分组统计。'''
+```
+
+(2) 如果想对所查询对象的关联对象进行聚合：
+
+练习：统计每一个出版社的最便宜的书
+
+```
+publishList=Publish.objects.annotate(MinPrice=Min("book__price"))
+ 
+for publish_obj in publishList:
+    print(publish_obj.name,publish_obj.MinPrice)
+
+```
+
+annotate的返回值是querySet，如果不想遍历对象，可以用上valuelist：
+
+```
+queryResult= Publish.objects
+　　　　　　　　　　　　.annotate(MinPrice=Min("book__price"))
+　　　　　　　　　　　　.values_list("name","MinPrice")
+print(queryResult)
+```
+
+解析同上。
+
+方式2:　
+
+```
+queryResult=Book.objects.values("publish__name").annotate(MinPrice=Min('price')) ＃ 思考： if 有一个出版社没有出版过书会怎样？
+
+```
+
+解析：
+
+```
+'''
+查看 Book.objects.values("publish__name")的结果和对应的sql语句
+可以理解为values内的字段即group by的字段'''
+```
+
+(3) 统计每一本以py开头的书籍的作者个数：
+
+```
+ queryResult=Book.objects
+　　　　　　　　　　 .filter(title__startswith="Py")
+　　　　　　　　　 　.annotate(num_authors=Count('authors'))
+```
+
+(4) 统计不止一个作者的图书：
+
+```
+queryResult=Book.objects
+　　　　　　　　　　.annotate(num_authors=Count('authors'))
+　　　　　　　　　　.filter(num_authors__gt=1)
+```
+
+(5) 根据一本图书作者数量的多少对查询集 `QuerySet`进行排序:
+
+```
+Book.objects.annotate(num_authors=Count('authors')).order_by('num_authors')
+
+```
+
+(6) 查询各个作者出的书的总价格:
+
+
+
+```
+# 按author表的所有字段 group by
+    queryResult=Author.objects　　　　　　　　　　　　　　.annotate(SumPrice=Sum("book__price"))　　　　　　　　　　　　　　.values_list("name","SumPrice")
+    print(queryResult)
+    
+# 按authors__name group by
+    queryResult2=Book.objects.values("authors__name")　　　　　　　　　　　　　　.annotate(SumPrice=Sum("price"))　　　　　　　　　　　　　　.values_list("authors__name","SumPrice")
+    print(queryResult2)
+```
+
+
+
+## F查询与Q查询
+
+### F查询
+
+在上面所有的例子中，我们构造的过滤器都只是将字段值与某个常量做比较。如果我们要对两个字段的值做比较，那该怎么做呢？
+
+Django 提供 F() 来做这样的比较。F() 的实例可以在查询中引用字段，来比较同一个 model 实例中两个不同字段的值。
+
+```
+# 查询评论数大于收藏数的书籍
+ 
+   from django.db.models import F
+   Book.objects.filter(commnetNum__lt=F('keepNum'))
+
+```
+
+Django 支持 F() 对象之间以及 F() 对象和常数之间的加减乘除和取模的操作。
+
+```
+# 查询评论数大于收藏数2倍的书籍
+    Book.objects.filter(commnetNum__lt=F('keepNum')*2)
+
+```
+
+修改操作也可以使用F函数,比如将每一本书的价格提高30元：
+
+```
+Book.objects.all().update(price=F("price")+30)　
+
+```
+
+### Q查询
+
+`filter()` 等方法中的关键字参数查询都是一起进行“AND” 的。 如果你需要执行更复杂的查询（例如`OR` 语句），你可以使用`Q 对象`。
+
+```
+from django.db.models import Q
+Q(title__startswith='Py')
+```
+
+`Q` 对象可以使用`&` 和`|` 操作符组合起来。当一个操作符在两个`Q` 对象上使用时，它产生一个新的`Q` 对象。
+
+```
+bookList=Book.objects.filter(Q(authors__name="yuan")|Q(authors__name="egon"))
+
+```
+
+等同于下面的SQL `WHERE` 子句：
+
+```
+WHERE name ="yuan" OR name ="egon"
+```
+
+你可以组合`&` 和`|` 操作符以及使用括号进行分组来编写任意复杂的`Q` 对象。同时，`Q` 对象可以使用`~` 操作符取反，这允许组合正常的查询和取反(`NOT`) 查询：
+
+```
+bookList=Book.objects.filter(Q(authors__name="yuan") & ~Q(publishDate__year=2017)).values_list("title")
+
+```
+
+查询函数可以混合使用`Q 对象`和关键字参数。所有提供给查询函数的参数（关键字参数或`Q` 对象）都将"AND”在一起。但是，如果出现`Q` 对象，它必须位于所有关键字参数的前面。例如：
+
+```
+ bookList=Book.objects.filter(Q(publishDate__year=2016) | Q(publishDate__year=2017),title__icontains="python")
+```
+
+
+
+# 修改表记录
+
+ ![img](assets/877318-20160727122351763-1427837148.png)
+
+注意：
+
+<1> 第二种方式修改不能用get的原因是：update是QuerySet对象的方法，get返回的是一个model对象，它没有update方法，而filter返回的是一个QuerySet对象(filter里面的条件可能有多个条件符合，比如name＝'alvin',可能有两个name＝'alvin'的行数据)。
+
+<2>在“插入和更新数据”小节中，我们有提到模型的save()方法，这个方法会更新一行里的所有列。 而某些情况下，我们只需要更新行里的某几列。
+
  
 
+此外，update()方法对于任何结果集（QuerySet）均有效，这意味着你可以同时更新多条记录update()方法会返回一个整型数值，表示受影响的记录条数。
+
+注意，这里因为update返回的是一个整形，所以没法用query属性；对于每次创建一个对象，想显示对应的raw sql，需要在settings加上日志记录部分
+
+
+
+# 删除表记录
+
+删除方法就是 delete()。它运行时立即删除对象而不返回任何值。例如：
+
+```
+e.delete()
+```
+
+你也可以一次性删除多个对象。每个 QuerySet 都有一个 delete() 方法，它一次性删除 QuerySet 中所有的对象。
+
+例如，下面的代码将删除 pub_date 是2005年的 Entry 对象：
+
+```
+Entry.objects.filter(pub_date__year=2005).delete()
+
+```
+
+要牢记这一点：无论在什么情况下，QuerySet 中的 delete() 方法都只使用一条 SQL 语句一次性删除所有对象，而并不是分别删除每个对象。如果你想使用在 model 中自定义的 delete() 方法，就要自行调用每个对象的delete 方法。(例如，遍历 QuerySet，在每个对象上调用 delete()方法)，而不是使用 QuerySet 中的 delete()方法。
+
+在 Django 删除对象时，会模仿 SQL 约束 ON DELETE CASCADE 的行为，换句话说，删除一个对象时也会删除与它相关联的外键对象。例如：
+
+```
+b = Blog.objects.get(pk=1)
+# This will delete the Blog and all of its Entry objects.
+b.delete()
+```
+
+要注意的是： delete() 方法是 QuerySet 上的方法，但并不适用于 Manager 本身。这是一种保护机制，是为了避免意外地调用 Entry.objects.delete() 方法导致 所有的 记录被误删除。如果你确认要删除所有的对象，那么你必须显式地调用：
+
+```
+Entry.objects.all().delete()　　
+
+```
+
+如果不想级联删除，可以设置为：
+
+```
+pubHouse = models.ForeignKey(to='Publisher', on_delete=models.SET_NULL, blank=True, null=True)
+```
+
+ 
+
+#  [Django-model进阶](https://www.cnblogs.com/yuanchenqi/articles/7570003.html)
+
+
+
+*知识预览*
+
+-   [QuerySet](https://www.cnblogs.com/yuanchenqi/articles/7570003.html#_label0)
+-   [中介模型](https://www.cnblogs.com/yuanchenqi/articles/7570003.html#_label1)
+-   [查询优化](https://www.cnblogs.com/yuanchenqi/articles/7570003.html#_label2)
+-   [extra](https://www.cnblogs.com/yuanchenqi/articles/7570003.html#_label3)
+-   [整体插入](https://www.cnblogs.com/yuanchenqi/articles/7570003.html#_label4)
+
+
+
+## QuerySet
+
+### 可切片
+
+使用Python 的切片语法来限制`查询集`记录的数目 。它等同于SQL 的`LIMIT` 和`OFFSET` 子句。
+
+```
+>>> Entry.objects.all()[:5]      # (LIMIT 5)
+>>> Entry.objects.all()[5:10]    # (OFFSET 5 LIMIT 5)
+```
+
+不支持负的索引（例如`Entry.objects.all()[-1]`）。通常，`查询集` 的切片返回一个新的`查询集` —— 它不会执行查询。
+
+### 可迭代
+
+```
+articleList=models.Article.objects.all()
+
+for article in articleList:
+    print(article.title)
+```
+
+### 惰性查询
+
+`查询集` 是惰性执行的 —— 创建`查询集`不会带来任何数据库的访问。你可以将过滤器保持一整天，直到`查询集` 需要求值时，Django 才会真正运行这个查询。
+
+```
+queryResult=models.Article.objects.all() # not hits database
+ 
+print(queryResult) # hits database
+ 
+for article in queryResult:
+    print(article.title)    # hits database
+
+```
+
+ 一般来说，只有在“请求”`查询集` 的结果时才会到数据库中去获取它们。当你确实需要结果时，`查询集` 通过访问数据库来*求值*。 关于求值发生的准确时间，参见[*何时计算查询集*](http://python.usyiyi.cn/documents/django_182/ref/models/querysets.html#when-querysets-are-evaluated)。
+
+### 缓存机制
+
+每个`查询集`都包含一个缓存来最小化对数据库的访问。理解它是如何工作的将让你编写最高效的代码。
+
+在一个新创建的`查询集`中，缓存为空。首次对`查询集`进行求值 —— 同时发生数据库查询 ——Django 将保存查询的结果到`查询集`的缓存中并返回明确请求的结果（例如，如果正在迭代`查询集`，则返回下一个结果）。接下来对该`查询集` 的求值将重用缓存的结果。
+
+请牢记这个缓存行为，因为对`查询集`使用不当的话，它会坑你的。例如，下面的语句创建两个`查询集`，对它们求值，然后扔掉它们：
+
+```
+print([a.title for a in models.Article.objects.all()])
+print([a.create_time for a in models.Article.objects.all()])
+```
+
+这意味着相同的数据库查询将执行两次，显然倍增了你的数据库负载。同时，还有可能两个结果列表并不包含相同的数据库记录，因为在两次请求期间有可能有Article被添加进来或删除掉。为了避免这个问题，只需保存`查询集`并重新使用它：
+
+```
+queryResult=models.Article.objects.all()
+print([a.title for a in queryResult])
+print([a.create_time for a in queryResult])
+```
+
+#### 何时查询集不会被缓存?
+
+查询集不会永远缓存它们的结果。当只对查询集的部分进行求值时会检查缓存， 如果这个部分不在缓存中，那么接下来查询返回的记录都将不会被缓存。所以，这意味着使用切片或索引来限制查询集将不会填充缓存。
+
+例如，重复获取查询集对象中一个特定的索引将每次都查询数据库：
+
+```
+>>> queryset = Entry.objects.all()
+>>> print queryset[5] # Queries the database
+>>> print queryset[5] # Queries the database again
+```
+
+然而，如果已经对全部查询集求值过，则将检查缓存：
+
+```
+>>> queryset = Entry.objects.all()
+>>> [entry for entry in queryset] # Queries the database
+>>> print queryset[5] # Uses cache
+>>> print queryset[5] # Uses cache
+
+```
+
+下面是一些其它例子，它们会使得全部的查询集被求值并填充到缓存中：
+
+```
+>>> [entry for entry in queryset]
+>>> bool(queryset)
+>>> entry in queryset
+>>> list(queryset)
+```
+
+注：简单地打印查询集不会填充缓存。
+
+```
+queryResult=models.Article.objects.all()
+print(queryResult) #  hits database
+print(queryResult) #  hits database
+```
+
+### exists()与iterator()方法
+
+#### exists：
+
+简单的使用if语句进行判断也会完全执行整个queryset并且把数据放入cache，虽然你并不需要这些 数据！为了避免这个，可以用exists()方法来检查是否有数据：
+
+```
+if queryResult.exists():
+    #SELECT (1) AS "a" FROM "blog_article" LIMIT 1; args=()
+        print("exists...")
+```
+
+#### iterator:
+
+当queryset非常巨大时，cache会成为问题。
+
+处理成千上万的记录时，将它们一次装入内存是很浪费的。更糟糕的是，巨大的queryset可能会锁住系统 进程，让你的程序濒临崩溃。要避免在遍历数据的同时产生queryset cache，可以使用iterator()方法 来获取数据，处理完数据就将其丢弃。
+
+
+
+```
+objs = Book.objects.all().iterator()
+# iterator()可以一次只从数据库获取少量数据，这样可以节省内存
+for obj in objs:
+    print(obj.title)
+#BUT,再次遍历没有打印,因为迭代器已经在上一次遍历(next)到最后一次了,没得遍历了
+for obj in objs:
+    print(obj.title)
+```
+
+
+
+当然，使用iterator()方法来防止生成cache，意味着遍历同一个queryset时会重复执行查询。所以使 #用iterator()的时候要当心，确保你的代码在操作一个大的queryset时没有重复执行查询。
+
+总结:
+
+queryset的cache是用于减少程序对数据库的查询，在通常的使用下会保证只有在需要的时候才会查询数据库。 使用exists()和iterator()方法可以优化程序对内存的使用。不过，由于它们并不会生成queryset cache，可能 会造成额外的数据库查询。　
+
+
+
+# 中介模型
+
+处理类似搭配 pizza 和 topping 这样简单的多对多关系时，使用标准的`ManyToManyField` 就可以了。但是，有时你可能需要关联数据到两个模型之间的关系上。
+
+例如，有这样一个应用，它记录音乐家所属的音乐小组。我们可以用一个`ManyToManyField` 表示小组和成员之间的多对多关系。但是，有时你可能想知道更多成员关系的细节，比如成员是何时加入小组的。
+
+对于这些情况，Django 允许你指定一个中介模型来定义多对多关系。 你可以将其他字段放在中介模型里面。源模型的`ManyToManyField` 字段将使用`through` 参数指向中介模型。对于上面的音乐小组的例子，代码如下：
+
+```python
+from django.db import models
+ 
+class Person(models.Model):
+    name = models.CharField(max_length=128)
+ 
+    def __str__(self):              # __unicode__ on Python 2
+        return self.name
+ 
+class Group(models.Model):
+    name = models.CharField(max_length=128)
+    members = models.ManyToManyField(Person, through='Membership')
+ 
+    def __str__(self):              # __unicode__ on Python 2
+        return self.name
+ 
+class Membership(models.Model):
+    person = models.ForeignKey(Person)
+    group = models.ForeignKey(Group)
+    date_joined = models.DateField()
+    invite_reason = models.CharField(max_length=64)
+```
+
+既然你已经设置好`ManyToManyField` 来使用中介模型（在这个例子中就是`Membership`），接下来你要开始创建多对多关系。你要做的就是创建中介模型的实例：
+
+```
+>>> ringo = Person.objects.create(name="Ringo Starr")
+>>> paul = Person.objects.create(name="Paul McCartney")
+>>> beatles = Group.objects.create(name="The Beatles")
+>>> m1 = Membership(person=ringo, group=beatles,
+...     date_joined=date(1962, 8, 16),
+...     invite_reason="Needed a new drummer.")
+>>> m1.save()
+>>> beatles.members.all()
+[<Person: Ringo Starr>]
+>>> ringo.group_set.all()
+[<Group: The Beatles>]
+>>> m2 = Membership.objects.create(person=paul, group=beatles,
+...     date_joined=date(1960, 8, 1),
+...     invite_reason="Wanted to form a band.")
+>>> beatles.members.all()
+[<Person: Ringo Starr>, <Person: Paul McCartney>]
+```
+
+与普通的多对多字段不同，你不能使用`add`、 `create`和赋值语句（比如，`beatles.members = [...]`）来创建关系：
+
+```
+# THIS WILL NOT WORK
+>>> beatles.members.add(john)
+# NEITHER WILL THIS
+>>> beatles.members.create(name="George Harrison")
+# AND NEITHER WILL THIS
+>>> beatles.members = [john, paul, ringo, george]
+```
+
+为什么不能这样做？ 这是因为你不能只创建 `Person`和 `Group`之间的关联关系，你还要指定 `Membership`模型中所需要的所有信息；而简单的`add`、`create` 和赋值语句是做不到这一点的。所以它们不能在使用中介模型的多对多关系中使用。此时，唯一的办法就是创建中介模型的实例。
+
+ `remove()`方法被禁用也是出于同样的原因。但是`clear()` 方法却是可用的。它可以清空某个实例所有的多对多关系：
+
+```
+>>> # Beatles have broken up
+>>> beatles.members.clear()
+>>> # Note that this deletes the intermediate model instances
+>>> Membership.objects.all()
+[]
+```
+
+
+
+# 查询优化
+
+## 表数据
+
+```
+class UserInfo(AbstractUser):
+    """
+    用户信息
+    """
+    nid = models.BigAutoField(primary_key=True)
+    nickname = models.CharField(verbose_name='昵称', max_length=32)
+    telephone = models.CharField(max_length=11, blank=True, null=True, unique=True, verbose_name='手机号码')
+    avatar = models.FileField(verbose_name='头像',upload_to = 'avatar/',default="/avatar/default.png")
+    create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
+ 
+    fans = models.ManyToManyField(verbose_name='粉丝们',
+                                  to='UserInfo',
+                                  through='UserFans',
+                                  related_name='f',
+                                  through_fields=('user', 'follower'))
+ 
+    def __str__(self):
+        return self.username
+ 
+class UserFans(models.Model):
+    """
+    互粉关系表
+    """
+    nid = models.AutoField(primary_key=True)
+    user = models.ForeignKey(verbose_name='博主', to='UserInfo', to_field='nid', related_name='users')
+    follower = models.ForeignKey(verbose_name='粉丝', to='UserInfo', to_field='nid', related_name='followers')
+ 
+class Blog(models.Model):
+ 
+    """
+    博客信息
+    """
+    nid = models.BigAutoField(primary_key=True)
+    title = models.CharField(verbose_name='个人博客标题', max_length=64)
+    site = models.CharField(verbose_name='个人博客后缀', max_length=32, unique=True)
+    theme = models.CharField(verbose_name='博客主题', max_length=32)
+    user = models.OneToOneField(to='UserInfo', to_field='nid')
+    def __str__(self):
+        return self.title
+ 
+class Category(models.Model):
+    """
+    博主个人文章分类表
+    """
+    nid = models.AutoField(primary_key=True)
+    title = models.CharField(verbose_name='分类标题', max_length=32)
+ 
+    blog = models.ForeignKey(verbose_name='所属博客', to='Blog', to_field='nid')
+ 
+class Article(models.Model):
+ 
+    nid = models.BigAutoField(primary_key=True)
+    title = models.CharField(max_length=50, verbose_name='文章标题')
+    desc = models.CharField(max_length=255, verbose_name='文章描述')
+    read_count = models.IntegerField(default=0)
+    comment_count= models.IntegerField(default=0)
+    up_count = models.IntegerField(default=0)
+    down_count = models.IntegerField(default=0)
+    category = models.ForeignKey(verbose_name='文章类型', to='Category', to_field='nid', null=True)
+    create_time = models.DateField(verbose_name='创建时间')
+    blog = models.ForeignKey(verbose_name='所属博客', to='Blog', to_field='nid')
+    tags = models.ManyToManyField(
+        to="Tag",
+        through='Article2Tag',
+        through_fields=('article', 'tag'),
+)
+ 
+ 
+class ArticleDetail(models.Model):
+    """
+    文章详细表
+    """
+    nid = models.AutoField(primary_key=True)
+    content = models.TextField(verbose_name='文章内容', )
+ 
+    article = models.OneToOneField(verbose_name='所属文章', to='Article', to_field='nid')
+ 
+ 
+class Comment(models.Model):
+    """
+    评论表
+    """
+    nid = models.BigAutoField(primary_key=True)
+    article = models.ForeignKey(verbose_name='评论文章', to='Article', to_field='nid')
+    content = models.CharField(verbose_name='评论内容', max_length=255)
+    create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
+ 
+    parent_comment = models.ForeignKey('self', blank=True, null=True, verbose_name='父级评论')
+    user = models.ForeignKey(verbose_name='评论者', to='UserInfo', to_field='nid')
+ 
+    up_count = models.IntegerField(default=0)
+ 
+    def __str__(self):
+        return self.content
+ 
+class ArticleUpDown(models.Model):
+    """
+    点赞表
+    """
+    nid = models.AutoField(primary_key=True)
+    user = models.ForeignKey('UserInfo', null=True)
+    article = models.ForeignKey("Article", null=True)
+    models.BooleanField(verbose_name='是否赞')
+ 
+class CommentUp(models.Model):
+    """
+    点赞表
+    """
+    nid = models.AutoField(primary_key=True)
+    user = models.ForeignKey('UserInfo', null=True)
+    comment = models.ForeignKey("Comment", null=True)
+ 
+ 
+class Tag(models.Model):
+    nid = models.AutoField(primary_key=True)
+    title = models.CharField(verbose_name='标签名称', max_length=32)
+    blog = models.ForeignKey(verbose_name='所属博客', to='Blog', to_field='nid')
+ 
+ 
+ 
+class Article2Tag(models.Model):
+    nid = models.AutoField(primary_key=True)
+    article = models.ForeignKey(verbose_name='文章', to="Article", to_field='nid')
+    tag = models.ForeignKey(verbose_name='标签', to="Tag", to_field='nid')
+```
+
+## select_related
+
+### 简单使用
+
+对于一对一字段（OneToOneField）和外键字段（ForeignKey），可以使用select_related 来对QuerySet进行优化。
+
+select_related 返回一个`QuerySet`，当执行它的查询时它沿着外键关系查询关联的对象的数据。它会生成一个复杂的查询并引起性能的损耗，但是在以后使用外键关系时将不需要数据库查询。
+
+简单说，在对QuerySet使用select_related()函数后，Django会获取相应外键对应的对象，从而在之后需要的时候不必再查询数据库了。
+
+下面的例子解释了普通查询和`select_related()` 查询的区别。
+
+查询id=2的文章的分类名称,下面是一个标准的查询：
+
+```
+# Hits the database.
+article=models.Article.objects.get(nid=2)
+ 
+# Hits the database again to get the related Blog object.
+print(article.category.title)
+```
+
+
+
+```
+'''
+ 
+SELECT
+    "blog_article"."nid",
+    "blog_article"."title",
+    "blog_article"."desc",
+    "blog_article"."read_count",
+    "blog_article"."comment_count",
+    "blog_article"."up_count",
+    "blog_article"."down_count",
+    "blog_article"."category_id",
+    "blog_article"."create_time",
+     "blog_article"."blog_id",
+     "blog_article"."article_type_id"
+             FROM "blog_article"
+             WHERE "blog_article"."nid" = 2; args=(2,)
+ 
+SELECT
+     "blog_category"."nid",
+     "blog_category"."title",
+     "blog_category"."blog_id"
+              FROM "blog_category"
+              WHERE "blog_category"."nid" = 4; args=(4,)
+ 
+ 
+'''
+```
+
+
+
+ 如果我们使用select_related()函数：
+
+```
+articleList=models.Article.objects.select_related("category").all()
+ 
+ 
+    for article_obj in articleList:
+        #  Doesn't hit the database, because article_obj.category
+        #  has been prepopulated in the previous query.
+        print(article_obj.category.title)
+```
+
+
+
+```
+SELECT
+     "blog_article"."nid",
+     "blog_article"."title",
+     "blog_article"."desc",
+     "blog_article"."read_count",
+     "blog_article"."comment_count",
+     "blog_article"."up_count",
+     "blog_article"."down_count",
+     "blog_article"."category_id",
+     "blog_article"."create_time",
+     "blog_article"."blog_id",
+     "blog_article"."article_type_id",
+ 
+     "blog_category"."nid",
+     "blog_category"."title",
+     "blog_category"."blog_id"
+ 
+FROM "blog_article"
+LEFT OUTER JOIN "blog_category" ON ("blog_article"."category_id" = "blog_category"."nid");
+```
+
+
+
+### 多外键查询
+
+这是针对category的外键查询，如果是另外一个外键呢？让我们一起看下：
+
+```
+article=models.Article.objects.select_related("category").get(nid=1)
+print(article.articledetail)
+```
+
+ 观察logging结果，发现依然需要查询两次，所以需要改为：
+
+```
+article=models.Article.objects.select_related("category","articledetail").get(nid=1)
+print(article.articledetail)
+
+```
+
+ 或者：
+
+```
+article=models.Article.objects
+　　　　　　　　　　　　　.select_related("category")
+　　　　　　　　　　　　　.select_related("articledetail")
+　　　　　　　　　　　　　.get(nid=1)  # django 1.7 支持链式操作
+print(article.articledetail)
+
+```
+
+ 
+
+```
+SELECT
+ 
+    "blog_article"."nid",
+    "blog_article"."title",
+    ......
+ 
+    "blog_category"."nid",
+    "blog_category"."title",
+    "blog_category"."blog_id",
+ 
+    "blog_articledetail"."nid",
+    "blog_articledetail"."content",
+    "blog_articledetail"."article_id"
+ 
+   FROM "blog_article"
+   LEFT OUTER JOIN "blog_category" ON ("blog_article"."category_id" = "blog_category"."nid")
+   LEFT OUTER JOIN "blog_articledetail" ON ("blog_article"."nid" = "blog_articledetail"."article_id")
+   WHERE "blog_article"."nid" = 1; args=(1,)
+```
+
+### 深层查询
+
+```
+# 查询id=1的文章的用户姓名
+ 
+    article=models.Article.objects.select_related("blog").get(nid=1)
+    print(article.blog.user.username)
+```
+
+ 依然需要查询两次：
+
+```
+SELECT
+    "blog_article"."nid",
+    "blog_article"."title",
+    ......
+ 
+     "blog_blog"."nid",
+     "blog_blog"."title",
+ 
+   FROM "blog_article" INNER JOIN "blog_blog" ON ("blog_article"."blog_id" = "blog_blog"."nid")
+   WHERE "blog_article"."nid" = 1;
+ 
+ 
+ 
+ 
+SELECT
+    "blog_userinfo"."password",
+    "blog_userinfo"."last_login",
+    ......
+ 
+FROM "blog_userinfo"
+WHERE "blog_userinfo"."nid" = 1;
+```
+
+ 这是因为第一次查询没有query到userInfo表，所以，修改如下：
+
+```
+article=models.Article.objects.select_related("blog__user").get(nid=1)
+print(article.blog.user.username)
+```
+
+```
+SELECT
+ 
+"blog_article"."nid", "blog_article"."title",
+......
+ 
+ "blog_blog"."nid", "blog_blog"."title",
+......
+ 
+ "blog_userinfo"."password", "blog_userinfo"."last_login",
+......
+ 
+FROM "blog_article"
+ 
+INNER JOIN "blog_blog" ON ("blog_article"."blog_id" = "blog_blog"."nid")
+ 
+INNER JOIN "blog_userinfo" ON ("blog_blog"."user_id" = "blog_userinfo"."nid")
+WHERE "blog_article"."nid" = 1;
+```
+
+
+
+### 总结
+
+1.  select_related主要针一对一和多对一关系进行优化。
+2.  select_related使用SQL的JOIN语句进行优化，通过减少SQL查询的次数来进行优化、提高性能。
+3.  可以通过可变长参数指定需要select_related的字段名。也可以通过使用双下划线“__”连接字段名来实现指定的递归查询。
+4.  没有指定的字段不会缓存，没有指定的深度不会缓存，如果要访问的话Django会再次进行SQL查询。
+5.  也可以通过depth参数指定递归的深度，Django会自动缓存指定深度内所有的字段。如果要访问指定深度外的字段，Django会再次进行SQL查询。
+6.  也接受无参数的调用，Django会尽可能深的递归查询所有的字段。但注意有Django递归的限制和性能的浪费。
+7.  Django >= 1.7，链式调用的select_related相当于使用可变长参数。Django < 1.7，链式调用会导致前边的select_related失效，只保留最后一个。
+
+## prefetch_related()
+
+对于多对多字段（ManyToManyField）和一对多字段，可以使用prefetch_related()来进行优化。
+
+prefetch_related()和select_related()的设计目的很相似，都是为了减少SQL查询的数量，但是实现的方式不一样。后者是通过JOIN语句，在SQL查询内解决问题。但是对于多对多关系，使用SQL语句解决就显得有些不太明智，因为JOIN得到的表将会很长，会导致SQL语句运行时间的增加和内存占用的增加。若有n个对象，每个对象的多对多字段对应Mi条，就会生成Σ(n)Mi 行的结果表。
+
+prefetch_related()的解决方法是，分别查询每个表，然后用Python处理他们之间的关系。
+
+```
+# 查询所有文章关联的所有标签
+    article_obj=models.Article.objects.all()
+    for i in article_obj:
+ 
+        print(i.tags.all())  #4篇文章: hits database 5
+```
+
+改为prefetch_related：
+
+```
+# 查询所有文章关联的所有标签
+    article_obj=models.Article.objects.prefetch_related("tags").all()
+    for i in article_obj:
+ 
+        print(i.tags.all())  #4篇文章: hits database 2
+```
+
+
+
+```
+SELECT "blog_article"."nid",
+               "blog_article"."title",
+               ......
+ 
+FROM "blog_article";
+ 
+ 
+ 
+SELECT
+  ("blog_article2tag"."article_id") AS "_prefetch_related_val_article_id",
+  "blog_tag"."nid",
+  "blog_tag"."title",
+  "blog_tag"."blog_id"
+   FROM "blog_tag"
+  INNER JOIN "blog_article2tag" ON ("blog_tag"."nid" = "blog_article2tag"."tag_id")
+  WHERE "blog_article2tag"."article_id" IN (1, 2, 3, 4);
+
+```
+
+
+
+# extra
+
+```
+extra(select=None, where=None, params=None, 
+      tables=None, order_by=None, select_params=None)
+```
+
+有些情况下，Django的查询语法难以简单的表达复杂的 `WHERE` 子句，对于这种情况, Django 提供了 `extra()` `QuerySet`修改机制 — 它能在 `QuerySet`生成的SQL从句中注入新子句
+
+extra可以指定一个或多个 `参数`,例如 `select`, `where` or `tables`. 这些参数都不是必须的，但是你至少要使用一个!要注意这些额外的方式对不同的数据库引擎可能存在移植性问题.(因为你在显式的书写SQL语句),除非万不得已,尽量避免这样做
+
+### 参数之select
+
+The `select` 参数可以让你在 `SELECT` 从句中添加其他字段信息，它应该是一个字典，存放着属性名到 SQL 从句的映射。
+
+```
+queryResult=models.Article
+　　　　　　　　　　　.objects.extra(select={'is_recent': "create_time > '2017-09-05'"})
+```
+
+结果集中每个 Entry 对象都有一个额外的属性is_recent, 它是一个布尔值，表示 Article对象的create_time 是否晚于2017-09-05.
+
+练习：
+
+
+
+```
+# in sqlite:
+    article_obj=models.Article.objects.filter(nid=1).extra(select={"standard_time":"strftime('%%Y-%%m-%%d',create_time)"}).values("standard_time","nid","title")
+    print(article_obj)
+    # <QuerySet [{'title': 'MongoDb 入门教程', 'standard_time': '2017-09-03', 'nid': 1}]>
+    
+```
+
+
+
+### 参数之`where` / `tables`
+
+您可以使用`where`定义显式SQL `WHERE`子句 - 也许执行非显式连接。您可以使用`tables`手动将表添加到SQL `FROM`子句。
+
+`where`和`tables`都接受字符串列表。所有`where`参数均为“与”任何其他搜索条件。
+
+举例来讲：
+
+```
+queryResult=models.Article
+　　　　　　　　　　　.objects.extra(where=['nid in (1,3) OR title like "py%" ','nid>2'])
+```
+
+
+
+# 整体插入
+
+创建对象时，尽可能使用bulk_create()来减少SQL查询的数量。例如：
+
+```
+Entry.objects.bulk_create([
+    Entry(headline="Python 3.0 Released"),
+    Entry(headline="Python 3.1 Planned")
+])
+```
+
+...更优于：
+
+```
+Entry.objects.create(headline="Python 3.0 Released")
+Entry.objects.create(headline="Python 3.1 Planned")
+```
+
+注意该方法有很多注意事项，所以确保它适用于你的情况。
+
+这也可以用在ManyToManyFields中，所以：
+
+```
+my_band.members.add(me, my_friend)
+```
+
+...更优于：
+
+```
+my_band.members.add(me)
+my_band.members.add(my_friend)
+```
+
+...其中Bands和Artists具有多对多关联。
+
+
+
+# [Django-admin管理工具](https://www.cnblogs.com/yuanchenqi/articles/8323452.html)
+
+
+
+*知识预览*
+
+-   [admin组件使用](https://www.cnblogs.com/yuanchenqi/articles/8323452.html#_label0)
+-   [admin源码解析](https://www.cnblogs.com/yuanchenqi/articles/8323452.html#_label1)
+
+
+
+# admin组件使用
+
+Django 提供了基于 web 的管理工具。
+
+Django 自动管理工具是 django.contrib 的一部分。你可以在项目的 settings.py 中的 INSTALLED_APPS 看到它：
+
+
+
+```
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    "app01"
+]
+```
+
+
+
+django.contrib是一套庞大的功能集，它是Django基本代码的组成部分。
+
+## 激活管理工具
+
+通常我们在生成项目时会在 urls.py 中自动设置好，
+
+
+
+```
+from django.conf.urls import url
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+
+]
+```
+
+
+
+当这一切都配置好后，Django 管理工具就可以运行了。
+
+## 使用管理工具
+
+启动开发服务器，然后在浏览器中访问 http://127.0.0.1:8000/admin/，得到登陆界面，
+
+你可以通过命令 **python manage.py createsuperuser** 来创建超级用户。
+
+为了让 admin 界面管理某个数据模型，我们需要先注册该数据模型到 admin
+
+
+
+```
+from django.db import models
+
+# Create your models here.
+
+class Author(models.Model):
+
+    name=models.CharField( max_length=32)
+    age=models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+class Publish(models.Model):
+
+    name=models.CharField( max_length=32)
+    email=models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+class Book(models.Model):
+
+    title = models.CharField( max_length=32)
+    publishDate=models.DateField()
+    price=models.DecimalField(max_digits=5,decimal_places=2)
+
+    publisher=models.ForeignKey(to="Publish")
+    authors=models.ManyToManyField(to='Author')
+
+    def __str__(self):
+        return self.title
+```
+
+
+
+## admin的定制
+
+在admin.py中只需要讲Mode中的某个类注册，即可在Admin中实现增删改查的功能，如：
+
+```
+admin.site.register(models.UserInfo)
+```
+
+但是，这种方式比较简单，如果想要进行更多的定制操作，需要利用ModelAdmin进行操作，如：
+
+
+
+```
+方式一：
+    class UserAdmin(admin.ModelAdmin):
+        list_display = ('user', 'pwd',)
+ 
+    admin.site.register(models.UserInfo, UserAdmin) # 第一个参数可以是列表
+     
+ 
+方式二：
+    @admin.register(models.UserInfo)                # 第一个参数可以是列表
+    class UserAdmin(admin.ModelAdmin):
+        list_display = ('user', 'pwd',)
+```
+
+
+
+ModelAdmin中提供了大量的可定制功能，如
+
+1.   list_display，列表时，定制显示的列。
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pwd', 'xxxxx')
+ 
+    def xxxxx(self, obj):
+        return "xxxxx"
+```
+
+2.   list_display_links，列表时，定制列可以点击跳转。
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pwd', 'xxxxx')
+    list_display_links = ('pwd',)
+```
+
+3.   list_filter，列表时，定制右侧快速筛选。
+
+4.   list_select_related，列表时，连表查询是否自动select_related
+
+5.   list_editable，列表时，可以编辑的列 
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pwd','ug',)
+    list_editable = ('ug',)
+```
+
+6.   search_fields，列表时，模糊搜索的功能
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+     
+    search_fields = ('user', 'pwd')
+```
+
+7.   date_hierarchy，列表时，对Date和DateTime类型进行搜索
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+ 
+    date_hierarchy = 'ctime'
+```
+
+8 inlines，详细页面，如果有其他表和当前表做FK，那么详细页面可以进行动态增加和删除
+
+```
+class UserInfoInline(admin.StackedInline): # TabularInline
+    extra = 0
+    model = models.UserInfo
+ 
+ 
+class GroupAdminMode(admin.ModelAdmin):
+    list_display = ('id', 'title',)
+    inlines = [UserInfoInline, ]
+```
+
+
+
+9 action，列表时，定制action中的操作
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+ 
+    # 定制Action行为具体方法
+    def func(self, request, queryset):
+        print(self, request, queryset)
+        print(request.POST.getlist('_selected_action'))
+ 
+    func.short_description = "中文显示自定义Actions"
+    actions = [func, ]
+ 
+    # Action选项都是在页面上方显示
+    actions_on_top = True
+    # Action选项都是在页面下方显示
+    actions_on_bottom = False
+ 
+    # 是否显示选择个数
+    actions_selection_counter = True
+```
+
+
+
+10 定制HTML模板
+
+```
+add_form_template = None
+change_form_template = None
+change_list_template = None
+delete_confirmation_template = None
+delete_selected_confirmation_template = None
+object_history_template = None
+```
+
+11 raw_id_fields，详细页面，针对FK和M2M字段变成以Input框形式
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+ 
+    raw_id_fields = ('FK字段', 'M2M字段',)
+```
+
+12 fields，详细页面时，显示字段的字段
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    fields = ('user',)
+```
+
+13 exclude，详细页面时，排除的字段
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    exclude = ('user',)
+```
+
+14 readonly_fields，详细页面时，只读字段
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    readonly_fields = ('user',)
+```
+
+15 fieldsets，详细页面时，使用fieldsets标签对数据进行分割显示
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('基本数据', {
+            'fields': ('user', 'pwd', 'ctime',)
+        }),
+        ('其他', {
+            'classes': ('collapse', 'wide', 'extrapretty'),  # 'collapse','wide', 'extrapretty'
+            'fields': ('user', 'pwd'),
+        }),
+    )
+```
+
+
+
+16 详细页面时，M2M显示时，数据移动选择（方向：上下和左右）
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    filter_vertical = ("m2m字段",) # 或filter_horizontal = ("m2m字段",)
+```
+
+17 ordering，列表时，数据排序规则
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    ordering = ('-id',)
+    或
+    def get_ordering(self, request):
+        return ['-id', ]
+```
+
+18.   radio_fields，详细页面时，使用radio显示选项（FK默认使用select）
+
+```
+radio_fields = {"ug": admin.VERTICAL} # 或admin.HORIZONTAL
+```
+
+19 form = ModelForm，用于定制用户请求时候表单验证
+
+```
+from app01 import models
+from django.forms import ModelForm
+from django.forms import fields
+ 
+ 
+class MyForm(ModelForm):
+    others = fields.CharField()
+ 
+    class Meta:
+        model = models = models.UserInfo
+        fields = "__all__"
+ 
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+ 
+    form = MyForm
+```
+
+
+
+20 empty_value_display = "列数据为空时，显示默认值"
+
+```
+@admin.register(models.UserInfo)
+class UserAdmin(admin.ModelAdmin):
+    empty_value_display = "列数据为空时，默认显示"
+ 
+    list_display = ('user','pwd','up')
+ 
+    def up(self,obj):
+        return obj.user
+    up.empty_value_display = "指定列数据为空时，默认显示"
+```
+
+
+
+
+
+
+
+```
+from django.contrib import admin
+
+# Register your models here.
+
+from .models import *
+
+class BookInline(admin.StackedInline): # TabularInline
+    extra = 0
+    model = Book
+
+class BookAdmin(admin.ModelAdmin):
+
+    list_display = ("title",'publishDate', 'price',"foo","publisher")
+    list_display_links = ('publishDate',"price")
+    list_filter = ('price',)
+    list_editable=("title","publisher")
+    search_fields = ('title',)
+    date_hierarchy = 'publishDate'
+    preserve_filters=False
+
+    def foo(self,obj):
+
+        return obj.title+str(obj.price)
+
+    # 定制Action行为具体方法
+    def func(self, request, queryset):
+        print(self, request, queryset)
+        print(request.POST.getlist('_selected_action'))
+
+    func.short_description = "中文显示自定义Actions"
+    actions = [func, ]
+    # Action选项都是在页面上方显示
+    actions_on_top = True
+    # Action选项都是在页面下方显示
+    actions_on_bottom = False
+
+    # 是否显示选择个数
+    actions_selection_counter = True
+
+    change_list_template="my_change_list_template.html"
+
+
+class PublishAdmin(admin.ModelAdmin):
+     list_display = ('name', 'email',)
+     inlines = [BookInline, ]
+
+
+admin.site.register(Book, BookAdmin) # 第一个参数可以是列表
+admin.site.register(Publish,PublishAdmin)
+admin.site.register(Author)
+```
+
+
+
+
+
+# admin源码解析
+
+## 单例模式
+
+**单例模式（Singleton Pattern）**是一种常用的软件设计模式，该模式的主要目的是确保**某一个类只有一个实例存在**。当你希望在整个系统中，某个类只能出现一个实例时，单例对象就能派上用场。
+
+比如，某个服务器程序的配置信息存放在一个文件中，客户端通过一个 AppConfig 的类来读取配置文件的信息。如果在程序运行期间，有很多地方都需要使用配置文件的内容，也就是说，很多地方都需要创建 AppConfig 对象的实例，这就导致系统中存在多个 AppConfig 的实例对象，而这样会严重浪费内存资源，尤其是在配置文件内容很多的情况下。事实上，类似 AppConfig 这样的类，我们希望在程序运行期间只存在一个实例对象。
+
+在 Python 中，我们可以用多种方法来实现单例模式：
+
+-   使用模块
+-   使用 `__new__`
+-   使用装饰器（decorator）
+-   使用元类（metaclass）
+
+### （1）使用 `__new__`
+
+为了使类只能出现一个实例，我们可以使用 `__new__` 来控制实例的创建过程，代码如下：
+
+```
+class Singleton(object):
+    _instance = None
+    def __new__(cls, *args, **kw):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kw)  
+        return cls._instance  
+
+class MyClass(Singleton):  
+    a = 1
+```
+
+
+
+在上面的代码中，我们将类的实例和一个类变量 `_instance` 关联起来，如果 `cls._instance` 为 None 则创建实例，否则直接返回 `cls._instance`。
+
+执行情况如下：
+
+```
+>>> one = MyClass()
+>>> two = MyClass()
+>>> one == two
+True
+>>> one is two
+True
+>>> id(one), id(two)
+(4303862608, 4303862608)
+```
+
+
+
+### （2）使用模块
+
+其实，**Python 的模块就是天然的单例模式**，因为模块在第一次导入时，会生成 `.pyc` 文件，当第二次导入时，就会直接加载 `.pyc` 文件，而不会再次执行模块代码。因此，我们只需把相关的函数和数据定义在一个模块中，就可以获得一个单例对象了。如果我们真的想要一个单例类，可以考虑这样做：
+
+```
+# mysingleton.py
+class My_Singleton(object):
+    def foo(self):
+        pass
+ 
+my_singleton = My_Singleton()
+```
+
+将上面的代码保存在文件 `mysingleton.py` 中，然后这样使用：
+
+```
+from mysingleton import my_singleton
+ 
+my_singleton.foo()
+```
+
+## admin执行流程
+
+<1> 循环加载执行所有已经注册的app中的admin.py文件
+
+```
+def autodiscover():
+    autodiscover_modules('admin', register_to=site)
+```
+
+<2> 执行代码
+
+```
+＃admin.py
+
+class BookAdmin(admin.ModelAdmin):
+    list_display = ("title",'publishDate', 'price')
+
+admin.site.register(Book, BookAdmin) 
+admin.site.register(Publish)
+```
+
+
+
+<3> admin.site 
+
+![img](assets/877318-20180123092346881-320111203.png)
+
+这里应用的是一个单例模式，对于AdminSite类的一个单例模式，执行的每一个app中的每一个admin.site都是一个对象
+
+<4> 执行register方法
+
+```
+admin.site.register(Book, BookAdmin) 
+admin.site.register(Publish)
+```
+
+
+
+```
+class ModelAdmin(BaseModelAdmin):pass
+
+def register(self, model_or_iterable, admin_class=None, **options):
+    if not admin_class:
+            admin_class = ModelAdmin
+    # Instantiate the admin class to save in the registry
+    self._registry[model] = admin_class(model, self)
+```
+
+
+
+思考：在每一个app的admin .py中加上
+
+```
+print(admin.site._registry)   ＃ 执行结果？
+```
+
+到这里，注册结束！
+
+<5> admin的URL配置
+
+```
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+]
+```
+
+
+
+```
+class AdminSite(object):
+    
+     def get_urls(self):
+        from django.conf.urls import url, include
+      
+        urlpatterns = []
+
+        # Add in each model's views, and create a list of valid URLS for the
+        # app_index
+        valid_app_labels = []
+        for model, model_admin in self._registry.items():
+            urlpatterns += [
+                url(r'^%s/%s/' % (model._meta.app_label, model._meta.model_name), include(model_admin.urls)),
+            ]
+            if model._meta.app_label not in valid_app_labels:
+                valid_app_labels.append(model._meta.app_label)
+
+      
+        return urlpatterns
+
+    @property
+    def urls(self):
+        return self.get_urls(), 'admin', self.name
+        
+```
+
+
+
+<6> url()方法的扩展应用
+
+
+
+```
+from django.shortcuts import HttpResponse
+def test01(request):
+    return HttpResponse("test01")
+
+def test02(request):
+    return HttpResponse("test02")
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^yuan/', ([
+                    url(r'^test01/', test01),
+                    url(r'^test02/', test02),
+
+                    ],None,None)),
+
+]
+```
+
+
+
+扩展优化
+
+
+
+```
+from django.conf.urls import url,include
+from django.contrib import admin
+
+from django.shortcuts import HttpResponse
+
+def change_list_view(request):
+    return HttpResponse("change_list_view")
+def add_view(request):
+    return HttpResponse("add_view")
+def delete_view(request):
+    return HttpResponse("delete_view")
+def change_view(request):
+    return HttpResponse("change_view")
+
+def get_urls():
+
+    temp=[
+        url(r"^$".format(app_name,model_name),change_list_view),
+        url(r"^add/$".format(app_name,model_name),add_view),
+        url(r"^\d+/del/$".format(app_name,model_name),delete_view),
+        url(r"^\d+/change/$".format(app_name,model_name),change_view),
+    ]
+
+    return temp
+
+
+url_list=[]
+
+for model_class,obj in admin.site._registry.items():
+
+    model_name=model_class._meta.model_name
+    app_name=model_class._meta.app_label
+
+    # temp=url(r"{0}/{1}/".format(app_name,model_name),(get_urls(),None,None))
+    temp=url(r"{0}/{1}/".format(app_name,model_name),include(get_urls()))
+    url_list.append(temp)
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^yuan/', (url_list,None,None)),
+]
+```
+
+
+
+ 
+
+# [Django-进阶](https://www.cnblogs.com/yuanchenqi/articles/7652353.html)
+
+
+
+*知识预览*
+
+-   [分页](https://www.cnblogs.com/yuanchenqi/articles/7652353.html#_label0)
+-   [中间件](https://www.cnblogs.com/yuanchenqi/articles/7652353.html#_label1)
+
+
+
+# 分页
+
+## Django的分页器（paginator）
+
+### view
+
+```
+from django.shortcuts import render,HttpResponse
+
+# Create your views here.
+from app01.models import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+def index(request):
+
+    '''
+    批量导入数据:
+
+    Booklist=[]
+    for i in range(100):
+        Booklist.append(Book(title="book"+str(i),price=30+i*i))
+    Book.objects.bulk_create(Booklist)
+    '''
+
+    '''
+分页器的使用:
+
+    book_list=Book.objects.all()
+
+    paginator = Paginator(book_list, 10)
+
+    print("count:",paginator.count)           #数据总数
+    print("num_pages",paginator.num_pages)    #总页数
+    print("page_range",paginator.page_range)  #页码的列表
+
+
+
+    page1=paginator.page(1) #第1页的page对象
+    for i in page1:         #遍历第1页的所有数据对象
+        print(i)
+
+    print(page1.object_list) #第1页的所有数据
+
+
+    page2=paginator.page(2)
+
+    print(page2.has_next())            #是否有下一页
+    print(page2.next_page_number())    #下一页的页码
+    print(page2.has_previous())        #是否有上一页
+    print(page2.previous_page_number()) #上一页的页码
+
+
+
+    # 抛错
+    #page=paginator.page(12)   # error:EmptyPage
+
+    #page=paginator.page("z")   # error:PageNotAnInteger
+
+    '''
+
+
+    book_list=Book.objects.all()
+
+    paginator = Paginator(book_list, 10)
+    page = request.GET.get('page',1)
+    currentPage=int(page)
+
+    try:
+        print(page)
+        book_list = paginator.page(page)
+    except PageNotAnInteger:
+        book_list = paginator.page(1)
+    except EmptyPage:
+        book_list = paginator.page(paginator.num_pages)
+
+    return render(request,"index.html",{"book_list":book_list,"paginator":paginator,"currentPage":currentPage})
+    
+```
+
+
+
+### index.html:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+
+    <h4>分页器</h4>
+    <ul>
+
+        {% for book in book_list %}
+             <li>{{ book.title }} -----{{ book.price }}</li>
+        {% endfor %}
+
+     </ul>
+
+
+    <ul class="pagination" id="pager">
+
+                 {% if book_list.has_previous %}
+                    <li class="previous"><a href="/index/?page={{ book_list.previous_page_number }}">上一页</a></li>
+                 {% else %}
+                    <li class="previous disabled"><a href="#">上一页</a></li>
+                 {% endif %}
+
+
+                 {% for num in paginator.page_range %}
+
+                     {% if num == currentPage %}
+                       <li class="item active"><a href="/index/?page={{ num }}">{{ num }}</a></li>
+                     {% else %}
+                       <li class="item"><a href="/index/?page={{ num }}">{{ num }}</a></li>
+
+                     {% endif %}
+                 {% endfor %}
+
+
+
+                 {% if book_list.has_next %}
+                    <li class="next"><a href="/index/?page={{ book_list.next_page_number }}">下一页</a></li>
+                 {% else %}
+                    <li class="next disabled"><a href="#">下一页</a></li>
+                 {% endif %}
+
+            </ul>
+</div>
+
+</body>
+</html>
+
+```
+
+
+
+## 扩展
+
+```python
+def index(request):
+
+
+    book_list=Book.objects.all()
+
+    paginator = Paginator(book_list, 15)
+    page = request.GET.get('page',1)
+    currentPage=int(page)
+
+    #  如果页数十分多时，换另外一种显示方式
+    if paginator.num_pages>30:
+
+        if currentPage-5<1:
+            pageRange=range(1,11)
+        elif currentPage+5>paginator.num_pages:
+            pageRange=range(currentPage-5,paginator.num_pages+1)
+
+        else:
+            pageRange=range(currentPage-5,currentPage+5)
+
+    else:
+        pageRange=paginator.page_range
+
+
+    try:
+        print(page)
+        book_list = paginator.page(page)
+    except PageNotAnInteger:
+        book_list = paginator.page(1)
+    except EmptyPage:
+        book_list = paginator.page(paginator.num_pages)
+
+    return render(request,"index.html",locals())
+```
+
+
+
+## 自定义分页器
+
+
+
+```python
+"""
+分页组件使用示例：
+
+    obj = Pagination(request.GET.get('page',1),len(USER_LIST),request.path_info)
+    page_user_list = USER_LIST[obj.start:obj.end]
+    page_html = obj.page_html()
+
+    return render(request,'index.html',{'users':page_user_list,'page_html':page_html})
+
+
+"""
+
+class Pagination(object):
+
+    def __init__(self,current_page,all_count,base_url,per_page_num=2,pager_count=11):
+        """
+        封装分页相关数据
+        :param current_page: 当前页
+        :param all_count:    数据库中的数据总条数
+        :param per_page_num: 每页显示的数据条数
+        :param base_url: 分页中显示的URL前缀
+        :param pager_count:  最多显示的页码个数
+        """
+
+        try:
+            current_page = int(current_page)
+        except Exception as e:
+            current_page = 1
+
+        if current_page <1:
+            current_page = 1
+
+        self.current_page = current_page
+
+        self.all_count = all_count
+        self.per_page_num = per_page_num
+
+        self.base_url = base_url
+
+        # 总页码
+        all_pager, tmp = divmod(all_count, per_page_num)
+        if tmp:
+            all_pager += 1
+        self.all_pager = all_pager
+
+
+        self.pager_count = pager_count
+        self.pager_count_half = int((pager_count - 1) / 2)
+
+    @property
+    def start(self):
+        return (self.current_page - 1) * self.per_page_num
+
+    @property
+    def end(self):
+        return self.current_page * self.per_page_num
+
+    def page_html(self):
+        # 如果总页码 < 11个：
+        if self.all_pager <= self.pager_count:
+            pager_start = 1
+            pager_end = self.all_pager + 1
+        # 总页码  > 11
+        else:
+            # 当前页如果<=页面上最多显示11/2个页码
+            if self.current_page <= self.pager_count_half:
+                pager_start = 1
+                pager_end = self.pager_count + 1
+
+            # 当前页大于5
+            else:
+                # 页码翻到最后
+                if (self.current_page + self.pager_count_half) > self.all_pager:
+                    pager_end = self.all_pager + 1
+                    pager_start = self.all_pager - self.pager_count + 1
+                else:
+                    pager_start = self.current_page - self.pager_count_half
+                    pager_end = self.current_page + self.pager_count_half + 1
+
+        page_html_list = []
+
+        first_page = '<li><a href="%s?page=%s">首页</a></li>' % (self.base_url,1,)
+        page_html_list.append(first_page)
+
+        if self.current_page <= 1:
+            prev_page = '<li class="disabled"><a href="#">上一页</a></li>'
+        else:
+            prev_page = '<li><a href="%s?page=%s">上一页</a></li>' % (self.base_url,self.current_page - 1,)
+
+        page_html_list.append(prev_page)
+
+        for i in range(pager_start, pager_end):
+            if i == self.current_page:
+                temp = '<li class="active"><a href="%s?page=%s">%s</a></li>' % (self.base_url,i, i,)
+            else:
+                temp = '<li><a href="%s?page=%s">%s</a></li>' % (self.base_url,i, i,)
+            page_html_list.append(temp)
+
+        if self.current_page >= self.all_pager:
+            next_page = '<li class="disabled"><a href="#">下一页</a></li>'
+        else:
+            next_page = '<li><a href="%s?page=%s">下一页</a></li>' % (self.base_url,self.current_page + 1,)
+        page_html_list.append(next_page)
+
+        last_page = '<li><a href="%s?page=%s">尾页</a></li>' % (self.base_url,self.all_pager,)
+        page_html_list.append(last_page)
+
+        return ''.join(page_html_list)
+```
+
+
+
+
+
+# 中间件
+
+![img](assets/101822420536468.png)
+
+## 中间件的概念
+
+中间件顾名思义，是介于request与response处理之间的一道处理过程，相对比较轻量级，并且在全局上改变django的输入与输出。因为改变的是全局，所以需要谨慎实用，用不好会影响到性能。
+
+Django的中间件的定义：
+
+```
+Middleware is a framework of hooks into Django’s request/response processing. <br>It’s a light, low-level “plugin” system for globally altering Django’s input or output.
+
+```
+
+如果你想修改请求，例如被传送到view中的**HttpRequest**对象。 或者你想修改view返回的**HttpResponse**对象，这些都可以通过中间件来实现。
+
+可能你还想在view执行之前做一些操作，这种情况就可以用 middleware来实现。
+
+大家可能频繁在view使用`request.user`吧。 Django想在每个view执行之前把user设置为request的属性，于是就用了一个中间件来实现这个目标。所以Django提供了可以修改request 对象的中间件 `AuthenticationMiddleware`。
+
+Django默认的`Middleware`：
+
+
+
+```
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+```
+
+
+
+每一个中间件都有具体的功能。
+
+## 自定义中间件
+
+中间件中一共有四个方法：
+
+```
+process_request
+
+process_view
+
+process_exception
+
+process_response
+```
+
+
+
+### process_request，process_response
+
+当用户发起请求的时候会依次经过所有的的中间件，这个时候的请求时process_request,最后到达views的函数中，views函数处理后，在依次穿过中间件，这个时候是process_response,最后返回给请求者。
+
+![img](assets/877318-20171012212952512-1143032176-6885135.png)
+
+上述截图中的中间件都是django中的，我们也可以自己定义一个中间件，我们可以自己写一个类，但是必须继承MiddlewareMixin
+
+需要导入
+
+```
+from django.utils.deprecation import MiddlewareMixin
+
+```
+
+ ![img](assets/877318-20171012215322324-2079210800-6885136.png)
+
+**in views:**
+
+```
+def index(request):
+
+    print("view函数...")
+    return HttpResponse("OK")
+```
+
+**in Mymiddlewares.py：**
+
+
+
+```python
+from django.utils.deprecation import MiddlewareMixin
+from django.shortcuts import HttpResponse
+
+class Md1(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md1请求")
+ 
+    def process_response(self,request,response):
+        print("Md1返回")
+        return response
+
+class Md2(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md2请求")
+        #return HttpResponse("Md2中断")
+    def process_response(self,request,response):
+        print("Md2返回")
+        return response
+```
+
+
+
+**结果：**
+
+```
+Md1请求
+Md2请求
+view函数...
+Md2返回
+Md1返回
+```
+
+**注意：**如果当请求到达请求2的时候直接不符合条件返回，即return HttpResponse("Md2中断")，程序将把请求直接发给中间件2返回，然后依次返回到请求者，结果如下：
+
+返回Md2中断的页面，后台打印如下：
+
+```
+Md1请求
+Md2请求
+Md2返回
+Md1返回
+```
+
+**流程图如下：**
+
+**![img](assets/877318-20171012223730527-1366794845.png)** 
+
+### process_view
+
+```
+process_view(self, request, callback, callback_args, callback_kwargs)
+```
+
+ **Mymiddlewares.py**修改如下
+
+
+
+```
+from django.utils.deprecation import MiddlewareMixin
+from django.shortcuts import HttpResponse
+
+class Md1(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md1请求")
+        #return HttpResponse("Md1中断")
+    def process_response(self,request,response):
+        print("Md1返回")
+        return response
+
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        print("Md1view")
+
+class Md2(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md2请求")
+        return HttpResponse("Md2中断")
+    def process_response(self,request,response):
+        print("Md2返回")
+        return response
+
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        print("Md2view")
+```
+
+
+
+结果如下：
+
+
+
+```
+Md1请求
+Md2请求
+Md1view
+Md2view
+view函数...
+Md2返回
+Md1返回
+```
+
+
+
+下图进行分析上面的过程：
+
+![img](assets/997599-20170113093429385-1950865037.png)
+
+当最后一个中间的process_request到达路由关系映射之后，返回到中间件1的process_view，然后依次往下，到达views函数，最后通过process_response依次返回到达用户。
+
+process_view可以用来调用视图函数：
+
+```
+class Md1(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md1请求")
+        #return HttpResponse("Md1中断")
+    def process_response(self,request,response):
+        print("Md1返回")
+        return response
+
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+
+        # return HttpResponse("hello")
+
+        response=callback(request,*callback_args,**callback_kwargs)
+        return response
+```
+
+
+
+结果如下：
+
+```
+Md1请求
+Md2请求
+view函数...
+Md2返回
+Md1返回
+```
+
+注意：process_view如果有返回值，会越过其他的process_view以及视图函数，但是所有的process_response都还会执行。
+
+### process_exception
+
+```
+process_exception(self, request, exception)
+
+```
+
+示例修改如下：
+
+
+
+```
+class Md1(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md1请求")
+        #return HttpResponse("Md1中断")
+    def process_response(self,request,response):
+        print("Md1返回")
+        return response
+
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+
+        # return HttpResponse("hello")
+
+        # response=callback(request,*callback_args,**callback_kwargs)
+        # return response
+        print("md1 process_view...")
+
+    def process_exception(self):
+        print("md1 process_exception...")
+
+
+
+class Md2(MiddlewareMixin):
+
+    def process_request(self,request):
+        print("Md2请求")
+        # return HttpResponse("Md2中断")
+    def process_response(self,request,response):
+        print("Md2返回")
+        return response
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        print("md2 process_view...")
+
+    def process_exception(self):
+        print("md1 process_exception...")
+```
+
+
+
+结果如下：
+
+
+
+```
+Md1请求
+Md2请求
+md1 process_view...
+md2 process_view...
+view函数...
+
+Md2返回
+Md1返回
+```
+
+
+
+流程图如下：
+
+当views出现错误时：
+
+![img](assets/877318-20171012235627512-66918024.png)
+
+ 将md2的process_exception修改如下：
+
+```
+  def process_exception(self,request,exception):
+
+        print("md2 process_exception...")
+        return HttpResponse("error")
+```
+
+结果如下：
+
+```
+Md1请求
+Md2请求
+md1 process_view...
+md2 process_view...
+view函数...
+md2 process_exception...
+Md2返回
+Md1返回
+```
+
+
+
  
 
 
 
 
 
- 
+
+
+  
 
 　　
 
