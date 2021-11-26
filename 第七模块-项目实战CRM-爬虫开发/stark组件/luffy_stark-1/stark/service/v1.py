@@ -36,7 +36,15 @@ class StarkSite(object):
             patterns.append(url(r'%s/%s/add/$' % (app_label, model_name,), handler.add_view))
             patterns.append(url(r'%s/%s/change/(\d+)/$' % (app_label, model_name,), handler.change_view))
             patterns.append(url(r'%s/%s/del/(\d+)/$' % (app_label, model_name,), handler.change_view))
-
+        # print(patterns)
+        '''
+        [<RegexURLPattern None app01/depart/list/$>,
+         <RegexURLPattern None app01/depart/add/$>, 
+         <RegexURLPattern None app01/depart/change/(\d+)/$>, 
+         <RegexURLPattern None app01/depart/del/(\d+)/$>,
+         ........
+        ]
+        '''
         return patterns
 
     @property
