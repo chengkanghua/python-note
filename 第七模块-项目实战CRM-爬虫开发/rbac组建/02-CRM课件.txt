@@ -32,190 +32,306 @@ https://www.cnblogs.com/wupeiqi/articles/9169292.html
 	- stark组件
 	- crm业务
 步骤:
-1. 创建 django project , luffy_permission
-2. 两个app
-	- rbac, 权限组件
-	- web , 销售管理系统
-3. app : rbac
-4. app: web
-5. 两个app的整合
-6. 快速完成一个基本权限控制, 在 示例代码: <已录入权限数据源码下载: 猛击这里> 开始开发
-7. 功能的完善, 将权限相关的功能放在rbac应用下,以便于以后的组件的应用.
-总结: 6/7属于权限控制
-8. 动态菜单的功能
-	- 一级菜单,如何实现动态显示一级菜单?
-		a. 表结构修改+录入菜单数据
-		b. 获取菜单信息并保存到session
-		c. 模板中显示菜单信息(session)
-			ps: inclusion_tag
-		扩展: 如何默认选中菜单
-	- 二级菜单	
-		a. session中存储的菜单信息结构:
-			{
-				1:{ title:'信息管理',
-				      icon:'x1',
-				      children:[
-					{'title':'客户列表','url':'/customer/list/'},
-					{'title':'账单列表','url':'/account/list/'},
-				   ]},
-				2:{ title:'用户信息',
-				      icon:'x1',
-				      children:[
-					{'title':'客户列表','url':'/userinfo/list/'},
-				   ]},
-				
-			}
-		b. 数据库表结构:
-			class Menu(models.Model):
-				"""
-				菜单
-				"""
-				title = models.CharField(verbose_name='菜单', max_length=32)
-				icon = models.CharField(verbose_name='图标', max_length=32)
-
-				def __str__(self):
-					return self.title
-
-
-			class Permission(models.Model):
-				"""
-				权限表
-				"""
-				title = models.CharField(verbose_name='标题', max_length=32)
-				url = models.CharField(verbose_name='含正则的URL', max_length=128)
-
-				menu = models.ForeignKey(verbose_name='菜单', to='Menu', null=True, blank=True, help_text='null表示非菜单')
-
-				def __str__(self):
-					return self.title
-
-		c. 页面显示二级菜单.
-			inclusion_tag中循环显示.
-
-9. 点击非菜单的权限时,默认选中或默认展开.
-	当点击某个不能成为菜单的权限时,指定一个可以成为菜单的权限,让其默认选中以及展开.
-	a. 数据库设计
-	b. 思路
-		- 登陆,做权限和菜单的初始化:
-			- 获取菜单信息
+第一部分 权限组件 
+	1. 创建 django project , luffy_permission
+	2. 两个app
+		- rbac, 权限组件
+		- web , 销售管理系统
+	3. app : rbac
+	4. app: web
+	5. 两个app的整合
+	6. 快速完成一个基本权限控制, 在 示例代码: <已录入权限数据源码下载: 猛击这里> 开始开发
+	7. 功能的完善, 将权限相关的功能放在rbac应用下,以便于以后的组件的应用.
+	总结: 6/7属于权限控制
+	8. 动态菜单的功能
+		- 一级菜单,如何实现动态显示一级菜单?
+			a. 表结构修改+录入菜单数据
+			b. 获取菜单信息并保存到session
+			c. 模板中显示菜单信息(session)
+				ps: inclusion_tag
+			扩展: 如何默认选中菜单
+		- 二级菜单	
+			a. session中存储的菜单信息结构:
 				{
-					1:{
-						'title':'信息管理',
-						'icon': 'fa-cmaera-retro',
-						'class':'',
-						'children':[{
-							{'id':1,'url':'/customer/list/','title':'客户列表',class='active'}  # 可以做菜单的权限id
-						}]
-					},
-					2:{......}
+					1:{ title:'信息管理',
+						icon:'x1',
+						children:[
+						{'title':'客户列表','url':'/customer/list/'},
+						{'title':'账单列表','url':'/account/list/'},
+					]},
+					2:{ title:'用户信息',
+						icon:'x1',
+						children:[
+						{'title':'客户列表','url':'/userinfo/list/'},
+					]},
+					
 				}
-			- 获取权限信息
-				[
-					{'id':1,'url':'/customer/list/','pid':null}, # 客户列表:可做菜单
-					{'id':2,'url':'/customer/add/','pid':1}      # 添加客户:不可
-				]
-		- 再次来访问
-			- 中间件进行权限的效验(根据权限信息)
-				获取id或pid(应该被选中的可以做菜单的权限id)
-		- 模板中使用inclustion_tag生成动态菜单(根据菜单信息动态生成)
-10. 路径导航
-11. 权限粒度控制到按钮
-总结:
-	- 权限控制
-	- 动态菜单 
-	- 权限的分配
-	问题: 以前你是如果做的权限分配, 给某个用户分配一个角色？某个人分配某个全线？
-	答案： django admin进行录入
+			b. 数据库表结构:
+				class Menu(models.Model):
+					"""
+					菜单
+					"""
+					title = models.CharField(verbose_name='菜单', max_length=32)
+					icon = models.CharField(verbose_name='图标', max_length=32)
 
-12. 权限分配
-	a. 角色管理
-		知识点
-		- ModeForm
-		- 根据namespace 和name 反向解析生成 URL
-		- 模版的查找顺序
-	b. 用户管理
-		知识点
-		- ModeForm
-			- 字段的自定制
-			- 钩子方法
-			- 错误提示(中文)
-			- 重写 __init__ 方法 给所有字段添加属性(form—control)
-		- 根据namespace 和name 反向解析生成 URL
-		- 模版的查找顺序
-	c. 菜单和权限管理
-		视频讲解: 一级 , 二级 , 权限
-		知识点:
-			- 保留URL中的原搜索条件
-			- 模板中整形转换成字符串  1|safe
-			- ModelForm 定制radio
-			- ModelForm 显示默认值
-			- ModelForm save之前对其instance进行修改
-			- BootStrapModelForm基类
-	d. 批量的权限操作
-		- formset
-			- 什么是formset?
-				答: Form组件或ModelForm用于做一个表单验证, formset用于做多个表单验证的组件.
-			- 应用场景?
-				答: 批量操作.
-			- 如何实现用formset?
-				答: 见示例代码
-		- 自动发现项目中的URL
-			- 问题: 给你一个项目,请帮我获取当前项目中都有哪些URL以及name    rbac:permission_list
-			- 实现思路.
-			- 具体实现: 见示例代码
-		-------------------------------------
-		 1. 获取项目中所有权限 set1
-		 2. 去数据库中获取已经录入的所有权限 set2
-		 
-		 情况一:  自动发现 》 数据库---》实现批量添加  ps: 通过name进行对比
-		 	set1 - set2  ==》 添加
-			+ formset
-		 情况二: 数据库 》 自动发现  --》 实现批量删除
-		 	set2 - set1  ==》 删除
-		 情况三: 自动发现有 》 数据有  -- 实现批量更新
-		 	set3 =  set1 & set2  ==》更新
-			+ formset
-		--------------------------------------
-		知识点:
-			- formset(ModelFormSet)	
+					def __str__(self):
+						return self.title
+
+
+				class Permission(models.Model):
+					"""
+					权限表
+					"""
+					title = models.CharField(verbose_name='标题', max_length=32)
+					url = models.CharField(verbose_name='含正则的URL', max_length=128)
+
+					menu = models.ForeignKey(verbose_name='菜单', to='Menu', null=True, blank=True, help_text='null表示非菜单')
+
+					def __str__(self):
+						return self.title
+
+			c. 页面显示二级菜单.
+				inclusion_tag中循环显示.
+
+	9. 点击非菜单的权限时,默认选中或默认展开.
+		当点击某个不能成为菜单的权限时,指定一个可以成为菜单的权限,让其默认选中以及展开.
+		a. 数据库设计
+		b. 思路
+			- 登陆,做权限和菜单的初始化:
+				- 获取菜单信息
+					{
+						1:{
+							'title':'信息管理',
+							'icon': 'fa-cmaera-retro',
+							'class':'',
+							'children':[{
+								{'id':1,'url':'/customer/list/','title':'客户列表',class='active'}  # 可以做菜单的权限id
+							}]
+						},
+						2:{......}
+					}
+				- 获取权限信息
+					[
+						{'id':1,'url':'/customer/list/','pid':null}, # 客户列表:可做菜单
+						{'id':2,'url':'/customer/add/','pid':1}      # 添加客户:不可
+					]
+			- 再次来访问
+				- 中间件进行权限的效验(根据权限信息)
+					获取id或pid(应该被选中的可以做菜单的权限id)
+			- 模板中使用inclustion_tag生成动态菜单(根据菜单信息动态生成)
+	10. 路径导航
+	11. 权限粒度控制到按钮
+	总结:
+		- 权限控制
+		- 动态菜单 
+		- 权限的分配
+		问题: 以前你是如果做的权限分配, 给某个用户分配一个角色？某个人分配某个全线？
+		答案： django admin进行录入
+
+	12. 权限分配
+		a. 角色管理
+			知识点
+			- ModeForm
+			- 根据namespace 和name 反向解析生成 URL
+			- 模版的查找顺序
+		b. 用户管理
+			知识点
+			- ModeForm
+				- 字段的自定制
+				- 钩子方法
+				- 错误提示(中文)
+				- 重写 __init__ 方法 给所有字段添加属性(form—control)
+			- 根据namespace 和name 反向解析生成 URL
+			- 模版的查找顺序
+		c. 菜单和权限管理
+			视频讲解: 一级 , 二级 , 权限
+			知识点:
+				- 保留URL中的原搜索条件
+				- 模板中整形转换成字符串  1|safe
+				- ModelForm 定制radio
+				- ModelForm 显示默认值
+				- ModelForm save之前对其instance进行修改
+				- BootStrapModelForm基类
+		d. 批量的权限操作
+			- formset
+				- 什么是formset?
+					答: Form组件或ModelForm用于做一个表单验证, formset用于做多个表单验证的组件.
+				- 应用场景?
+					答: 批量操作.
+				- 如何实现用formset?
+					答: 见示例代码
 			- 自动发现项目中的URL
-			- 唯一约束错误信息
+				- 问题: 给你一个项目,请帮我获取当前项目中都有哪些URL以及name    rbac:permission_list
+				- 实现思路.
+				- 具体实现: 见示例代码
+			-------------------------------------
+			1. 获取项目中所有权限 set1
+			2. 去数据库中获取已经录入的所有权限 set2
+			
+			情况一:  自动发现 》 数据库---》实现批量添加  ps: 通过name进行对比
+				set1 - set2  ==》 添加
+				+ formset
+			情况二: 数据库 》 自动发现  --》 实现批量删除
+				set2 - set1  ==》 删除
+			情况三: 自动发现有 》 数据有  -- 实现批量更新
+				set3 =  set1 & set2  ==》更新
+				+ formset
+			--------------------------------------
+			知识点:
+				- formset(ModelFormSet)	
+				- 自动发现项目中的URL
+				- 唯一约束错误信息
 
-	e. 分配权限
-		- 展示用户、角色、权限信息
-		- 选择用户、角色时,页面上的默认选项.
-		- 角色和权限分配[保存]
+		e. 分配权限
+			- 展示用户、角色、权限信息
+			- 选择用户、角色时,页面上的默认选项.
+			- 角色和权限分配[保存]
 
-		- 知识点总结:
-			- 数据类型设置引用
-			menu_list= [
-				{'id':1,'title':'菜单1'},
-				{'id':2,'title':'菜单2'},
-				{'id':3,'title':'菜单3'},
-			]
-			menu_dict = {}
-			"""
-			menu_list= [
-				1:{'id':1,'title':'菜单1'},
-				2:{'id':2,'title':'菜单2'},
-				3:{'id':3,'title':'菜单3'},
-			]
-			"""
-			for item in menu_list:
-				menu_dict[item['id]] = item
-				# menu_dict[2]['title'] = '666'
-				menu_dict[2]['children'] = [11,22]
-				print(menu_list)
+			- 知识点总结:
+				- 数据类型设置引用
+				menu_list= [
+					{'id':1,'title':'菜单1'},
+					{'id':2,'title':'菜单2'},
+					{'id':3,'title':'菜单3'},
+				]
+				menu_dict = {}
+				"""
+				menu_list= [
+					1:{'id':1,'title':'菜单1'},
+					2:{'id':2,'title':'菜单2'},
+					3:{'id':3,'title':'菜单3'},
+				]
+				"""
+				for item in menu_list:
+					menu_dict[item['id]] = item
+					# menu_dict[2]['title'] = '666'
+					menu_dict[2]['children'] = [11,22]
+					print(menu_list)
 
-				
-			- M2M关系表的更新
+					
+				- M2M关系表的更新
 
-13. 编写使用文档(主机管理程序)
+	13. 编写使用文档(主机管理程序)
+
+第二部分 stark组件 
+	介绍:
+		 stark组件,是一个帮助开发者快速实现数据库表的增删改查+.
+	目标:
+		10s 中完成一张表的增删改查.
+	前戏:
+		1. django项目启动时,自定义执行某个py文件.
+			django启动时,且在读取项目中路由之前执行某个py文件.
+			在任意app的apps.py中的config类中定义ready方法,并调用autodiscover_modules
+				form django.apps import AppConfig
+				from django.utils.module_loading import autodiscover_modules
+				class App01Config(AppConfig):
+					name = 'app01'
+					def ready(self):
+						autodiscover_modules('filename')
+			django 在启动时,就会去所有已注册的app的目录下找 filename.py	并自动导入
+
+			如果执行两次,是因为django内部自动重启导致:
+				python manage.py runserver  127.0.0.1:8001 --noreload
+			
+			提示: 
+				如果 xxx.py执行代码向“某个神奇的地方” 放入了一些值.之后的路由加载时,可以去“某个神奇的地方” 读取到原来设置的值
+
+		2. 单例模式
+			单: 一个
+			例: 实例,对象.
+
+			通过利用Python模块导入的特性: 在Python中,如果已经导入过的文件再次被重新导入时候,python不会再重新解释一遍,而是选择从内存中直接将原来导入的值拿来用.
+			xxx.py
+				class AdminSite(object):
+					pass
+				site = AdminSite() # 为AdminSite 类创建了一个对象(实例)
+			app.py
+				import utils
+				print(utils.site)
+				import utils
+				print(utils.site)
+			提示:
+				如果以后存在一个单例模式的对象,可以先在此对象中放入一个值,然后再在其他的文件中导入该对象,通过对象再次将值获取到.
+
+		3. django路由分发的本质include
+			方式一:
+				from django.conf.urls import url,include
+
+				urlpatterns = [
+					url(r'^web/', include("app01.urls")),
+				]
+
+			方式二:
+				include 函数主要返回有三个元素的元祖.
+				from django.conf.urls import url,include
+				from app01 import urls
+				urlpatterns = [
+					url(r'^web/',(urls,app_name, namespace)), #第一个参数是urls文件对象,通过此对象可以获取urls.patterns获取分发的路由. 
+				]
+
+				在源码内部,读取路由时:
+					如有第一个参数有: urls.patterns 属性,那么子路由就从该属性中后去.
+					如果第一个参数无: urls.patterns 属性,那么子路由就是第一个参数.
+
+			方式三:
+				urlpatterns = [
+					url(r'^web/',([
+						url(r'^index/',views.index),
+						url(r'^home/',views.home),
+					],app_name,namespace)), # 第一个参数时urls文件对象,通过此对象可以获取urls.patterns获取分发的路由.
+				]
+
+			示例: pre_luffy_stark.zip
+
+	组件开发
+		1. 创建django project
+
+		2. 创建基础业务表
+			app01/models.py
+					部门表
+					用户表
+			app02/models.py
+					主机表
+		3. 对以上的三张表做增删改查
+			- 为每张表创建4个url
+			- 为每张表创建4个视图函数
+
+			app01/models.py
+				Depart
+					/app01/depart/list/
+					/app01/depart/add/
+					/app01/depart/change/(\d+)/
+					/app01/depart/del/(\d+)/
+
+				UserInfo
+					/app01/userinfo/list/
+					/app01/userinfo/add/
+					/app01/userinfo/change/(\d+)/
+					/app01/userinfo/del/(\d+)/
+			app02/models.py
+				Host
+					/app02/host/list/
+					/app02/host/add/
+					/app02/host/change/(\d+)/
+					/app02/host/del/(\d+)/
+
+		b. 为app中的每个model类自动创建url以及相关视图函数
+			- 动态生成url
+			- 将视图提取到基类
+			- URL分发扩展 & 后缀
+			- 为URL设置别名
+			- URL的别名进行重新生成
+
+		c. 定制页面显示的列
+			- 基本列表页面列的定制
+			- 未定义list_display字段的页面,默认显示对象
+			- 为页面显示的列预留一个钩子函数
+			- 为页面提供自定义现实的函数
 
 
+			
 
-
-
+		
 
 
 

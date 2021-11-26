@@ -17,7 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from stark.service.v1 import site
 
+print(site.urls)
+'''
+([<RegexURLPattern None app01/depart/list/$>, <RegexURLPattern None app01/depart/add/$>, <RegexURLPattern None app01/depart/change/(\d+)/$>, <RegexURLPattern None app01/depart/del/(\d+)/$>, <RegexURLPattern None app01/userinfo/list/$>, <RegexURLPattern None app01/userinfo/add/$>, <RegexURLPattern None app01/userinfo/change/(\d+)/$>, <RegexURLPattern None app01/userinfo/del/(\d+)/$>, <RegexURLPattern None app02/host/list/$>, <RegexURLPattern None app02/host/add/$>, <RegexURLPattern None app02/host/change/(\d+)/$>, <RegexURLPattern None app02/host/del/(\d+)/$>, <RegexURLPattern None app02/role/list/$>, <RegexURLPattern None app02/role/add/$>, <RegexURLPattern None app02/role/change/(\d+)/$>, <RegexURLPattern None app02/role/del/(\d+)/$>], 'stark', 'stark')
 
+'''
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^stark/', site.urls),
