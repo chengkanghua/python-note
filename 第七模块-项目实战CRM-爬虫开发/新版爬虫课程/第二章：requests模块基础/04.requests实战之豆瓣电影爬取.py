@@ -3,6 +3,7 @@
 import requests
 import json
 if __name__ == "__main__":
+    # URL: https://movie.douban.com/j/chart/top_list?type=24&interval_id=100%3A90&action=&start=20&limit=20
     url = 'https://movie.douban.com/j/chart/top_list'
     param = {
         'type': '24',
