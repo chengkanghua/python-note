@@ -17,10 +17,13 @@ if __name__ == "__main__":
     #使用通用爬虫对url对应的一整张页面进行爬取
     page_text = requests.get(url=url,headers=headers).text
 
+    with open('qiushibaike.html','w',encoding='utf-8') as f:
+        f.write(page_text)
+    print(page_text)
     #使用聚焦爬虫将页面中所有的糗图进行解析/提取
     ex = '<div class="thumb">.*?<img src="(.*?)" alt.*?</div>'
-    img_src_list = re.findall(ex,page_text,re.S)   # findall参数有re.S，不会对\n进行中断
-    # print(img_src_list)
+    img_src_list = re.findall(ex,page_text,re.S)
+    print(img_src_list)
     for src in img_src_list:
         #拼接出一个完整的图片url
         src = 'https:'+src

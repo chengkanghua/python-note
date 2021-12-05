@@ -59,16 +59,15 @@ bs4进行数据解析
             - select('某种选择器（id，class，标签...选择器）'),返回的是一个列表。
             - 层级选择器：
                 - soup.select('.tang > ul > li > a')：>表示的是一个层级
-                - oup.select('.tang > ul a')：空格表示的多个层级
+                - soup.select('.tang > ul a')：空格表示的多个层级
         - 获取标签之间的文本数据：
-            - soup.a.text/string/get_text()
-            - text/get_text():可以获取某一个标签中所有的文本内容
-            - string：只可以获取该标签下面直系的文本内容
+            - soup.a.text / .string / .get_text()
+                - text/get_text():可以获取某一个标签中所有的文本内容
+                - string：只可以获取该标签下面直系的文本内容
         - 获取标签中属性值：
             - soup.a['href']
 
 xpath解析：最常用且最便捷高效的一种解析方式。通用性。
-
     - xpath解析原理：
         - 1.实例化一个etree的对象，且需要将被解析的页面源码数据加载到该对象中。
         - 2.调用etree对象中的xpath方法结合着xpath表达式实现标签的定位和内容的捕获。

@@ -1,0 +1,806 @@
+[
+  [
+    {
+      "rownum": 1,
+      "storeName": "育慧里",
+      "addressDetail": "小营东路3号北京凯基伦购物中心一层西侧",
+      "pro": "24小时,Wi-Fi,店内参观,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 2,
+      "storeName": "京通新城",
+      "addressDetail": "朝阳路杨闸环岛西北京通苑30号楼一层南侧",
+      "pro": "24小时,Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 3,
+      "storeName": "黄寺大街",
+      "addressDetail": "黄寺大街15号北京城乡黄寺商厦",
+      "pro": "Wi-Fi,点唱机,店内参观,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 4,
+      "storeName": "四季青桥",
+      "addressDetail": "西四环北路117号北京欧尚超市F1、B1",
+      "pro": "Wi-Fi,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 5,
+      "storeName": "亦庄",
+      "addressDetail": "北京经济开发区西环北路18号F1＋F2",
+      "pro": "24小时,Wi-Fi,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 6,
+      "storeName": "石园南大街",
+      "addressDetail": "通顺路石园西区南侧北京顺义西单商场石园分店一层、二层部分",
+      "pro": "24小时,Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 7,
+      "storeName": "北京南站",
+      "addressDetail": "北京南站候车大厅B岛201号",
+      "pro": "Wi-Fi,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 8,
+      "storeName": "北清路",
+      "addressDetail": "北京北清路1号146区",
+      "pro": "24小时,Wi-Fi,店内参观,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 9,
+      "storeName": "大红门新世纪肯德基餐厅",
+      "addressDetail": "海户屯北京新世纪服装商贸城一层南侧",
+      "pro": "Wi-Fi,点唱机,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 10,
+      "storeName": "巴沟",
+      "addressDetail": "巴沟路2号北京华联万柳购物中心一层",
+      "pro": "Wi-Fi,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    }
+  ],
+  [
+    {
+      "rownum": 11,
+      "storeName": "欢乐谷",
+      "addressDetail": "南磨房乡小武基北路北京欢乐谷内欢乐时光区一层",
+      "pro": "礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 12,
+      "storeName": "亦庄沃尔玛",
+      "addressDetail": "经济技术开发区文化园东路6号北京经开汇展中心1-2层",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 13,
+      "storeName": "北京站Select",
+      "addressDetail": "北京火车站候车大厅一层西侧原商务中心",
+      "pro": "精选店,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 14,
+      "storeName": "西客站内三",
+      "addressDetail": "莲花桥东路118号北京西客站候车大厅内2层第4营业厅及2层夹层回廊",
+      "pro": "礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 15,
+      "storeName": "西环嘉茂",
+      "addressDetail": "北京北站旁 凯德mall负一层",
+      "pro": "Wi-Fi,店内参观,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 16,
+      "storeName": "日照银座餐厅",
+      "addressDetail": "北京路与泰安路交汇处银座商城一楼",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "山东省",
+      "cityName": "日照市"
+    },
+    {
+      "rownum": 17,
+      "storeName": "荆州北京路",
+      "addressDetail": "北京中路227号肯德基餐厅",
+      "pro": "Wi-Fi,点唱机,礼品卡,生日餐会",
+      "provinceName": "湖北省",
+      "cityName": "荆州市"
+    },
+    {
+      "rownum": 18,
+      "storeName": "荆州月亮湾",
+      "addressDetail": "沙市中商百货一楼北京路中路173号",
+      "pro": "点唱机,礼品卡,生日餐会",
+      "provinceName": "湖北省",
+      "cityName": "荆州市"
+    },
+    {
+      "rownum": 19,
+      "storeName": "金山",
+      "addressDetail": "建新镇金山大道100号北京金山05店面",
+      "pro": "24小时,Wi-Fi,点唱机,店内参观,礼品卡,生日餐会",
+      "provinceName": "福建省",
+      "cityName": "福州市"
+    },
+    {
+      "rownum": 20,
+      "storeName": "北京南站三",
+      "addressDetail": "北京南站地下一层南大门内东侧场地快速进站口3与快速进站口4中间",
+      "pro": "礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    }
+  ],
+  [
+    {
+      "rownum": 21,
+      "storeName": "北京南站五",
+      "addressDetail": "北京南站地下一层到达层西南侧第5出站口旁",
+      "pro": "礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 22,
+      "storeName": "北京南站六",
+      "addressDetail": "北京南站二层旅客出发层西南角（23B检票口）旁",
+      "pro": "礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 23,
+      "storeName": "北京站广场二",
+      "addressDetail": "北京站进站口西侧前廊下",
+      "pro": "24小时,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 24,
+      "storeName": "马坡汽车穿梭",
+      "addressDetail": "马坡镇顺城大街29号北京乡村乐园一层",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 25,
+      "storeName": "新城外城DT",
+      "addressDetail": "南四环成寿寺路308号北京城外诚家居广场停车广场",
+      "pro": "Wi-Fi,店内参观,礼品卡",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 26,
+      "storeName": "铁路",
+      "addressDetail": "北京南路895号电话3822695",
+      "pro": "Wi-Fi,点唱机,礼品卡,生日餐会",
+      "provinceName": "新疆",
+      "cityName": "乌鲁木齐市"
+    },
+    {
+      "rownum": 27,
+      "storeName": "苏州路",
+      "addressDetail": "北京南路28号家乐福苏州路购物中心一层肯德基餐厅",
+      "pro": "Wi-Fi,点唱机,店内参观,礼品卡,生日餐会",
+      "provinceName": "新疆",
+      "cityName": "乌鲁木齐市"
+    },
+    {
+      "rownum": 28,
+      "storeName": "蒙苑",
+      "addressDetail": "兴安北路169号北京华联一层",
+      "pro": "Wi-Fi,点唱机,店内参观,礼品卡,生日餐会",
+      "provinceName": "内蒙古",
+      "cityName": "呼和浩特市"
+    },
+    {
+      "rownum": 29,
+      "storeName": "南昌",
+      "addressDetail": "南昌路982号新北京华联一层",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "甘肃省",
+      "cityName": "兰州市"
+    },
+    {
+      "rownum": 30,
+      "storeName": "太原府东",
+      "addressDetail": "府东街18号北京华联超一层",
+      "pro": "Wi-Fi,点唱机,店内参观,礼品卡,生日餐会",
+      "provinceName": "山西省",
+      "cityName": "太原市"
+    }
+  ],
+  [
+    {
+      "rownum": 31,
+      "storeName": "金利",
+      "addressDetail": "新华路138号鑫乐广场（北京华联超市旁）",
+      "pro": "Wi-Fi,店内参观,礼品卡",
+      "provinceName": "江苏省",
+      "cityName": "南京市"
+    },
+    {
+      "rownum": 32,
+      "storeName": "芜湖营盘山路",
+      "addressDetail": "北京东路与营盘山路交叉口大润发超市一楼",
+      "pro": "24小时,Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "安徽省",
+      "cityName": "芜湖市"
+    },
+    {
+      "rownum": 33,
+      "storeName": "阜阳火车站",
+      "addressDetail": "向阳路和北京东路交汇口",
+      "pro": "24小时,Wi-Fi,点唱机,礼品卡",
+      "provinceName": "安徽省",
+      "cityName": "阜阳市"
+    },
+    {
+      "rownum": 34,
+      "storeName": "淮安北京路苏果",
+      "addressDetail": "北京新村五区新苑逸城",
+      "pro": "24小时,Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "江苏省",
+      "cityName": "淮安市"
+    },
+    {
+      "rownum": 35,
+      "storeName": "金阳82266155",
+      "addressDetail": "金阳新区北京西路金源时代购物中心一层",
+      "pro": "24小时,Wi-Fi,点唱机,店内参观,礼品卡",
+      "provinceName": "贵州省",
+      "cityName": "贵阳市"
+    },
+    {
+      "rownum": 36,
+      "storeName": "国酒路",
+      "addressDetail": "仁怀市中枢镇酒都新区国酒大道超一时代广场一楼北京华联旁",
+      "pro": "24小时,Wi-Fi,点唱机,礼品卡",
+      "provinceName": "贵州省",
+      "cityName": "遵义市"
+    },
+    {
+      "rownum": 37,
+      "storeName": "白云",
+      "addressDetail": "北京路延长线大白庙村家乐福超市一楼",
+      "pro": "24小时,Wi-Fi,点唱机,礼品卡,生日餐会",
+      "provinceName": "云南省",
+      "cityName": "昆明市"
+    },
+    {
+      "rownum": 38,
+      "storeName": "北辰",
+      "addressDetail": "北京路延长线财富中心E栋",
+      "pro": "24小时,Wi-Fi,礼品卡,生日餐会",
+      "provinceName": "云南省",
+      "cityName": "昆明市"
+    },
+    {
+      "rownum": 39,
+      "storeName": "博乐友好",
+      "addressDetail": "北京路与新华路交汇处友好购物中心肯德基餐厅",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "新疆",
+      "cityName": "博乐市"
+    },
+    {
+      "rownum": 40,
+      "storeName": "梦时代",
+      "addressDetail": "北京东路308号恒茂梦时代国际广场三号楼一层",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "江西省",
+      "cityName": "南昌市"
+    }
+  ],
+  [
+    {
+      "rownum": 41,
+      "storeName": "荆州万达",
+      "addressDetail": "北京西路508号万达广场一层1001A",
+      "pro": "点唱机,礼品卡,生日餐会",
+      "provinceName": "湖北省",
+      "cityName": "荆州市"
+    },
+    {
+      "rownum": 42,
+      "storeName": "洪泽大润发",
+      "addressDetail": "北京路与建设路交汇处",
+      "pro": "Wi-Fi,店内参观,礼品卡,生日餐会",
+      "provinceName": "江苏省",
+      "cityName": "淮安市"
+    },
+    {
+      "rownum": 43,
+      "storeName": "洪城大厦",
+      "addressDetail": "西湖区北京西路156号一层洪城大厦肯德基",
+      "pro": "Wi-Fi,点唱机,礼品卡",
+      "provinceName": "江西省",
+      "cityName": "南昌市"
+    },
+    {
+      "rownum": 44,
+      "storeName": "福润德餐厅",
+      "addressDetail": "北京南路433号大寨沟福润德一楼肯德基餐厅",
+      "pro": "Wi-Fi,点唱机,店内参观,礼品卡",
+      "provinceName": "新疆",
+      "cityName": "乌鲁木齐市"
+    },
+    {
+      "rownum": 45,
+      "storeName": "奎屯友好餐厅",
+      "addressDetail": "飞鸿里北京东路3栋友好时尚购物中心1-2层",
+      "pro": null,
+      "provinceName": "新疆",
+      "cityName": "伊犁哈萨克自治州"
+    },
+    {
+      "rownum": 46,
+      "storeName": "徐州泉山大润发",
+      "addressDetail": "北京路与欣欣路交叉口大润发超市一层",
+      "pro": "Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "江苏省",
+      "cityName": "徐州市"
+    },
+    {
+      "rownum": 47,
+      "storeName": "大兴龙湖",
+      "addressDetail": "龙湖北京大兴天街商业楼三层3F-10a铺位",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 48,
+      "storeName": "徐州铜山万达",
+      "addressDetail": "北京北路19号",
+      "pro": "24小时,点唱机,店内参观",
+      "provinceName": "江苏省",
+      "cityName": "徐州市"
+    },
+    {
+      "rownum": 49,
+      "storeName": "西站南广场二号",
+      "addressDetail": "北京西客站南站房东附楼一层105号铺位、104铺位和二层204铺位",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 50,
+      "storeName": "银川悦海",
+      "addressDetail": "尹家渠街东侧、枕水路南侧北京华联悦海新天地购物中心一层",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "宁夏",
+      "cityName": "银川市"
+    }
+  ],
+  [
+    {
+      "rownum": 51,
+      "storeName": "万达电话18571740284",
+      "addressDetail": "发展大道与北京路延长线交汇处",
+      "pro": "Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "湖北省",
+      "cityName": "十堰市"
+    },
+    {
+      "rownum": 52,
+      "storeName": "银川新华联",
+      "addressDetail": "通达北街以西北京路以北新华联广场1层、4层",
+      "pro": "Wi-Fi",
+      "provinceName": "宁夏",
+      "cityName": "银川市"
+    },
+    {
+      "rownum": 53,
+      "storeName": "沧州高铁站",
+      "addressDetail": "北京路西端头高铁站候车大厅二楼",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "河北省",
+      "cityName": "沧州市"
+    },
+    {
+      "rownum": 54,
+      "storeName": "北海宁春城",
+      "addressDetail": "北京路西、西南大道北和安.宁春城一期",
+      "pro": "24小时,Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "广西",
+      "cityName": "北海市"
+    },
+    {
+      "rownum": 55,
+      "storeName": "宣堡服务区北",
+      "addressDetail": "宣堡北052381560366(往北京方向)",
+      "pro": "Wi-Fi",
+      "provinceName": "江苏省",
+      "cityName": "泰州市"
+    },
+    {
+      "rownum": 56,
+      "storeName": "西郊百益餐厅",
+      "addressDetail": "北京中路46号西郊百益超市一层",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "西藏自治区",
+      "cityName": "拉萨市"
+    },
+    {
+      "rownum": 57,
+      "storeName": "北京路天河城（原仰忠汇）",
+      "addressDetail": "越秀区北京路168号二层自编B201/L201号铺",
+      "pro": "Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "广东省",
+      "cityName": "广州市"
+    },
+    {
+      "rownum": 58,
+      "storeName": "北京肯德基有限公司紫码路餐厅",
+      "addressDetail": "阎村镇乐活家园45号楼一层109号商铺、二层109号商铺、二层108号商铺",
+      "pro": "24小时,Wi-Fi,店内参观,生日餐会",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 59,
+      "storeName": "拉萨功德林天街",
+      "addressDetail": "北京中路47号1,2层",
+      "pro": "Wi-Fi,机场店",
+      "provinceName": "西藏自治区",
+      "cityName": "拉萨市"
+    },
+    {
+      "rownum": 60,
+      "storeName": "肯德基精选1（北京方向）",
+      "addressDetail": "电话：0315-6561129，",
+      "pro": "Wi-Fi,精选店",
+      "provinceName": "河北省",
+      "cityName": "唐山市"
+    }
+  ],
+  [
+    {
+      "rownum": 61,
+      "storeName": "橘洲一号",
+      "addressDetail": "北京东三路18号橘洲一号（2栋负一楼商铺）首层",
+      "pro": "24小时,Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "广东省",
+      "cityName": "茂名市"
+    },
+    {
+      "rownum": 62,
+      "storeName": "十堰远洋国际",
+      "addressDetail": "五堰街办北京北路83A号1幢2-1",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "湖北省",
+      "cityName": "十堰市"
+    },
+    {
+      "rownum": 63,
+      "storeName": "新机场2号",
+      "addressDetail": "大兴区北京大兴国际机场国际抵港区域",
+      "pro": "Wi-Fi,机场店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 64,
+      "storeName": "胜利门",
+      "addressDetail": "沅陵县辰州中路北京公馆2栋1层",
+      "pro": "Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "湖南省",
+      "cityName": "怀化市"
+    },
+    {
+      "rownum": 65,
+      "storeName": "观山湖印象城",
+      "addressDetail": "北京西路与金阳南路交界处西南角",
+      "pro": "Wi-Fi,点唱机,生日餐会",
+      "provinceName": "贵州省",
+      "cityName": "贵阳市"
+    },
+    {
+      "rownum": 66,
+      "storeName": "沭阳万达",
+      "addressDetail": "北京南路（原新城路22号）万达广场一层1030号商铺",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "江苏省",
+      "cityName": "宿迁市"
+    },
+    {
+      "rownum": 67,
+      "storeName": "北京南站九",
+      "addressDetail": "丰台区北京南站高架层东南角",
+      "pro": "精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 68,
+      "storeName": "贵阳数博万达",
+      "addressDetail": "北京西路66号万达广场1031号商铺",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "贵州省",
+      "cityName": "贵阳市"
+    },
+    {
+      "rownum": 69,
+      "storeName": "贵阳数博万达",
+      "addressDetail": "北京西路66号万达广场1031号商铺",
+      "pro": "Wi-Fi,点唱机",
+      "provinceName": "贵州省",
+      "cityName": "贵阳市"
+    },
+    {
+      "rownum": 70,
+      "storeName": "皖江环球港",
+      "addressDetail": "北京西路与政府北路交叉口北斗星城2期1-3#栋一层",
+      "pro": "Wi-Fi",
+      "provinceName": "安徽省",
+      "cityName": "铜陵市"
+    }
+  ],
+  [
+    {
+      "rownum": 71,
+      "storeName": "西宁长江路餐厅",
+      "addressDetail": "北京华联华联购物中心一楼肯德基",
+      "pro": "Wi-Fi",
+      "provinceName": "青海省",
+      "cityName": "西宁市"
+    },
+    {
+      "rownum": 72,
+      "storeName": "皖江环球港",
+      "addressDetail": "北京西路与政府北路交叉口北斗星城2期1-3#栋一层",
+      "pro": "Wi-Fi",
+      "provinceName": "安徽省",
+      "cityName": "铜陵市"
+    },
+    {
+      "rownum": 73,
+      "storeName": "西宁长江路餐厅",
+      "addressDetail": "北京华联华联购物中心一楼肯德基",
+      "pro": "Wi-Fi",
+      "provinceName": "青海省",
+      "cityName": "西宁市"
+    },
+    {
+      "rownum": 74,
+      "storeName": "辽中服务区外卖点(北京方向）",
+      "addressDetail": "辽中县京哈高速公路沿线辽中服务区北侧一层（北京方向）",
+      "pro": "Wi-Fi",
+      "provinceName": "辽宁省",
+      "cityName": "沈阳市"
+    },
+    {
+      "rownum": 75,
+      "storeName": "辽中服务区外卖点(北京方向）",
+      "addressDetail": "辽中县京哈高速公路沿线辽中服务区北侧一层（北京方向）",
+      "pro": "Wi-Fi",
+      "provinceName": "辽宁省",
+      "cityName": "沈阳市"
+    },
+    {
+      "rownum": 76,
+      "storeName": "北京朝阳站",
+      "addressDetail": "北京朝阳站内二层高架夹层G2-9-1",
+      "pro": "精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 77,
+      "storeName": "北京朝阳站",
+      "addressDetail": "北京朝阳站内二层高架夹层G2-9-1",
+      "pro": "精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 78,
+      "storeName": "新百CCPARK",
+      "addressDetail": "回族自治区北京中路192号CCpark店一层1D23铺",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "宁夏",
+      "cityName": "银川市"
+    },
+    {
+      "rownum": 79,
+      "storeName": "新百CCPARK",
+      "addressDetail": "回族自治区北京中路192号CCpark店一层1D23铺",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "宁夏",
+      "cityName": "银川市"
+    },
+    {
+      "rownum": 80,
+      "storeName": "北京站精选5",
+      "addressDetail": "北京站内二层北京站第四候车室门口外侧",
+      "pro": "Wi-Fi,店内参观,精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    }
+  ],
+  [
+    {
+      "rownum": 81,
+      "storeName": "北京站精选5",
+      "addressDetail": "北京站内二层北京站第四候车室门口外侧",
+      "pro": "Wi-Fi,店内参观,精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 82,
+      "storeName": "红军营",
+      "addressDetail": "来广营北京龙湖蓝海引擎产业园一层【L1-007】",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 83,
+      "storeName": "红军营",
+      "addressDetail": "来广营北京龙湖蓝海引擎产业园一层【L1-007】",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 84,
+      "storeName": "大兴国际机场六号",
+      "addressDetail": "北京大兴国际机场航站楼S-BL02-007、008（大兴机场内）",
+      "pro": "Wi-Fi,机场店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 85,
+      "storeName": "大兴国际机场六号",
+      "addressDetail": "北京大兴国际机场航站楼S-BL02-007、008（大兴机场内）",
+      "pro": "Wi-Fi,机场店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 86,
+      "storeName": "十堰环球港",
+      "addressDetail": "北京路十堰环球港1B层A08",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "湖北省",
+      "cityName": "十堰市"
+    },
+    {
+      "rownum": 87,
+      "storeName": "十堰环球港",
+      "addressDetail": "北京路十堰环球港1B层A08",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "湖北省",
+      "cityName": "十堰市"
+    },
+    {
+      "rownum": 88,
+      "storeName": "十堰环球港",
+      "addressDetail": "北京路十堰环球港1B层A08",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "湖北省",
+      "cityName": "十堰市"
+    },
+    {
+      "rownum": 89,
+      "storeName": "十堰环球港",
+      "addressDetail": "北京路十堰环球港1B层A08",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "湖北省",
+      "cityName": "十堰市"
+    },
+    {
+      "rownum": 90,
+      "storeName": "金安桥中海",
+      "addressDetail": "02商铺阜石路与北辛安路交汇处东南角的北京金安中海环宇荟地上一层的L101,L1",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    }
+  ],
+  [
+    {
+      "rownum": 91,
+      "storeName": "金安桥中海",
+      "addressDetail": "02商铺阜石路与北辛安路交汇处东南角的北京金安中海环宇荟地上一层的L101,L1",
+      "pro": "Wi-Fi,店内参观",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 92,
+      "storeName": "北京站精选四",
+      "addressDetail": "北京站内一层大厅中间区域LED显示屏下",
+      "pro": "精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 93,
+      "storeName": "北京站精选四",
+      "addressDetail": "北京站内一层大厅中间区域LED显示屏下",
+      "pro": "精选店",
+      "provinceName": "北京市",
+      "cityName": "北京市"
+    },
+    {
+      "rownum": 94,
+      "storeName": "凯里九方",
+      "addressDetail": "北京西路南侧九方购物广场",
+      "pro": "Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "贵州省",
+      "cityName": "黔东南苗族侗族自治州"
+    },
+    {
+      "rownum": 95,
+      "storeName": "凯里九方",
+      "addressDetail": "北京西路南侧九方购物广场",
+      "pro": "Wi-Fi,点唱机,店内参观,生日餐会",
+      "provinceName": "贵州省",
+      "cityName": "黔东南苗族侗族自治州"
+    },
+    {
+      "rownum": 96,
+      "storeName": "银川兴庆吾悦",
+      "addressDetail": "回族自治区北京东路新城吾悦广场【1002、1003】号商铺",
+      "pro": "Wi-Fi,店内参观,生日餐会",
+      "provinceName": "宁夏",
+      "cityName": "银川市"
+    },
+    {
+      "rownum": 97,
+      "storeName": "荆州人信汇",
+      "addressDetail": "北京中路239号人信汇一层123号商铺",
+      "pro": "24小时,点唱机,精选店",
+      "provinceName": "湖北省",
+      "cityName": "荆州市"
+    },
+    {
+      "rownum": 98,
+      "storeName": "荆州人信汇",
+      "addressDetail": "北京中路239号人信汇一层123号商铺",
+      "pro": "24小时,点唱机,精选店",
+      "provinceName": "湖北省",
+      "cityName": "荆州市"
+    }
+  ]
+]

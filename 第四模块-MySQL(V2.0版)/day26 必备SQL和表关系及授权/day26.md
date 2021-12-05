@@ -103,12 +103,6 @@ select * from info where id > 10;
 
 
 
-
-
-
-
-
-
 ### 1.2 通配符
 
 一般用于模糊搜索。
@@ -547,6 +541,18 @@ select id from info;
   - 删除
   - 修改
   - 查询（各种变着花样的查询）
+
+
+
+```sql
+扩展:
+show status; 显示服务器状态信息
+show create database 和 create table 分别显示创建时候的特定语句
+show grants, 用来洗那是授予用户的安全权限
+show errors 和 show warnings 显示服务器错误与警告信息
+show distinct vend_id from products  # distinct 去重
+
+```
 
 
 

@@ -11,6 +11,6 @@ if __name__ == "__main__":
     #find('tagName'):等同于soup.div
     # print(soup.find('div'))  #print(soup.div)
     # print(soup.find('div',class_='song').string)
-    # print(soup.find_all('a'))
+    # print(soup.find_all('a'))  #返回符合要求的所有标签 , 是一个列表
     # print(soup.select('.tang'))
     print(soup.select('.tang > ul a')[0]['href'])
