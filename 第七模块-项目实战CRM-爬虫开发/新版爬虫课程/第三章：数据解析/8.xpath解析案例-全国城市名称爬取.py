@@ -42,3 +42,6 @@ if __name__ == "__main__":
         city_name = a.xpath('./text()')[0]
         all_city_names.append(city_name)
     print(all_city_names,len(all_city_names))
+
+
+    
