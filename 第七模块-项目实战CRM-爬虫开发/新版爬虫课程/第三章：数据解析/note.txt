@@ -97,8 +97,26 @@ xpath解析：最常用且最便捷高效的一种解析方式。通用性。
 
         ，
 
+报错记录:
+  xpath 解析本地html文件,乱码问题,
+  1. 手动到html文件head里添加 <meta http-equiv=Content-Type content="text/html;charset=utf-8">
 
+  2. lxml.etree.tostring 用utf-8 编码
+  ```
+    from urllib.request import urlopen
+    from lxml import etree
 
+    #读取baidu.com并解析
+    htmlFile = urlopen('http://www.baidu.com').read()
+    html = etree.HTML(htmlFile)
 
+    #获取title标签
+    htmlTitle = html.xpath( "//title")[0]
+
+    # to string 并打印
+    strTitle = etree.tostring(htmlTitle, encoding = "utf-8").decode("utf-8") # encoding和decode一个都不能少。
+    print(strTitle)
+  ``` 
+参考: https://blog.csdn.net/damontive/article/details/113422206
 
 
