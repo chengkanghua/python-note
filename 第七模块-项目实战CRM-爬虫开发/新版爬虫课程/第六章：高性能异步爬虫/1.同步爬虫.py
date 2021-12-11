@@ -3,9 +3,9 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
 }
 urls = [
-    'http://xmdx.sc.chinaz.net/Files/DownLoad/jianli/201904/jianli10231.rar',
-    'http://zjlt.sc.chinaz.net/Files/DownLoad/jianli/201904/jianli10229.rar',
-    'http://xmdx.sc.chinaz.net/Files/DownLoad/jianli/201904/jianli10231.rar'
+    'https://downsc.chinaz.net/Files/DownLoad/jianli/202111/jianli16497.rar',
+    'https://downsc.chinaz.net/Files/DownLoad/jianli/202111/jianli16498.rar',
+    'https://downsc.chinaz.net/Files/DownLoad/jianli/202111/jianli16495.rar'
 ]
 
 def get_content(url):

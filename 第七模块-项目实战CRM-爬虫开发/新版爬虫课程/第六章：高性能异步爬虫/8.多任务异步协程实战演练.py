@@ -26,3 +26,4 @@ for page in range(2,50):
         a.append(name)
 print(len(a))
 print('总耗时：',time.time()-start)
+ 
