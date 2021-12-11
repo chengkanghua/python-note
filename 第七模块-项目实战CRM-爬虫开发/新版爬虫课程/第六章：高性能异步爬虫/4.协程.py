@@ -9,7 +9,6 @@ c = request('www.baidu.com')
 
 # #创建一个事件循环对象
 # loop = asyncio.get_event_loop()
-#
 # #将协程对象注册到loop中，然后启动loop
 # loop.run_until_complete(c)
 
@@ -17,11 +16,9 @@ c = request('www.baidu.com')
 # loop = asyncio.get_event_loop()
 # #基于loop创建了一个task对象
 # task = loop.create_task(c)
-# print(task)
-#
-# loop.run_until_complete(task)
-#
-# print(task)
+# print(task)   # task对象未执行
+# loop.run_until_complete(task)   # 将task注册到事件循环当中就会被执行
+# print(task)  # task已经执行
 
 #future的使用
 # loop = asyncio.get_event_loop()

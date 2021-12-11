@@ -3,6 +3,7 @@ import asyncio
 import time
 
 start = time.time()
+# 运行此文件 , 先运行flask服务.py 文件
 urls = [
     'http://127.0.0.1:5000/bobo','http://127.0.0.1:5000/jay','http://127.0.0.1:5000/tom'
 ]
