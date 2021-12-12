@@ -20,28 +20,46 @@ scrapy框架
             - pip install scrapy
             测试：在终端里录入scrapy指令，没有报错即表示安装成功！
     - 创建一个工程：scrapy startproject xxxPro
+                  scrapy startproject firstBlood
     - cd xxxPro
     - 在spiders子目录中创建一个爬虫文件
         - scrapy genspider spiderName www.xxx.com
+          scrapy genspider first www.xxx.com
     - 执行工程：
         - scrapy crawl spiderName
+          scrapy crawl first
+          scrapy crawl first  --nolog   # 输出不显示日志信息
 
-- scrapy数据解析
+sttings.py 配置
+    #显示指定类型的日志信息
+    LOG_LEVEL = 'ERROR'
+    # Obey robots.txt rules
+    ROBOTSTXT_OBEY = False
+    USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
+    FEED_EXPORT_ENCODING='UTF-8'  # 命令行导出json时候会以utf-8 ,或者 导出时候最后指定 -s FEED_EXPORT_ENCODING='UTF-8'
+    ITEM_PIPELINES = { # 开启管道类
+   'qiubaiPro.pipelines.QiubaiproPipeline': 300,
+    }
+- scrapy数据解析  qiubaiPro
+scrapy startproject qiubaiPro
+cd qiubaiPro
+scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
+
 
 - scrapy持久化存储
     - 基于终端指令：
         - 要求：只可以将parse方法的返回值存储到本地的文本文件中
         - 注意：持久化存储对应的文本文件的类型只可以为：'json', 'jsonlines', 'jl', 'csv', 'xml', 'marshal', 'pickle
         - 指令：scrapy crawl xxx -o filePath
-        - 好处：简介高效便捷
+        - 好处：简洁高效便捷
         - 缺点：局限性比较强（数据只可以存储到指定后缀的文本文件中）
 
     - 基于管道：
         - 编码流程：
             - 数据解析
-            - 在item类中定义相关的属性
+            - 在item类中定义相关的属性  (items.py 文件中)
             - 将解析的数据封装存储到item类型的对象
-            - 将item类型的对象提交给管道进行持久化存储的操作
+            - 将item类型的对象提交给管道进行持久化存储的操作 (管道文件piplines.py)
             - 在管道类的process_item中要将其接受到的item对象中存储的数据进行持久化存储操作
             - 在配置文件中开启管道
         - 好处：
@@ -73,7 +91,6 @@ scrapy框架
         爬虫是主要干活的, 用于从特定的网页中提取自己需要的信息, 即所谓的实体(Item)。用户也可以从中提取出链接,让Scrapy继续抓取下一个页面
     项目管道(Pipeline)
         负责处理爬虫从网页中抽取的实体，主要的功能是持久化实体、验证实体的有效性、清除不需要的信息。当页面被爬虫解析后，将被发送到项目管道，并经过几个特定的次序处理数据。
-
 
 
 - 请求传参
@@ -187,6 +204,12 @@ scrapy框架
                 - 调度器的队列在redis的客户端中
                     - lpush xxx www.xxx.com
             - 爬取到的数据存储在了redis的proName:items这个数据结构中
+
+
+学习目录顺序:
+1 firstBlood
+2 qiubaiPro
+3 xiaohuaPro
 
 
 
