@@ -93,11 +93,11 @@ scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
         负责处理爬虫从网页中抽取的实体，主要的功能是持久化实体、验证实体的有效性、清除不需要的信息。当页面被爬虫解析后，将被发送到项目管道，并经过几个特定的次序处理数据。
 
 
-- 请求传参
+- 请求传参   # bossPro
     - 使用场景：如果爬取解析的数据不在同一张页面中。（深度爬取）
     - 需求：爬取boss的岗位名称，岗位描述
 
-- 图片数据爬取之ImagesPipeline
+- 图片数据爬取之ImagesPipeline  # imgsPro
     - 基于scrapy爬取字符串类型的数据和爬取图片类型的数据区别？
         - 字符串：只需要基于xpath进行解析且提交管道进行持久化存储
         - 图片：xpath解析出图片src的属性值。单独的对图片地址发起请求获取图片二进制类型的数据
@@ -117,7 +117,7 @@ scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
             - 指定开启的管道：自定制的管道类
 
 
-- 中间件
+- 中间件  # middlePro
     - 下载中间件
         - 位置：引擎和下载器之间
         - 作用：批量拦截到整个工程中所有的请求和响应
@@ -125,25 +125,25 @@ scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
             - UA伪装:process_request
             - 代理IP:process_exception:return request
 
-        - 拦截响应：
+        - 拦截响应： # wangyiPro
             - 篡改响应数据，响应对象
             - 需求：爬取网易新闻中的新闻数据（标题和内容）
                 - 1.通过网易新闻的首页解析出五大板块对应的详情页的url（没有动态加载）
                 - 2.每一个板块对应的新闻标题都是动态加载出来的（动态加载）
                 - 3.通过解析出每一条新闻详情页的url获取详情页的页面源码，解析出新闻内容
 
-- CrawlSpider:类，Spider的一个子类
+- CrawlSpider:类，Spider的一个子类   # sunPro
     - 全站数据爬取的方式
         - 基于Spider：手动请求
         - 基于CrawlSpider
     - CrawlSpider的使用：
-        - 创建一个工程
+        - 创建一个工程 scrapy startproject sunPro
         - cd XXX
         - 创建爬虫文件（CrawlSpider）：
             - scrapy genspider -t crawl xxx www.xxxx.com
-            - 链接提取器：
+            - 链接提取器： LinkExtractor
                 - 作用：根据指定的规则（allow）进行指定链接的提取
-            - 规则解析器：
+            - 规则解析器： rules
                 - 作用：将链接提取器提取到的链接进行指定规则（callback）的解析
         #需求：爬取sun网站中的编号，新闻标题，新闻内容，标号
             - 分析：爬取的数据没有在同一张页面中。
@@ -152,12 +152,12 @@ scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
 
 
 
-- 分布式爬虫
+- 分布式爬虫  # fbsPro
     - 概念：我们需要搭建一个分布式的机群，让其对一组资源进行分布联合爬取。
     - 作用：提升爬取数据的效率
 
     - 如何实现分布式？
-        - 安装一个scrapy-redis的组件
+        - 安装一个scrapy-redis的组件 # pip3.6 install scrapy-redis
         - 原生的scarapy是不可以实现分布式爬虫，必须要让scrapy结合着scrapy-redis组件一起实现分布式爬虫。
         - 为什么原生的scrapy不可以实现分布式？
             - 调度器不可以被分布式机群共享
@@ -186,8 +186,10 @@ scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
                     # 配置调度器是否要持久化, 也就是当爬虫结束了, 要不要清空Redis中请求队列和去重指纹的set。如果是True, 就表示要持久化存储, 就不清空数据, 否则清空数据
                     SCHEDULER_PERSIST = True
                 - 指定redis服务器：
-
+                    REDIS_HOST = '10.37.129.2' #redis远程服务器的ip（修改）
+                    REDIS_PORT = 6379
             - redis相关操作配置：
+                下载地址: http://download.redis.io/releases/redis-4.0.11.tar.gz
                 - 配置redis的配置文件：
                     - linux或者mac：redis.conf
                     - windows:redis.windows.conf
@@ -210,8 +212,10 @@ scrapy genspider qiubai www.xxx.com   # 创建爬虫文件
 1 firstBlood
 2 qiubaiPro
 3 xiaohuaPro
-
-
-
-
+4 bossPro
+5 imgsPro
+6 middlePro
+7 wangyiPro
+8 sunPro
+9 fbsPro
 

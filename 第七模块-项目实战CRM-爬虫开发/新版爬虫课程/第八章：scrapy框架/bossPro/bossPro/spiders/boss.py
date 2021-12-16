@@ -24,12 +24,13 @@ class BossSpider(scrapy.Spider):
     #解析首页中的岗位名称
     def parse(self, response):
         li_list = response.xpath('//*[@id="main"]/div/div[3]/ul/li')
+        print(li_list)
         for li in li_list:
             item = BossproItem()
 
             job_name = li.xpath('.//div[@class="info-primary"]/h3/a/div[1]/text()').extract_first()
             item['job_name'] = job_name
-            # print(job_name)
+            print(job_name)
             detail_url = 'https://www.zhipin.com'+li.xpath('.//div[@class="info-primary"]/h3/a/@href').extract_first()
             #对详情页发请求获取详情页的页面源码数据
             #手动请求的发送
