@@ -280,6 +280,20 @@ CPython的解释器主要有两大版本：
   export PATH
   ```
 
+```
+小笔记:
+Python3 pip3查看和设置当前镜像源
+pip3 install --upgrade pip    # 升级到最新版
+pip3 config set global.index-url https://pypi.douban.com/simple/  # 设置镜像源
+pip3 config list   # 查看当前镜像源
+
+常用源:
+http://mirrors.aliyun.com/pypi/simple/
+https://pypi.tuna.tsinghua.edu.cn/simple/
+https://pypi.douban.com/simple/
+
+```
+
 
 
 #### 4.1.2 windows系统

@@ -11,10 +11,12 @@ class WangyiSpider(scrapy.Spider):
 
     #实例化一个浏览器对象
     def __init__(self):
-        self.bro = webdriver.Chrome(executable_path='/Users/bobo/Desktop/小猿圈爬虫课程/chromedriver')
+        # self.bro = webdriver.Chrome(executable_path='/Users/bobo/Desktop/小猿圈爬虫课程/chromedriver')
+        self.bro = webdriver.Chrome(executable_path='/Users/kanghua/PycharmProjects/python-note/第七模块-项目实战CRM-爬虫开发/新版爬虫课程/第七章selenium模块应用/chromedriver')
 
     def parse(self, response):
         li_list = response.xpath('//*[@id="index2016_wrap"]/div[1]/div[2]/div[2]/div[2]/div[2]/div/ul/li')
+        
         alist = [3,4,6,7,8]
         for index in alist:
             model_url = li_list[index].xpath('./a/@href').extract_first()
