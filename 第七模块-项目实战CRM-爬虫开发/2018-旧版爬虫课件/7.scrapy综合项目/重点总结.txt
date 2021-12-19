@@ -1,0 +1,18 @@
+1.接触过几种爬虫模块:
+	urllib , requests
+2.robots协议是什么:
+	requests模块没有使用硬性的语法对该协议进行生效.
+	scrapy硬性的语法对该协议进行了生效.
+3. 如何处理验证码:
+	打码兔 , 超级鹰
+4. 掌握几种数据解析的方式:
+	正则,xpath , bs4
+5. 如何爬取动态加载的页面数据:
+	1. selenium
+	2. ajax, 抓包工具抓取异步发起的请求(url)
+6. 接触过哪些反爬机制? 如何处理? 
+	robots协议  UA  封IP  验证码, 动态数据爬取, 数据加密, token
+7.在scrapy中接触过几种爬虫的类:
+	Spider , CrawlSpider, RedisCrawlSpider, RedisSpider
+8. 如何实现分布式流程:
+	scrapy-redis , RedisCrawSpider, RedisSpider 
