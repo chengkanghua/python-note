@@ -14,7 +14,7 @@ class PublicCustomerModelForm(StarkModelForm):
 
 class PublicCustomerHandler(StarkHandler):
 
-    def display_record(self, obj=None, is_header=None):
+    def display_record(self, obj=None, is_header=None,*args,**kwargs):
         if is_header:
             return '跟进记录'
         record_url = self.reverse_commons_url(self.get_url_name('record_view'), pk=obj.pk)
