@@ -10,9 +10,9 @@ class QiubaibypagesPipeline(object):
     fp = None
     def open_spider(self,spider):
         print('开始爬虫')
-        self.fp = open('./qiubai.txt','w',encoding='utf-8')
+        self.fp = open('./qiubai1.txt','w',encoding='utf-8')
     def process_item(self, item, spider):
-        self.fp.write(item['author']+":"+item['content'])
+        self.fp.write(item['author'].strip()+":"+item['content'].strip()+"\n")
         return item
     def close_spider(self,spider):
         self.fp.close()

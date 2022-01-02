@@ -6,7 +6,7 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import redis
-
+import json
 class QiubaiproPipeline(object):
     conn = None
     def open_spider(self,spider):
@@ -17,7 +17,7 @@ class QiubaiproPipeline(object):
             'author':item['author'],
             'content':item['content']
         }
-        self.conn.lpush('data', dict)
+        self.conn.lpush('data', json.dumps(dict))
         return item
 
 #实现将数据值存储到本地磁盘中

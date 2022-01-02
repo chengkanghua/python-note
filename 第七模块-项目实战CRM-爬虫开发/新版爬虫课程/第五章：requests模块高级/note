@@ -31,7 +31,7 @@ cookie：用来让服务器端记录客户端的相关状态。
     - 隐藏自身真实IP
 代理相关的网站：
     - 快代理
-    - 西祠代理
+    -   
     - www.goubanjia.com
 代理ip的类型：
     - http：应用到http协议对应的url中
