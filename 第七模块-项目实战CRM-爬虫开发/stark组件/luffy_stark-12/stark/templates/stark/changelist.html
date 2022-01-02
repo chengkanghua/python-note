@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="luffy-container">
+
+
+        {% if add_btn %}
+            <div style="margin: 5px 0;float: left">
+                {{ add_btn|safe }}
+            </div>
+        {% endif %}
+
+        {% if search_list %}
+            <div style="float: right;">
+                <form method="GET" class="form-inline">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" value="{{ search_value }}" placeholder="关键字搜索">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                {% for item in header_list %}
+                    <th>{{ item }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in body_list %}
+                <tr>
+                    {% for ele in row %}
+                        <td>{{ ele }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+                {{ pager.page_html|safe }}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}

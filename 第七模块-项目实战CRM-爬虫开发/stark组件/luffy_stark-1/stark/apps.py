@@ -7,3 +7,9 @@ class StarkConfig(AppConfig):
 
     def ready(self):
         autodiscover_modules('stark')
+
+
+
+
+
+

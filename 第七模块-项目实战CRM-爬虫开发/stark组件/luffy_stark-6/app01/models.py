@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Depart(models.Model):
     """
     部门表

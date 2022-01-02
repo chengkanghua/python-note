@@ -11,5 +11,5 @@ from scrapy import signals
 class MyProxy(object):
     def process_request(self,request,spider):
         #请求ip的更换
-        request.meta['proxy'] = "https://178.128.90.1:8080"
+        request.meta['proxy'] = "https://178.128.90.1:808"
 

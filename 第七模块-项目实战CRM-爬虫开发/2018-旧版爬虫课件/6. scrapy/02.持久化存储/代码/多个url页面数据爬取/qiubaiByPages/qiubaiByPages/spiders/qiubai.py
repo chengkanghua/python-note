@@ -12,10 +12,10 @@ class QiubaiSpider(scrapy.Spider):
     pageNum = 1
 
     def parse(self, response):
-        div_list = response.xpath('//*[@id="content-left"]/div')
+        div_list = response.xpath('//*[@id="content"]/div/div[2]/div')
 
         for div in div_list:
-            author = div.xpath('./div[@class="author clearfix"]/a[2]/h2/text()').extract_first()
+            author = div.xpath('./div[1]/a[2]/h2/text()').extract_first()
             content = div.xpath('.//div[@class="content"]/span/text()').extract_first()
 
             #创建一个items对象，将解析到数据值存储到items对象中

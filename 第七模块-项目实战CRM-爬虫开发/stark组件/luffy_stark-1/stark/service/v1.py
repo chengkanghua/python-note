@@ -7,7 +7,7 @@ from django.shortcuts import HttpResponse
 class StarkSite(object):
     def __init__(self):
         self._registry = []
-        self.app_name = 'stark'
+        self.app_name = 'stark' 
         self.namespace = 'stark'
 
     def register(self, model_class, handler_class):

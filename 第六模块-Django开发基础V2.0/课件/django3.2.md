@@ -1475,6 +1475,13 @@ python manage.py migrate
 
 ```
 
+```
+更新models之后同步数据库中,没有新增字段?
+ 每个app还得带有 migrations/ 目录以及目录下的 __init__.py 文件，否则 Django 不会为这个app创建任何迁移。
+ 参考:https://cloud.tencent.com/developer/article/1642134
+ 
+```
+
 
 
 补充：在django内部提供了一系列的功能，这些功能也会使用到数据库，所以在项目搭建以后第一次数据迁移的时候，会看到django项目中其他的数据表被创建了。其中就有一个django内置的admin站点管理。
