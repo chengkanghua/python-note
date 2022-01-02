@@ -8,6 +8,7 @@ from web.views.class_list import ClassListHandler
 from web.views.public_customer import PublicCustomerHandler
 from web.views.private_customer import PrivateCustomerHandler
 from web.views.consult_record import ConsultRecordHandler
+from web.views.payment_record import PaymentRecordHandler
 site.register(models.Course,CourseHandler)
 site.register(models.School,SchoolHandler)
 
@@ -19,6 +20,6 @@ site.register(models.Customer,PublicCustomerHandler,'pub')
 site.register(models.Customer,PrivateCustomerHandler,'priv')
 
 site.register(models.ConsultRecord,ConsultRecordHandler)
-
+site.register(models.PaymentRecord,PaymentRecordHandler)
 
 
