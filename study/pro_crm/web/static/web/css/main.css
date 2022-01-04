@@ -1,0 +1,37 @@
+
+.btn-add{
+    margin: 10px 0;
+}
+
+.btn-submit{
+    margin-top: 20px;
+}
+
+.btn-register{
+    margin-top: 20px;
+    margin-left: 50px;
+}
+
+.list-tbody>tr>td {
+    line-height:30px !important;
+}
+
+#myform span{ 
+    color: red;
+    display: block;
+    text-align: right;
+}
+
+#id_sex{
+  height: 20px;
+  overflow: hidden;
+}
+#id_sex li{
+    float: left;
+    margin-right: 20px;
+    list-style: none;
+}
+
+.login-title{
+    margin: 50px 0;
+}

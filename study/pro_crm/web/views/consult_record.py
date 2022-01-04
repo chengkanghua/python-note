@@ -3,12 +3,14 @@ from stark.service.v1 import StarkHandler,StarkModelForm
 from django.shortcuts import HttpResponse
 from web import models
 from django.utils.safestring import mark_safe
+from .base import PermissionHandler
+
 class ConsultRecordModelForm(StarkModelForm):
     class Meta:
         model = models.ConsultRecord
         fields = ['note',]
 
-class ConsultRecordHandler(StarkHandler):
+class ConsultRecordHandler(PermissionHandler,StarkHandler):
     change_list_template = 'consult_record.html'
     model_form_class = ConsultRecordModelForm
     list_display = ['note','consultant','date']

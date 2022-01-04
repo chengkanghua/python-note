@@ -19,7 +19,7 @@ def get_choice_text(title, field):
     :return:
     '''
 
-    def inner(self, obj=None, is_header=None):
+    def inner(self, obj=None, is_header=None, *args, **kwargs):
         if is_header:
             return title
         method = "get_%s_display" % field
@@ -30,14 +30,14 @@ def get_choice_text(title, field):
 
 def get_datetime_text(title, field, time_format='%Y-%m-%d'):
     '''
-        对于Stark组件中定义列时，定制时间格式的数据
+    对于Stark组件中定义列时，定制时间格式的数据
     :param title:  页面显示的表头
     :param field:  字段名称
     :param time_format: 要格式化的时间格式
     :return:
     '''
 
-    def inner(self, obj=None, is_header=None):
+    def inner(self, obj=None, is_header=None, *args, **kwargs):
         if is_header:
             return title
         datetime_value = getattr(obj, field)
@@ -55,7 +55,7 @@ def get_m2m_text(title, field):
     :return:
     """
 
-    def inner(self, obj=None, is_header=None):
+    def inner(self, obj=None, is_header=None, *args, **kwargs):
         if is_header:
             return title
         queryset = getattr(obj, field).all()
@@ -64,6 +64,22 @@ def get_m2m_text(title, field):
 
     return inner
 
+def get_another_text(title, field, style=''):
+    """
+    对于Stark组件中定义列时，字段自定义标题或者样式，调用此方法即可。
+    :param title: 希望页面显示的表头
+    :param field: 字段名称
+    :param style: 样式
+    :return:
+    """
+
+    def inner(self, obj=None, is_header=None, *args, **kwargs):
+        if is_header:
+            return title
+        field_td = '<span style="%s">%s</span>' % (style, getattr(obj, field))
+        return mark_safe(field_td)
+
+    return inner
 
 class SearchGroupRow(object):
     def __init__(self, title, queryset_or_tuple, option, query_dict):
@@ -208,7 +224,7 @@ class StarkHandler(object):
     delete_template = None
 
     list_display = []
-    per_page_count = 2  # 每页显示数
+    per_page_count = 10  # 每页显示数
 
     def display_checkbox(self, obj=None, is_header=None, *args, **kwargs):
         if is_header:
@@ -240,7 +256,7 @@ class StarkHandler(object):
             self.reverse_change_url(pk=obj.pk), self.reverse_delete_url(pk=obj.pk))
         return mark_safe(tpl)
 
-    def get_list_display(self):
+    def get_list_display(self, request, *args, **kwargs):
         '''
         获取页面应该显示的列,预留的自定义扩展,例如:根据不同用户显示不同列
         :return:
@@ -260,7 +276,7 @@ class StarkHandler(object):
 
     model_form_class = None
 
-    def get_model_form_class(self, is_add,request,pk,*args,**kwargs):
+    def get_model_form_class(self, is_add, request, pk, *args, **kwargs):
         '''
         定制添加和编辑页面的model_form的定制
         :param is_add:
@@ -386,7 +402,7 @@ class StarkHandler(object):
 
         data_list = queryset[pager.start:pager.end]
         #   ############5 处理表格 ####
-        list_display = self.get_list_display()
+        list_display = self.get_list_display(request, *args, **kwargs)
         # 5.1处理表格的表头
         header_list = []
         if list_display:
@@ -402,6 +418,8 @@ class StarkHandler(object):
         # 5.1 处理表的内容
         # data_list = self.model_class.objects.all()
         body_list = []
+        # print('data_list:', data_list)
+        # print('list_display:', list_display)
         for row in data_list:
             tr_list = []
             if list_display:
@@ -451,7 +469,7 @@ class StarkHandler(object):
         :param request:
         :return:
         '''
-        model_form_class = self.get_model_form_class(True,request,None,*args,**kwargs)
+        model_form_class = self.get_model_form_class(True, request, None, *args, **kwargs)
         if request.method == 'GET':
             form = model_form_class()
             return render(request, self.add_template or 'stark/change.html', {'form': form})
@@ -476,7 +494,7 @@ class StarkHandler(object):
         if not current_change_object:
             return HttpResponse('要修改的数据不存在,请重新修改')
 
-        model_form_class = self.get_model_form_class(False,request,pk,*args,**kwargs)
+        model_form_class = self.get_model_form_class(False, request, pk, *args, **kwargs)
         if request.method == 'GET':
             form = model_form_class(instance=current_change_object)
             return render(request, self.change_template or 'stark/change.html', {'form': form})
@@ -577,6 +595,7 @@ class StarkHandler(object):
         def inner(request, *args, **kwargs):
             self.request = request
             return func(request, *args, **kwargs)
+
         return inner
 
     def get_urls(self):
