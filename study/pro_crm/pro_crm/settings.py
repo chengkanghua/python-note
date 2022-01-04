@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rbac.middlewares.rbac.RbacMiddleware',
 ]
 
 ROOT_URLCONF = 'pro_crm.urls'
@@ -124,7 +125,45 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = 'media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ######################### 权限配置 #################
+RBAC_USER_MODLE_CLASS = "web.models.UserInfo"
+PERMISSION_SESSION_KEY = "luffy_permission_url_list_key"
+MENU_SESSION_KEY = "luffy_permission_menu_key"
+# 自动化发现路由中URL时，排除的URL
+AUTO_DISCOVER_EXCLUDE = [
+    '/admin/.*',
+    '/login/',
+    '/logout/',
+    '/index/',
+    '/stu_login/',
+    '/stu/.*',
+    '/media/.*',
+]
+# 需要登录但无需权限的URL
+NO_PERMISSION_LIST = [
+            '/index/',
+            '/logout/',
+            '/media/.*',
+            '/info/',  # 个人信息修改
+            '/password/' # 个人密码修改
+            '/media/',
+            '/media/.*'
+        ]
+
+# 不做权限校验，白名单列表
+VALID_URL_LIST = [
+    '^/$',
+    '/login/',
+    '/admin/.*',
+    '/stu_login/',
+    '/stu/.*',
+
+]

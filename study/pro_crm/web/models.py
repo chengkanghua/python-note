@@ -18,6 +18,15 @@ class Department(models.Model):
     def __str__(self):
         return self.title
 
+class Course(models.Model):
+    '''
+    课程表:  linux基础 python全栈  java大数据
+    '''
+    name = models.CharField(verbose_name='课程名称',max_length=32)
+
+    def __str__(self):
+        return self.name
+
 class UserInfo(RbacUserInfo):
     '''
     员工表
@@ -34,15 +43,6 @@ class UserInfo(RbacUserInfo):
     def __str__(self):
         return self.nickname
 
-class Course(models.Model):
-    '''
-    课程表:  linux基础 python全栈  java大数据
-    '''
-    name = models.CharField(verbose_name='课程名称',max_length=32)
-
-    def __str__(self):
-        return self.name
-
 class ClassList(models.Model):
     """
     班级表
@@ -56,7 +56,7 @@ class ClassList(models.Model):
     start_date = models.DateField(verbose_name="开班日期")
     graduate_date = models.DateField(verbose_name="结业日期", null=True, blank=True)
     class_teacher = models.ForeignKey(verbose_name='班主任', to='UserInfo', related_name='classes',on_delete=models.CASCADE,limit_choices_to={'depart__title':'教质部'})
-    tech_teachers = models.ManyToManyField(verbose_name='任课老师', to='UserInfo', related_name='teach_classes', blank=True,limit_choices_to={'depart__title__in':['linux教学部','python教学部']})
+    tech_teachers = models.ManyToManyField(verbose_name='任课老师', to='UserInfo', related_name='teach_classes', blank=True,limit_choices_to={'depart__title__in':['教学部',]})
     memo = models.TextField(verbose_name='说明', blank=True, null=True)
 
     def __str__(self):
@@ -148,8 +148,8 @@ class Customer(models.Model):
     last_consult_date = models.DateField(verbose_name="最后跟进日期", auto_now_add=True)
 
     def __str__(self):
-        return "姓名:{0},联系方式:{1}".format(self.name, self.qq, )
-
+        # return "姓名:{0},联系方式:{1}".format(self.name, self.qq, )
+        return self.name
 
 class ConsultRecord(models.Model):
     '''
@@ -206,7 +206,56 @@ class Student(models.Model):
         (4, "退学")
     ]
     student_status = models.IntegerField(verbose_name="学员状态", choices=student_status_choices, default=1)
+    score = models.IntegerField(verbose_name='积分',default=100)
     memo = models.CharField(verbose_name='备注', max_length=255, blank=True, null=True)
+    password = models.CharField(verbose_name='密码', max_length=64, null=True)
 
     def __str__(self):
         return self.customer.name
+
+class ScoreRecord(models.Model):
+    """
+    积分记录
+    """
+    student = models.ForeignKey(verbose_name='学生', to='Student',on_delete=models.CASCADE)
+    content = models.TextField(verbose_name='理由')
+    score = models.IntegerField(verbose_name='分值', help_text='违纪扣分写负值，表现邮寄加分写正值')
+    user = models.ForeignKey(verbose_name='执行人', to='UserInfo',on_delete=models.CASCADE)
+
+class CourseRecord(models.Model):
+    """
+    上课记录表
+    """
+    class_object = models.ForeignKey(verbose_name="班级", to="ClassList",on_delete=models.CASCADE)
+    day_num = models.IntegerField(verbose_name="节次")
+    teacher = models.ForeignKey(verbose_name="讲师", to='UserInfo',on_delete=models.CASCADE)
+    date = models.DateField(verbose_name="上课日期", auto_now_add=True)
+
+    course_title = models.CharField(verbose_name='本节课程名称', max_length=64, null=True, blank=True)
+    course_memo = models.TextField(verbose_name='内容概要', null=True, blank=True)
+    homework = models.TextField(verbose_name='作业内容', null=True, blank=True)
+
+    def __str__(self):
+        return "{0} day{1}".format(self.class_object, self.day_num)
+
+class StudyRecord(models.Model):
+    '''
+    学生考勤记录
+    '''
+    course_record = models.ForeignKey(verbose_name="第几天课程", to="CourseRecord",on_delete=models.CASCADE)
+    student = models.ForeignKey(verbose_name="学员", to='Student',on_delete=models.CASCADE)
+    record_choices = (
+        ('checked', "已签到"),
+        ('vacate', "请假"),
+        ('late', "迟到"),
+        ('noshow', "缺勤"),
+        ('leave_early', "早退"),
+    )
+    record = models.CharField("上课纪录", choices=record_choices, default="checked", max_length=64)
+    homework_url = models.CharField(verbose_name='作业', max_length=64, null=True, blank=True)
+    homework_score = models.PositiveIntegerField(verbose_name='作业成绩', default=0)
+    homework_comment = models.CharField(verbose_name='导师点评', max_length=255, null=True, blank=True)
+
+
+
+

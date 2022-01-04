@@ -2,23 +2,27 @@ from stark.service.v1 import StarkHandler,StarkModelForm,get_m2m_text,get_choice
 from web import models
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from .base import PermissionHandler
+
 class PrivateCustomerModelForm(StarkModelForm):
     class Meta:
         model = models.Customer
         exclude = ['consultant',]    #排除课程顾问的显示编辑
 
-class PrivateCustomerHandler(StarkHandler):
+class PrivateCustomerHandler(PermissionHandler,StarkHandler):
     model_form_class = PrivateCustomerModelForm
     def display_record(self,obj=None,is_header=None,*args,**kwargs):
         if is_header:
             return '跟进'
         record_url = reverse('stark:web_consultrecord_list',kwargs={'customer_id': obj.pk})
         return mark_safe('<a target="_blank" href="%s">跟进 </a>' % record_url)
-    def display_pay_record(self,obj=None,is_header=None,*args,**kwargs):
+
+    def display_pay_record(self,obj=None, is_header=None, *args, **kwargs):
         if is_header:
             return '缴费'
-        record_url = reverse('stark:web_paymentrecord_list',kwargs={'customer_id': obj.pk})
+        record_url = reverse('stark:web_paymentrecord_list', kwargs={'customer_id': obj.pk})
         return mark_safe('<a target="_blank" href="%s">缴费</a>' % record_url)
+
     list_display = [StarkHandler.display_checkbox,'name','qq',get_m2m_text('咨询课程','course'),
                     get_choice_text('状态','status'),display_record,display_pay_record]
 

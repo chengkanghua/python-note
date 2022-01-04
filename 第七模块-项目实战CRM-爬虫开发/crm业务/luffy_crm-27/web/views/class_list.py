@@ -16,7 +16,6 @@ class ClassListModelForm(StarkModelForm):
             'graduate_date': DateTimePickerInput,
         }
 
-
 class ClassListHandler(StarkHandler):
 
     def display_course(self, obj=None, is_header=None, *args, **kwargs):

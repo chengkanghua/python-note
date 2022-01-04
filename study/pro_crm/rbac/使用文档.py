@@ -28,6 +28,8 @@ RBAC组件的使用文档
                 abstract = True
 
     业务/models.py
+        from rbac.models import UserInfo as RbacUserInfo
+
         class UserInfo(RbacUserInfo):
             phone = models.CharField(verbose_name='联系方式', max_length=32)
             level_choices = (
@@ -39,13 +41,15 @@ RBAC组件的使用文档
 
             depart = models.ForeignKey(verbose_name='部门', to='Department')
 
-4. 讲业务系统中的用户表的路径写到配置文件。
+4. 将业务系统中的用户表的路径写到配置文件。
 
     # 业务中的用户表
     RBAC_USER_MODLE_CLASS = "app01.models.UserInfo"
 
     用于在rbac分配权限时，读取业务表中的用户信息。
-
+    例如:
+        # ######################### 权限配置 #################
+        RBAC_USER_MODLE_CLASS = "web.models.UserInfo"
 
 5. 业务逻辑开发
     将所有的路由都设置一个name，如：
@@ -71,6 +75,7 @@ RBAC组件的使用文档
         urlpatterns = [
             ...
             url(r'^rbac/', include('rbac.urls', namespace='rbac')),
+            # url(r'^rbac/', include(('rbac.urls','rbac'), namespace='rbac')), #django2.0以上这样写
 
         ]
 
@@ -93,7 +98,7 @@ RBAC组件的使用文档
 7. 编写用户登录的逻辑【进行权限初始化】
 
     from django.shortcuts import render, redirect
-    from app01 import models
+    from app01 import models  # app01换成对应web应用名称
     from rbac.service.init_permission import init_permission
 
 
@@ -127,7 +132,6 @@ RBAC组件的使用文档
 
 
     相关配置：需要登录但无需权限的URL
-
         # 需要登录但无需权限的URL
         NO_PERMISSION_LIST = [
             '/index/',
@@ -145,7 +149,7 @@ RBAC组件的使用文档
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'rbac.middlewares.rbac.RbacMiddleware',
+        'rbac.middlewares.rbac.RbacMiddleware',  #中间件中添加
     ]
 
     # 白名单，无需登录就可以访问

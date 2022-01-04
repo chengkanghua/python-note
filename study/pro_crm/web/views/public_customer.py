@@ -4,7 +4,7 @@ from django.db import transaction
 from django.conf.urls import url
 from django.utils.safestring import mark_safe
 from django.shortcuts import HttpResponse, render,redirect
-
+from .base import PermissionHandler
 
 class PublicCustomerModelForm(StarkModelForm):
     class Meta:
@@ -12,7 +12,7 @@ class PublicCustomerModelForm(StarkModelForm):
         exclude = ['consultant', ]  # 公户排除录入课程顾问字段
 
 
-class PublicCustomerHandler(StarkHandler):
+class PublicCustomerHandler(PermissionHandler,StarkHandler):
 
     def display_record(self, obj=None, is_header=None,*args,**kwargs):
         if is_header:

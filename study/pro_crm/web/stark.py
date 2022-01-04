@@ -9,6 +9,10 @@ from web.views.public_customer import PublicCustomerHandler
 from web.views.private_customer import PrivateCustomerHandler
 from web.views.consult_record import ConsultRecordHandler
 from web.views.payment_record import PaymentRecordHandler
+from web.views.check_payment_record import CheckPaymentRecordHandler
+from web.views.student import StudnetHandler
+from web.views.score_record import ScoreHandler
+from web.views.course_record import CourseRecordHandler
 site.register(models.Course,CourseHandler)
 site.register(models.School,SchoolHandler)
 
@@ -21,5 +25,8 @@ site.register(models.Customer,PrivateCustomerHandler,'priv')
 
 site.register(models.ConsultRecord,ConsultRecordHandler)
 site.register(models.PaymentRecord,PaymentRecordHandler)
+site.register(models.PaymentRecord,CheckPaymentRecordHandler,'check')
+site.register(models.Student,StudnetHandler)
 
-
+site.register(models.ScoreRecord,ScoreHandler)
+site.register(models.CourseRecord,CourseRecordHandler)

@@ -3,9 +3,10 @@ from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.conf.urls import url
 from django.shortcuts import HttpResponse, render, redirect
-from stark.service.v1 import StarkHandler, get_choice_text, StarkModelForm, StarkForm, Option
+from stark.service.v1 import StarkHandler, get_choice_text, StarkModelForm, StarkForm, Option,get_m2m_text
 from web import models
 from web.utils.md5 import gen_md5
+from .base import PermissionHandler
 
 
 class UserInfoAddModelForm(StarkModelForm):
@@ -43,14 +44,14 @@ class ResetPasswordForm(StarkForm):
         self.cleaned_data['password'] = gen_md5(password)
         return self.cleaned_data
 
-class UserInfoHandler(StarkHandler):
+class UserInfoHandler(PermissionHandler,StarkHandler):
     def display_reset_pwd(self, obj=None, is_header=None):
         if is_header:
             return '重置密码'
         reset_url = self.reverse_commons_url(self.get_url_name('reset_pwd'), pk=obj.pk)
         return mark_safe("<a href='%s'>重置密码</a>" %reset_url )
 
-    list_display = ['nickname',get_choice_text('性别','gender'),'phone','email','depart',display_reset_pwd]
+    list_display = ['nickname',get_choice_text('性别','gender'),'phone','email','depart',get_m2m_text('角色', 'roles'),display_reset_pwd]
 
     search_list = ['nickname__contains','name__contains']
 
@@ -59,7 +60,7 @@ class UserInfoHandler(StarkHandler):
         Option(field='depart'),
     ]
 
-    def get_model_form_class(self,is_add=False):
+    def get_model_form_class(self,is_add,request,pk,*args,**kwargs):
         if is_add:
             return UserInfoAddModelForm
         else:
