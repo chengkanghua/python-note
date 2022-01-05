@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% block "title" %}
+    <title>Document</title>
+    {% endblock %}
+    {% block "js-css" %}
+    <script src="/static/web/jquery/jquery-3.4.0.min.js"></script>
+    <script src="/static/web/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/web/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/web/css/main.css">
+    {% endblock%}
+</head>
+
+<body>
+    {% block "top" %}
+    {% include "student/top.html" %}
+    {% endblock %}
+
+    <div class="container">
+        <div class="row">
+            {% block "content"%}
+            暂无内容
+            {% block "paginator" %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li>
+                        {% if current_page_data.has_previous %}
+                        <a href="?page={{current_page_data.previous_page_number}}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                        {% else %}
+                        <a aria-label="Previous" class="disabled">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                        {% endif %}
+                    </li>
+
+                    {% for i in page_range%}
+                    {% if i == current_page_num %}
+                    <li class="active"><a href="?page={{i}}">{{i}}</a></li>
+                    {% else %}
+                    <li><a href="?page={{i}}">{{i}}</a></li>
+                    {% endif %}
+                    {% endfor %}
+
+                    <li>
+                        {% if current_page_data.has_next %}
+                        <a href="?page={{current_page_data.next_page_number}}" aria-label="Next"><span
+                                aria-hidden="true">&raquo;</span></a>
+                        {% else %}
+                        <a aria-label="Next" class="disabled"><span aria-hidden="true">&raquo;</span></a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+            {% endblock %}            
+            {% endblock %}
+
+
+        </div>
+    </div>
+
+
+
+    {% block "other" %}
+
+    {% endblock %}
+
+</body>
+
+</html>
