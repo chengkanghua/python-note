@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+<div class="luffy-container">
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <div style="margin: 5px 0">
+            <input type="submit" value="保存" class="btn btn-success">
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 150px">姓名</th>
+                    <th style="width: 150px">考勤</th>
+                    <th style="width: 150px">作业</th>
+                    <th style="width: 150px">成绩</th>
+                    <th>导师点评</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset %}
+                <tr>
+                    {{ form.id }}
+                    <td>{{ form.instance.student }}</td>
+                    <td>{{ form.record }} </td>
+                    <td>
+                        {% if form.instance.homework_url %}
+                        <a href="/media/homework/{{ form.instance.homework_url }}" target="_blank">点击下载</a>
+                        {% else %}
+                        未提交
+                        {% endif %}
+                    </td>
+                    <td>{{ form.homework_score }} <span style="color: red">{{ form.record.errors.0 }}</span></td>
+                    <td>{{ form.homework_comment }} <span style="color: red">{{ form.record.errors.0 }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+{% endblock %}

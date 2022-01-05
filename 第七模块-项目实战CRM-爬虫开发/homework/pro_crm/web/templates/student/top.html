@@ -1,0 +1,38 @@
+<nav class="navbar navbar-default">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/stu/index/">学生课程系统</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                {% if 'class' in request.path %}
+                <li class="active"><a href="/stu/classlist/">班级</a></li>
+                {% else %}
+                <li><a href="/stu/classlist/">班级</a></li>
+                {% endif %}
+
+{#                {% if 'course' in request.path %}#}
+{#                <li class="active"><a href="/stu/course/list/0/">作业</a></li>#}
+{#                {% else %}#}
+{#                <li><a href="/stu/course/list/0/">作业</a></li>#}
+{#                {% endif %}#}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.session.student_info.id %}
+                <li><a href="#">欢迎你</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">{{request.session.student_info.name}} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/stu/logout/">退出</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>

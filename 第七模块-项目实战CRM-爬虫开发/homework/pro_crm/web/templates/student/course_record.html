@@ -1,0 +1,74 @@
+{% extends "student/base.html" %}
+
+
+{% block "title" %}
+    <title>作业</title>
+{% endblock %}
+
+
+
+{% block "content" %}
+    <div class="col-md-6 col-md-offset-3">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ course_record_obj.class_object }}&nbsp;&nbsp;&nbsp;{{ course_record_obj.course_title }}</div>
+            <div class="panel-body">
+                <h4>内容概要: </h4>
+                <p>{{ course_record_obj.course_memo }}</p>
+                <h4>作业内容: </h4>
+                <p>{{ course_record_obj.homework }}</p>
+            </div>
+        </div>
+
+        {% if study_record_obj %}
+            {% if study_record_obj.homework_url %}
+                <div style="margin-top:15px;margin-bottom: 15px;">
+                    <label for="">作业下载:</label>
+                    <a href="/media/homework/{{ study_record_obj.homework_url }}">点击下载</a>
+                </div>
+            {% endif %}
+            {% if study_record_obj.homework_score %}
+                <div style="margin-top:15px;margin-bottom: 15px;">
+                    <label for="">作业成绩:</label>
+                    <span>{{ study_record_obj.homework_score }}</span>
+                </div>
+                <div>
+                    <label for="">导师点评:</label>
+                    <span>{{ study_record_obj.homework_comment }}</span>
+                </div>                
+            {% else %}
+                <form action="" method="post" id="myform" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div>
+                        <label for="">打包上传作业(文件格式为.ZIP):</label>
+                        <input type="file" class="form-control" name="homework" id="homework">
+                    </div>
+                    <div>
+                        <input type="submit" value="提 交" class="btn btn-success pull-right btn-submit">
+                        <span style='color: red;'>{{ msg }}</span>
+                    </div>
+                </form>
+            {% endif %}
+
+        {% else %}
+            未开放作业上传
+        {% endif %}
+
+
+    </div>
+{% endblock %}
+
+
+
+
+
+
+{% block "other" %}
+
+{% endblock %}
+
+
+
+
+
+
