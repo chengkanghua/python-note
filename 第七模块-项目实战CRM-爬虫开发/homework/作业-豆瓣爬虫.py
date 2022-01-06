@@ -19,7 +19,7 @@ if __name__ == "__main__":
             'limit':'20',
         }
         # 免费代理地址 https://www.kuaidaili.com/free/
-        response = requests.get(url=url,params=param,headers=header,proxies={"http":"111.160.169.54:41820"})
+        response = requests.get(url=url,params=param,headers=header,proxies={"http":"218.75.102.198:8000"})
         data.append(response.json())
 
 fp = open('./douban1.json','a',encoding='utf-8')

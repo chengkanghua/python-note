@@ -16,6 +16,7 @@ def login(request):
     :param request:
     :return:
     '''
+    print(request.path_info)
     if request.method == 'GET':
         return render(request,'login.html')
 

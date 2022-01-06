@@ -1,0 +1,11 @@
+
+django 框架使用
+    登陆页面
+       登陆成功 设置session  跳转主页 index
+       django 中间拦截没有登陆的访问
+       index 跳转登陆页面 login
+
+
+
+
+
