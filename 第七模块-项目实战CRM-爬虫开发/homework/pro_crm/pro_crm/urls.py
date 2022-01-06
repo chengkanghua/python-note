@@ -21,8 +21,7 @@ from stark.service.v1 import site
 from django.views.static import serve
 from web.views import account
 from web.views.stu import student, class_list, course_record
-# print(f"^{settings.MEDIA_URL}(?P<path>.*)$" )
-# print(settings.MEDIA_URL) #/media/
+
 urlpatterns = [
     url('admin/', admin.site.urls),
     url('^stark/',site.urls),

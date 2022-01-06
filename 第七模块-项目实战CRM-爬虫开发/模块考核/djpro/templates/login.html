@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bs/css/bootstrap.css">
+    <script src="/static/bs/js/jquery3.6.js"></script>
+    <script src="/static/bs/js/bootstrap.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <form class="form-group">
+                {% csrf_token %}
+                <label for="name">用户名</label>
+                <input type="text" name="name" id="name" class="form-control">
+                <label for="pwd">密码</label>
+                <input type="password" name="pwd" id="pwd" class="form-control">
+                <span class="error"></span>
+                <div class="btn btn-default pull-right btn_login">登陆</div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+    $('.btn_login').click(function () {
+        var name = $('#name').val()
+        var pwd = $('#pwd').val()
+        //console.log(name,pwd)
+        $.ajax({
+            url:'/login/',
+            type:'post',
+            data:{
+                name:name,
+                pwd:pwd,
+                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+            },
+            success:function (data) {
+                console.log(data)
+                if (data.state){
+                    location.href='/index/'
+                }else{
+                    $('.error').text(data.msg)
+                    setTimeout(function () {
+                        $('.error').text('')
+                    },3000)
+                }
+            }
+        })
+
+
+    })
+</script>
+</body>
+</html>
