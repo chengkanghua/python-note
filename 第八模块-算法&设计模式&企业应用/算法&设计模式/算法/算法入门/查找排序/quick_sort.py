@@ -45,7 +45,7 @@ def quick_sort(li):
     _quick_sort(li, 0, len(li)-1)
 
 li = list(range(10000, 0, -1))
-# random.shuffle(li)
+random.shuffle(li)
 #
 # li1 = copy.deepcopy(li)
 # li2 = copy.deepcopy(li)
