@@ -23,14 +23,14 @@ from web.views import account
 from web.views.stu import student, class_list, course_record
 
 urlpatterns = [
-    url('admin/', admin.site.urls),
-    url('^stark/',site.urls),
-    url(r'^rbac/', include(('rbac.urls','rbac'), namespace='rbac')),
-    url('^login/',account.login,name='login'),
-    url('^logout/',account.logout,name='logout'),
-    url('^index/',account.index,name='index'),
-    url('^info/', account.info, name='info'),
-    url('^password/', account.password, name='password'),
+    path('admin/', admin.site.urls),
+    path('stark/',site.urls),
+    re_path(r'^rbac/', include(('rbac.urls','rbac'), namespace='rbac')),
+    path('login/',account.login,name='login'),
+    path('logout/',account.logout,name='logout'),
+    path('index/',account.index,name='index'),
+    path('info/', account.info, name='info'),
+    path('password/', account.password, name='password'),
 
 
     # 学生端url
@@ -45,9 +45,9 @@ urlpatterns = [
     re_path(r'^$', account.guide),
 
     # 配置media
-    # re_path(r"^%s(?P<path>.*)$" % settings.MEDIA_URL, serve,
-    #         {"document_root": settings.MEDIA_ROOT}),
-
-    re_path(r"^media/(?P<path>.*)$", serve,
+    re_path(r"^%s(?P<path>.*)$" % settings.MEDIA_URL.lstrip('/'), serve,
             {"document_root": settings.MEDIA_ROOT}),
+
+    # re_path(r"^media/(?P<path>.*)$", serve,
+    #         {"document_root": settings.MEDIA_ROOT}),
 ]

@@ -149,6 +149,7 @@ VALID_URL_LIST = [
     '/admin/.*',
     '/stu_login/',
     '/stu/.*',
+    '/media/.*',
 ]
 # 权限配置自动获取URL信息，此处内容不获取
 AUTO_DISCOVER_EXCLUDE = [

@@ -126,9 +126,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = 'media/'
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = 'media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -155,6 +154,7 @@ VALID_URL_LIST = [
     '/admin/.*',
     '/stu_login/',
     '/stu/.*',
+    '/media/.*',
 ]
 
 # 自动化发现路由中URL时，排除的URL

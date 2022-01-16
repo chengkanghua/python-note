@@ -7,6 +7,7 @@ class FbsSpider(RedisCrawlSpider):
     name = 'fbs'
     # allowed_domains = ['www.xx.com']
     # start_urls = ['http://www.xx.com/']
+    # redis-cli  lpush ershoufang https://bj.58.com/ershoufang/
     redis_key = 'ershoufang'
     link = LinkExtractor(allow=r'ershoufang/p\d+/')
     rules = (

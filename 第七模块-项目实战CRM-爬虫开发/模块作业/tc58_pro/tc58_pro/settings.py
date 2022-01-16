@@ -1,4 +1,4 @@
-# Scrapy settings for fbsPro project
+# Scrapy settings for tc58_pro project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,12 +7,12 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'fbsPro'
+BOT_NAME = 'tc58_pro'
 
-SPIDER_MODULES = ['fbsPro.spiders']
-NEWSPIDER_MODULE = 'fbsPro.spiders'
+SPIDER_MODULES = ['tc58_pro.spiders']
+NEWSPIDER_MODULE = 'tc58_pro.spiders'
+# LOG_LEVEL = 'ERROR'
 
-LOG_LEVEL = 'ERROR'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.45 Safari/537.36 Edg/97.0.1072.34'
 
@@ -45,13 +45,13 @@ ROBOTSTXT_OBEY = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'fbsPro.middlewares.FbsproSpiderMiddleware': 543,
+#    'tc58_pro.middlewares.Tc58ProSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'fbsPro.middlewares.FbsproDownloaderMiddleware': 543,
+#    'tc58_pro.middlewares.Tc58ProDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'fbsPro.pipelines.FbsproPipeline': 300,
+#    'tc58_pro.pipelines.Tc58ProPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -86,21 +86,3 @@ ROBOTSTXT_OBEY = False
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-
-
-#指定管道
-ITEM_PIPELINES = {
-    'scrapy_redis.pipelines.RedisPipeline': 400
-}
-#指定调度器
-# 增加了一个去重容器类的配置, 作用使用Redis的set集合来存储请求的指纹数据, 从而实现请求去重的持久化
-DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
-# 使用scrapy-redis组件自己的调度器
-SCHEDULER = "scrapy_redis.scheduler.Scheduler"
-# 配置调度器是否要持久化, 也就是当爬虫结束了, 要不要清空Redis中请求队列和去重指纹的set。如果是True, 就表示要持久化存储, 就不清空数据, 否则清空数据
-SCHEDULER_PERSIST = True
-
-#指定redis
-REDIS_HOST = '127.0.0.1' #redis远程服务器的ip（修改）
-REDIS_PORT = 6379
-
