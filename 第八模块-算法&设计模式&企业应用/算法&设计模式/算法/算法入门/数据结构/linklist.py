@@ -6,13 +6,14 @@ class Node:
     def __init__(self, item):
         self.item = item
         self.next = None
+        self.prior = None
 
 def create_linklist_head(li):
     head = Node(li[0])
     for element in li[1:]:
         node = Node(element)
         node.next = head
-        head = node
+        head = node  # 新的head
     return head
 
 def create_linklist_tail(li):
@@ -28,6 +29,9 @@ def print_linklist(lk):
     while lk:
         print(lk.item, end=',')
         lk = lk.next
+
+
+
 
 lk = create_linklist_tail([1,2,3,6,8])
 print_linklist(lk)

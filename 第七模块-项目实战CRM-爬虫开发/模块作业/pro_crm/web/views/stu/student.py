@@ -4,6 +4,7 @@ from web import models
 from web.utils.md5 import gen_md5
 
 
+
 def index(request):
     """学生中心首页"""
     return render(request, 'student/index.html')
@@ -20,6 +21,7 @@ def login(request):
     if not student:
         return render(request, 'student/login.html', {'msg': '用户名或密码错误'})
     request.session['student_info'] = {'id': student.id, 'name': student.customer.name}
+
     return redirect('/stu/index/')
 
 
