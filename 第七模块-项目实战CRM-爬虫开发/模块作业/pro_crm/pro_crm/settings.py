@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-lm!0qdim5ymsw5pdq#zi_-kj0%ze(9pa=n5x@@g3(pudvst-k&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"] #允许所有主机访问
+
 
 
 # Application definition
@@ -85,7 +87,16 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'HOST': '127.0.0.1',  # 数据库主机
+#         'PORT': 3306,  # 数据库端口
+#         'USER': 'root',  # 数据库用户名
+#         'PASSWORD': '',  # 数据库用户密码
+#         'NAME': 'crm'  # 数据库名字
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
