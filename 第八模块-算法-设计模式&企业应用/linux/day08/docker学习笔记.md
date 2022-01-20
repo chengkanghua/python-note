@@ -251,6 +251,8 @@ redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 1
 
 ## docker学习
 
+老师博客地址 https://www.cnblogs.com/pyyu/tag/docker/
+
 本地开发环境--快速开发新功能---django2---等等新的模块
 
 测试环境---测试代码
@@ -527,7 +529,6 @@ docker port  容器id  #查看容器的端口转发
 FROM scratch #制作base image 基础镜像，尽量使用官方的image作为base image
 FROM centos #使用base image
 FROM ubuntu:14.04 #带有tag的base image
-
 
 #LABEL标签，定义变量，定义坐着信息等
 LABEL version=“1.0” #容器元信息，帮助信息，Metadata，类似于代码注释

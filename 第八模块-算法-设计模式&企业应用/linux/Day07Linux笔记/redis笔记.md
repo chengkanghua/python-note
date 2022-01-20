@@ -2,7 +2,9 @@
 
 ### 五大数据类型，开发必会的技能
 
-老师的博客
+老师的博客 
+
+https://www.cnblogs.com/pyyu/p/9843950.html  redis文章列表
 
 https://www.cnblogs.com/pyyu/p/9467279.html
 

@@ -119,6 +119,27 @@ vim /etc/profile
 写入PATH="/opt/tengine/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:"
 
 ```
+# mysql 安装 建立库
+```bash
+[root@centos7-kh ~]# yum install mariadb mariadb-server
+[root@centos7-kh ~]# systemctl start mariadb
+[root@centos7-kh ~]# systemctl enable mariadb
+[root@centos7-kh ~]# systemctl status mariadb
+
+# 登陆创建 crm库
+[root@centos7-kh ~]# mysql -u root -p
+Enter password:
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 2
+Server version: 5.5.68-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> create database crm charset=utf8;
+MariaDB [(none)]> quit
+```
 
 # Uwsgi django 等安装
 ```bash
