@@ -471,6 +471,6 @@ print(" [x] Awaiting RPC requests")
 channel.start_consuming()
 ```
 
-
+https://www.cnblogs.com/pyedu/p/11866829.html
 
  
