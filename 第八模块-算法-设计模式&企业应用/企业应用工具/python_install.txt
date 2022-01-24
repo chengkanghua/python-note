@@ -1,0 +1,235 @@
+部署⼀个python业务的web服务器
+
+软件环境
+rhel7.5
+
+python3.7.1   
+wget https://www.python.org/ftp/python/3.7.1/Python-3.7.1.tar.xz
+
+
+uwsgi 2.0.17
+wget https://files.pythonhosted.org/packages/a2/c9/
+a2d5737f63cd9df4317a4acc15d1ddf4952e28398601d8d7d706c16381e0/
+uwsgi-2.0.17.1.tar.gz
+
+
+#/usr/local/lib/python3.7
+[root@web01 ~]# tar xf Python-3.7.1.tar.xz
+[root@web01 ~]# cd Python-3.7.1
+[root@web01 Python-3.7.1]# yum -y install gcc-* openssl-* libffi-
+devel  sqlite-devel
+[root@web01 Python-3.7.1]#  ./configure --enable-optimizations --with-openssl=/usr/bin/openssl
+[root@web01 Python-3.7.1]# make -j4
+[root@web01 Python-3.7.1]# make install
+
+[root@web01 Python-3.7.1]# python3
+Python 3.7.1 (default, Oct 27 2018, 22:51:15) 
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-28)] on linux
+Type "help", "copyright", "credits" or "license" for more 
+information.
+>>> 
+>>> exit();
+
+当我们从Python官⽅⽹站下载并安装好Python 3.5后，我们就直接获得了⼀个官⽅版本的
+解释器：CPython。
+CPython。这个解释器是⽤C语⾔开发的，所以叫CPython。在命令⾏下运⾏python就是启
+动CPython解释器。
+CPython是使⽤最⼴的Python解释器。教程的所有代码也都在CPython下执⾏。
+⽤ Python 的语法混合编写 Python 和 C/C++ 代码，提升 Python 速度
+调⽤ C/C++ 代码
+
+pip is configured with locations that require TLS/SSL, however the 
+ssl module in Python is not available.
+
+[root@web01 Python-3.7.1]# vim Modules/Setup    把下边这段话的#去掉
+211 SSL=/usr/local/ssl
+212 _ssl _ssl.c \
+213         -DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
+214         -L$(SSL)/lib -lssl -lcrypto
+
+[root@web01 Python-3.7.1]# make
+[root@web01 Python-3.7.1]# make install
+
+#升级pip⼯具  pip 是 Python 包管理⼯具，该⼯具提供了对Python 包的查找、下
+载、安装、卸载的功能。
+[root@web01 ~]# pip3 install --upgrade pip
+Collecting pip
+  Downloading https://files.pythonhosted.org/packages/c2/
+d7/90f34cb0d83a6c5631cf71dfe64cc1054598c843a92b400e55675cc2ac37/
+pip-18.1-py2.py3-none-any.whl (1.3MB)
+    100% |████████████████████████████████| 1.3MB 106kB/s 
+Installing collected packages: pip
+  Found existing installation: pip 10.0.1
+    Uninstalling pip-10.0.1:
+      Successfully uninstalled pip-10.0.1
+Successfully installed pip-18.1
+
+virtualenv 是⼀个创建隔绝的Python环境的⼯具。virtualenv创建⼀个包含所有必要
+的可执⾏⽂件的⽂件夹，⽤来使⽤Python⼯程所需的包。
+[root@web01 ~]# pip3 install virtualenv
+Collecting virtualenv
+  Downloading https://files.pythonhosted.org/packages/
+b6/30/96a02b2287098b23b875bc8c2f58071c35d2efe84f747b64d523721dc2b5/
+virtualenv-16.0.0-py2.py3-none-any.whl (1.9MB)
+    100% |████████████████████████████████| 1.9MB 55kB/s 
+Installing collected packages: virtualenv
+Successfully installed virtualenv-16.0.0
+
+[root@web01 ~]# virtualenv web01
+[root@web01 ~]# source web01/bin/activate
+(web01) [root@web01 ~]# pip3 install django
+(web01) [root@web01 ~]#django-admin.py startproject www
+(web01) [root@web01 ~]#python3 manage.py runserver 
+192.168.10.42:8000
+(web01) [root@web01 ~]# vim www/settings.py
+   ALLOWED_HOSTS = ['*']
+
+
+[root@web01 ~]# pip3 install django
+Collecting django
+  Downloading https://files.pythonhosted.org/packages/32/ab/
+22530cc1b2114e6067eece94a333d6c749fa1c56a009f0721e51c181ea53/
+Django-2.1.2-py3-none-any.whl (7.3MB)
+    100% |████████████████████████████████| 7.3MB 96kB/s 
+Collecting pytz (from django)
+  Downloading https://files.pythonhosted.org/packages/52/8b/
+876c5745f617630be90cfb8fafe363c6d7204b176dc707d1805d1e9a0a35/
+pytz-2018.6-py2.py3-none-any.whl (507kB)
+    100% |████████████████████████████████| 512kB 118kB/s 
+Installing collected packages: pytz, django
+Successfully installed django-2.1.2 pytz-2018.6
+
+
+uwsgi是服务器和服务端应⽤程序的通信协议，规定了怎么把请求转发给应⽤程序和返回
+uWSGI是⼀个Web服务器，它实现了WSGI协议、uwsgi、http等协议。Nginx中
+HttpUwsgiModule的作⽤是与uWSGI服务器进⾏交换。
+nginx 和 uWSGI交互就必须使⽤同⼀个协议，⽽上⾯说了uwsgi⽀持
+fastcgi,uwsgi,http协议，这些都是nginx⽀持的协议，只要⼤家沟通好使⽤哪个协议，
+就可以正常运⾏了。
+
+[root@web01 ~]# pip3 install uwsgi
+Collecting uwsgi
+  Downloading https://files.pythonhosted.org/packages/a2/c9/
+a2d5737f63cd9df4317a4acc15d1ddf4952e28398601d8d7d706c16381e0/
+uwsgi-2.0.17.1.tar.gz (800kB)
+    100% |████████████████████████████████| 808kB 64kB/s 
+Installing collected packages: uwsgi
+  Running setup.py install for uwsgi ... done
+Successfully installed uwsgi-2.0.17.1
+
+
+uwsgi
+
+[root@web01 ~]# mkdir /etc/uwsgi
+[root@web01 ~]# vim /etc/uwsgi/uwsgi.ini
+[uwsgi]
+uid = root
+gid = root
+socket = 127.0.0.1:9090
+master = true         //启动主进程
+vhost = true          //多站模式
+no-site = true        //多站模式时不设置⼊⼝模块和⽂件
+workers = 2           //⼦进程数
+reload-mercy = 10     //平滑的重启
+vacuum = true         //退出、重启时清理⽂件
+max-requests = 1000   //开启10000个进程后, ⾃动respawn下 
+limit-as = 512                // 将进程的总内存量控制在512M 
+buffer-size = 30000
+pidfile = /var/run/uwsgi9090.pid    //pid⽂件，⽤于下⾯的脚本启动、停⽌该
+进程
+daemonize = /website/uwsgi9090.log
+[root@web01 ~]# cat /etc/init.d/uwsgi 
+#!/bin/sh
+  DESC="uwsgi daemon"
+  NAME=uwsgi
+  DAEMON=/usr/local/bin/uwsgi
+  CONFIGFILE=/etc/uwsgi/$NAME.ini
+  PIDFILE=/var/run/$NAME.pid
+  SCRIPTNAME=/etc/init.d/$NAME
+  FIFOFILE=/tmp/uwsgififo
+  set -e
+  [ -x "$DAEMON" ] || exit 0
+
+  do_start() {
+  if [ ! -f $PIDFILE ];then
+      $DAEMON $CONFIGFILE || echo -n "uwsgi  running"
+  else
+      echo "The PID is exist..."
+  fi
+  }
+
+  do_stop() {
+  if [ -f $PIDFILE ];then
+      $DAEMON --stop $PIDFILE || echo -n "uwsgi not running"
+      rm -f $PIDFILE
+      echo "$DAEMON STOPED."
+  else
+      echo "The $PIDFILE doesn't found"
+  fi
+  }
+
+  do_reload() {
+  if [ -p $FIFOFILE ];then
+      echo w > $FIFOFILE
+  else
+      $DAEMON --touch-workers-reload $PIDFILE || echo -n "uwsgi 
+can't reload"
+  fi
+  }
+
+  do_status() {
+      ps aux|grep $DAEMON
+  }
+
+  case "$1" in
+  status)
+      echo -en "Status $NAME: \n"
+      do_status
+  ;;
+  start)
+      echo -en "Starting $NAME: \n"
+      do_start
+  ;;
+  stop)
+      echo -en "Stopping $NAME: \n"
+      do_stop
+  ;;  
+  reload|graceful)
+      echo -en "Reloading $NAME: \n"
+      do_reload
+  ;;
+  *)
+      echo "Usage: $SCRIPTNAME {start|stop|reload}" >&2
+      exit 3
+  ;;
+  esac
+  exit 0
+
+
+[root@web01 ~]# chmod 755 /etc/init.d/uwsgi
+
+Nginx发布
+ 
+ server {    
+      listen       80;
+      server_name  localhost;
+      #access_log   logs/abc.log main;
+      location / {
+          include  uwsgi_params;
+          uwsgi_pass  127.0.0.1:9090;         
+          uwsgi_param UWSGI_SCRIPT baism_web.wsgi;
+          uwsgi_param UWSGI_CHDIR  /usr/local/nginx/html/baism_web;
+          index  index.html index.htm;
+          client_max_body_size 35m;
+          #uwsgi_cache_valid 1m;
+          #uwsgi_temp_file_write_size 64k;
+          #uwsgi_busy_buffers_size 64k;
+         #uwsgi_buffers 8 64k;
+         #uwsgi_buffer_size 64k;
+         #uwsgi_read_timeout 300;
+        #uwsgi_send_timeout 300;
+        #uwsgi_connect_timeout 300;
+           }
+}
+
+pythonpath = /usr/local/lib/python3.7/site-packages

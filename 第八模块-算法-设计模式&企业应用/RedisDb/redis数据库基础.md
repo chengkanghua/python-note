@@ -35,7 +35,6 @@ redis是业界主流的key-value nosql 数据库之一。和Memcached类似，�
 
 Redis 中缓存热点数据，能够保护数据库，提高查询效率。如下图所示，我们在碰到需要执行耗时特别久，且结果不频繁变动的SQL，就特别适合将运行结果放入缓存。这样，后面的请求就去缓存中读取，使得请求能够迅速响应。
 
-
 ![img](assets/20180531085918614.jpeg)
 （二）并发
 
@@ -81,6 +80,58 @@ PONG
 ```
 
 这说明现在你已经成功地在计算机上安装了 Redis。
+
+#### linux源码编译安装redis
+
+```
+0.提前装好编译工具
+yum install gcc gcc-c++
+1.下载redis源码
+curl -o redis5.0.tar.gz https://download.redis.io/releases/redis-5.0.14.tar.gz
+2.解压缩
+tar -zxf redis5.0.tar.gz
+3.切换redis源码目录
+cd redis-5.0.14
+4.编译源文件
+make 
+
+[root@bj1 redis-5.0.14]# make
+cd src && make all
+make[1]: Entering directory `/opt/redis-5.0.14/src'
+    CC adlist.o
+In file included from adlist.c:34:0:
+zmalloc.h:50:31: fatal error: jemalloc/jemalloc.h: No such file or directory
+ #include <jemalloc/jemalloc.h>
+                               ^
+compilation terminated.
+make[1]: *** [adlist.o] Error 1
+make[1]: Leaving directory `/opt/redis-5.0.14/src'
+make: *** [all] Error 2
+
+[root@bj1 redis-5.0.14]# make MALLOC=libc  # 参考https://blog.csdn.net/AZXHNLS81/article/details/104569746
+
+
+5.编译好后，src/目录下有编译好的redis指令
+6.make install 安装到指定目录，默认在/usr/local/bin
+
+# 关闭防火墙
+systemctl stop firewalld
+systemctl disable firewalld
+# 配置文件
+[root@bj1 redis-5.0.14]# egrep -v "^$|^#" redis.conf
+bind 0.0.0.0
+daemonize yes
+
+#启动redis-server
+redis-server redis.conf
+
+# 将redis-server 放入后台并暂停
+ctrl + z
+[root@bj1 redis-5.0.14]# bg  # 后台服务器继续运行
+[1]+ redis-server redis.conf &
+```
+
+
 
 # 二、Python操作Redis
 
@@ -156,7 +207,7 @@ print r.get('foo')
 
 redis中的String在在内存中按照一个name对应一个value来存储。如图：
 
-![img](assets/720333-20161224160558276-436576532.png)
+<img src="assets/720333-20161224160558276-436576532.png" alt="img" style="zoom: 50%;" />
 
 set(name, value, ex=None, px=None, nx=False, xx=False)
 
@@ -179,7 +230,7 @@ setnx(name, value)
 设置值，只有name不存在时，执行设置操作（添加）
 ```
 
-setex(name, value, time)
+setex(name,  time，value)
 
 ```
 # 设置值
@@ -490,10 +541,10 @@ r.lrem(name, value, num)　
   
 # 参数：
     # name，redis的name
-    # value，要删除的值
-    # num，  num=0，删除列表中所有的指定值；
+    # count，  num=0，删除列表中所有的指定值；
            # num=2,从前到后，删除2个；
            # num=-2,从后向前，删除2个
+    # value 要删除的值
 ```
 
 lpop(name)
@@ -547,13 +598,13 @@ scard(name)
 # 获取name对应的集合中元素个数
 ```
 
-sdiff(keys, *args)
+sdiff(keys, *args)   差集
 
 ```
 # 在第一个name对应的集合中且不在其他name对应的集合的元素集合
 ```
 
-sinter(keys, *args)
+sinter(keys, *args)    交集
 
 ```
 # 获取多一个name对应集合的交集
@@ -589,7 +640,7 @@ srem(name, values)
 # 在name对应的集合中删除某些值
 ```
 
-sunion(keys, *args)
+sunion(keys, *args)  # 并集 两遍加一起去重
 
 ```
 # 获取多一个name对应的集合的并集
@@ -613,6 +664,16 @@ zadd(name, *args, **kwargs)
 
 ```
 
+zscan(name)
+
+```
+命令用于迭代有序集合中的元素（包括元素成员和元素分值）
+
+返回的每个元素都是一个有序集合元素，一个有序集合元素由一个成员（member）和一个分值（score）组成。
+```
+
+ 
+
 zcard(name)
 
 ```
@@ -625,15 +686,13 @@ zcount(name, min, max)
 # 获取name对应的有序集合中分数 在 [min,max] 之间的个数
 ```
 
-zincrby(name, value, amount)
+zincrby(name,  amount,value)
 
 ```
 # 自增name对应的有序集合的 name 对应的分数
 ```
 
 zrange( name, start, end, desc=False, withscores=False, score_cast_func=float)
-
-
 
 ```
 # 按照索引范围获取name对应的有序集合的元素

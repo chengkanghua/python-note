@@ -1,9 +1,8 @@
 import pika
 
-
-
 # 链接rabbitmq
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+credentials = pika.PlainCredentials('root', 'root123')  # mq用户名和密码
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='10.211.55.6',port=5672,credentials=credentials))
 channel = connection.channel()
 
 # 声明一个名为logs类型为fanout的交换机
