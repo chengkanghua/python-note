@@ -40,7 +40,49 @@ rabbitMQ是一款基于AMQP协议的消息中间件，它能够在应用之间�
 
 ## 3.1 rabbitmq的安装
 
-略
+```
+# 环境
+# CentOS Linux release 7.9.2009 (Core)
+
+下载地址：https://www.rabbitmq.com/download.html
+# RabbitMQ是采用 Erlang语言开发的，所以系统环境必须提供 Erlang环境，需要是安装 Erlang
+# Erlang和RabbitMQ版本对照：
+https://www.rabbitmq.com/which-erlang.html
+wget https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.9.13/rabbitmq-server-3.9.13-1.el7.noarch.rpm
+wget https://packagecloud.io/rabbitmq/erlang/packages/el/7/erlang-23.3.4.10-1.el7.x86_64.rpm/download.rpm
+mkdir -p /opt/rabbitmq
+rpm -Uvh erlang-23.3.4.10-1.el7.x86_64.rpm
+
+#在RabiitMQ安装过程中需要依赖socat插件，首先安装该插件
+yum install -y socat
+rpm -ivh rabbitmq-server-3.9.13-1.el7.noarch.rpm
+
+systemctl start rabbitmq-server
+systemctl status rabbitmq-server
+systemctl enable rabbitmq-server
+
+# 打开RabbitMQWeb管理界面插件
+rabbitmq-plugins enable rabbitmq_management
+打开浏览器，访问服务器公网ip:15672
+
+rabbitmq有一个默认的账号密码guest，但该情况仅限于本机localhost进行访问，所以需要添加一个远程登录的用户
+
+# 添加用户
+rabbitmqctl add_user root root123
+
+# 设置用户角色,分配操作权限
+rabbitmqctl set_user_tags root administrator
+
+# 为用户添加资源权限(授予访问虚拟机根节点的所有权限)
+rabbitmqctl set_permissions -p / root ".*" ".*" ".*"
+
+
+————————————————
+版权声明：本文为CSDN博主「Baret-H」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_45173404/article/details/116429302
+```
+
+
 
 ## 3.2 rabbitMQ工作模型
 
@@ -90,8 +132,9 @@ channel.start_consuming()
 **应答参数**
 
 ```python
-auto_ack=False
-ch.basic_ack(delivery_tag=method.delivery_tag)
+auto_ack=False # 监听队列参数改成False 
+ch.basic_ack(delivery_tag=method.delivery_tag) # 回调函数最后加入，
+# 回调函数执行到这里消息队列才会删除对应的值， 
 ```
 
 **持久化参数**

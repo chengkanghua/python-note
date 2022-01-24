@@ -3,7 +3,8 @@
 import pika
 
 # 1 链接rabbitmq
-connection = pika.BlockingConnection(pika.ConnectionParameters('127.0.0.1'))
+credentials = pika.PlainCredentials('root', 'root123')  # mq用户名和密码
+connection = pika.BlockingConnection(pika.ConnectionParameters('10.211.55.6',credentials=credentials))
 channel = connection.channel()
 
 # 2 创建队列

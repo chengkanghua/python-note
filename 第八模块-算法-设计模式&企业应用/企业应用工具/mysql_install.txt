@@ -1,0 +1,93 @@
+﻿mysql_install
+
+⼀、前期准备
+依赖包
+1）cmake命令  2.8以上
+https://cmake.org/download/
+
+boost Boost库是⼀个可移植、提供源代码的C++库，作为标准库的后备，是C++标准化进
+程的开发引擎之⼀
+https://www.boost.org/
+
+mysql
+https://dev.mysql.com/downloads/mysql/5.7.html#downloads
+
+
+⼆、install
+yum -y install ncurses-devel gcc-* bzip2-*
+
+
+1)cmake install
+tar xf cmake-3.6.0-rc1.tar
+cd cmake-3.6.0-rc1
+./configure
+make
+make install
+
+
+2）boost
+tar xf boost_1_59_0.tar.bz2
+mv boost_1_59_0 /usr/local/boost
+
+3)mysql 
+
+useradd -s /sbin/nologin -r mysql
+mkdir -pv /usr/local/mysql/data
+
+tar xf mysql...tar.xx
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/
+usr/local/mysql/data/ -DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock  
+-DDOWNLOAD_BOOST=0 -DWITH_INNODBBASE_STORAGE_ENGINE=1 -
+DENABLE_LOCAL_INFILE=1 -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -
+DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_USER=mysql -DWITH_DEBUG=0 
+-DWITH_EMBEDED_SERVER=0  -DDOWNLOAD_BOOST=1 -DWITH_BOOST=/usr/local/
+boost
+
+##解释
+-DCMAKE_INSTALL_PREFIX  指定安装路径
+-DMYSQL_DATADIR               指定存放数据⽂件的⽬录位置
+-DMYSQL_UNIX_ADDR                       指定mysql.sock的路径
+-DDOWNLOAD_BOOST=0            不下载boost库⽂件
+-DWITH_INNODBBASE_STORAGE_ENGINE=1   指定默认存储引擎
+-DENABLE_LOCAL_INFILE=1                           允许客户端使⽤local  data 
+local 导⼊本地数据⽂件
+-DEXTRA_CHARSETS=all                              ⽀持所有字符集
+-DDEFAULT_CHARSET=utf8                            默认字符集是UTF-8
+-DDEFAULT_COLLATION=utf8_general_ci               数据库校对规则
+-DMYSQL_USER=mysql                                           管理⽤户是mysql
+-DWITH_DEBUG=0                                               关闭debug
+-DWITH_EMBEDED_SERVER=0                           ⽣成⼀个libmysqld.a(.so)的
+库，这个库同时集成了mysql服务与客户端API
+-DWITH_BOOST=/usr/local/boost                     指定boost的路径
+
+
+make 
+make install
+
+4)安装后操作
+cp support-files/mysql.server /etc/init.d/mysql
+chmod 755 /etc/init.d/mysql
+chown mysql.mysql /usr/local/mysql/ -R
+ln -sf /usr/local/mysql/bin/* /usr/bin/
+ln -sf /usr/local/mysql/lib/* /usr/lib/
+ln -sf /usr/local/mysql/libexec/*  /usr/local/libexec
+ln -sf /usr/local/mysql/share/man/man1/*  /usr/share/man/man1
+ln -sf /usr/local/mysql/share/man/man8/*  /usr/share/man/man8
+/usr/local/mysql/bin/mysqld --initialize --user=mysql --basedir=/
+usr/local/mysql/ --datadir=/usr/local/mysql/data/ 
+
+
+修改配置⽂件   确保路径正确
+[root@web01 ~]# egrep -v "^#|^$" /etc/my.cnf
+[mysqld]
+datadir=/usr/local/mysql/data
+socket=/usr/local/mysql/mysql.sock
+symbolic-links=0
+[mysqld_safe]
+log-error=/var/log/mysql.log
+pid-file=/var/run/mysql.pid
+!includedir /etc/my.cnf.d
+
+5)启动mysql 
+    初始化   root@localhost: /q%Zpaoio5i1
+6）密码修改
