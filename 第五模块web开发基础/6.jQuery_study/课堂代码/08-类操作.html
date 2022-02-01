@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .box{
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+        .active{
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class='box'></div>
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+        $(function() {
+            // var isRed = true;
+            $('.box').click(function() {
+                /* if(isRed){
+                     $(this).addClass('active');
+                     isRed = false;
+                }else{
+                     $(this).removeClass('active');
+                     isRed = true;
+                } */
+                // if(!$(this).hasClass('active')){
+                //     $(this).addClass('active');
+                // }else{
+                //      $(this).removeClass('active');
+                // }
+
+                // $(this).addClass('active a b')
+
+               $(this).toggleClass('active');
+               
+            })
+        })
+    
+    </script>
+    
+</body>
+</html>

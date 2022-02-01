@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='box' style="width: 200px;height: 200px;background:red;">小马哥</div>
+    <script src="./jquery-3.4.1.js"></script>
+
+    <script>
+        // click dblclick(不常用) mousedown/mouseup mousemove移动事件(不常用)
+        // mouseover()/mouseout()
+        // mouseenter()/mouseleave()
+        // focus() blur()
+        // keydown() keyup()
+
+        // ready() 文档加载事件 scroll() 监听窗口滚动事件
+
+        /* function click(fn) {
+            if(fn){
+                fn('1');
+            }
+        }
+        click(function(c) {
+            
+        }) */
+
+        $(function (params) {
+            /*  $('#box').click(function() {
+                 
+                 $(this).hide(1000,function() {
+                     alert($(this).text());
+                 });
+             }) */
+
+            // 想一个问题:单击和双击是否会冲突? 如何解决冲突问题? 之间的时间差 是300ms
+            // $('#box').dblclick(function() {
+            //     console.log('双击了');
+            // })
+            $('#box').mousedown(function () {
+                console.log('鼠标摁下了');
+            });
+            $('#box').mouseup(function () {
+                console.log('鼠标抬起了');
+            })
+            $('#box').mousemove(function() {
+                console.log('移动了');
+                
+            })
+        })
+
+
+    </script>
+
+</body>
+
+</html>
