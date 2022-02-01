@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>案例:音乐播放器</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            margin: 20px 20px;
+            padding: 10px 5px;
+            border-radius: 3px;
+        }
+
+        ul li.active {
+            background-color: #D2E2F3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='app'>
+        <audio :src="getCurrentSongSrc" controls autoplay @ended='handleEnded'></audio>
+        <ul>
+            <li :class='{active:index===currentIndex}' v-for='(item,index) in musicData' :key='item.id'
+                @click='handleClick(index)'>
+                <h2>{{item.id}}-歌名：{{item.name}}</h2>
+                <p>{{item.author}}</p>
+            </li>
+        </ul>
+        <button @click='handleNext'>下一首</button>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        const musicData = [{
+                id: 1,
+                name: '于荣光 - 少林英雄',
+                author: '于荣光',
+                songSrc: './static/于荣光 - 少林英雄.mp3'
+            },
+            {
+                id: 2,
+                name: 'Joel Adams - Please Dont Go',
+                author: 'Joel Adams',
+                songSrc: './static/Joel Adams - Please Dont Go.mp3'
+            },
+            {
+                id: 3,
+                name: 'MKJ - Time',
+                author: 'MKJ',
+                songSrc: './static/MKJ - Time.mp3'
+            },
+            {
+                id: 4,
+                name: 'Russ - Psycho (Pt. 2)',
+                author: 'Russ',
+                songSrc: './static/Russ - Psycho (Pt. 2).mp3'
+            }
+        ];
+
+        new Vue({
+            el: '#app',
+            data: {
+                musicData,
+                currentIndex: 0
+            },
+            computed:{
+                getCurrentSongSrc(){
+                    return this.musicData[this.currentIndex].songSrc;
+                }
+            },
+            methods: {
+                handleClick(index) {
+                    this.currentIndex = index;
+                },
+                handleEnded() {
+                    this.handleNext();
+                },
+                handleNext() {
+                    this.currentIndex++;
+                    if (this.currentIndex === this.musicData.length) {
+                        this.currentIndex = 0;
+                    }
+                }
+            }
+        })
+    </script>
+    <!-- 18511803134 小马哥 -->
+    <!-- vue组件 -->
+    <!-- ajax  axios  ajax库 -->
+</body>
+
+</html>

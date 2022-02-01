@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>案例:音乐播放器</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            margin: 20px 20px;
+            padding: 10px 5px;
+            border-radius: 3px;
+        }
+
+        ul li.active {
+            background-color: #D2E2F3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='app'>
+        <audio :src="currentSrc" controls autoplay @ended='handleEnded'></audio>
+        <ul>
+            <li :class='{active:index===currentIndex}' v-for='(item,index) in musicData' :key='item.id'
+                @click='handleClick(item.songSrc,index)'>
+                <h2>{{item.id}}-歌名：{{item.name}}</h2>
+                <p>{{item.author}}</p>
+            </li>
+        </ul>
+        <button @click='handleNext'>下一首</button>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        const musicData = [{
+                id: 1,
+                name: '于荣光 - 少林英雄',
+                author: '于荣光',
+                songSrc: './static/于荣光 - 少林英雄.mp3'
+            },
+            {
+                id: 2,
+                name: 'Joel Adams - Please Dont Go',
+                author: 'Joel Adams',
+                songSrc: './static/Joel Adams - Please Dont Go.mp3'
+            },
+            {
+                id: 3,
+                name: 'MKJ - Time',
+                author: 'MKJ',
+                songSrc: './static/MKJ - Time.mp3'
+            },
+            {
+                id: 4,
+                name: 'Russ - Psycho (Pt. 2)',
+                author: 'Russ',
+                songSrc: './static/Russ - Psycho (Pt. 2).mp3'
+            }
+        ];
+
+        new Vue({
+            el: '#app',
+            data: {
+                musicData,
+                currentSrc: './static/于荣光 - 少林英雄.mp3',
+                currentIndex: 0
+            },
+            methods: {
+                handleClick(src, index) {
+                    this.currentSrc = src;
+                    this.currentIndex = index;
+                },
+                handleEnded() {
+                    // // 下一首的播放
+                    // this.currentIndex++;
+                    // this.currentSrc = this.musicData[this.currentIndex].songSrc;
+                    this.handleNext();
+                },
+                handleNext() {
+                    this.currentIndex++;
+                    if (this.currentIndex === this.musicData.length) {
+                        this.currentIndex = 0;
+                    }
+                    this.currentSrc = this.musicData[this.currentIndex].songSrc
+                }
+            }
+        })
+    </script>
+
+</body>
+
+</html>
