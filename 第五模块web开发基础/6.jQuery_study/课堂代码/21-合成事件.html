@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id='btn'>显示</button>
+    <div class="box" style="width: 200px;height: 200px;background: red;">
+
+    </div>
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+        $(function () {
+
+            /*  $('.box').mouseenter(function () {
+                 $(this).stop().css('background','green')
+             })
+             $('.box').mouseleave(function () {
+                 $(this).stop().css('background','red')
+             }) */
+            $('.box').hover(function () {
+                $(this).css('background', 'green')
+            }, function () {
+                $(this).css('background', 'red')
+            })
+            var isShow = true;
+
+            $('#btn').click(function () {
+                //  if(isShow){
+                //        $('.box').stop().hide();
+                //     //    $(this).text('隐藏');
+                //        isShow = false;
+                //  }else{
+                //      $('.box').stop().show();
+                //     //  $(this).text('显示');
+                //      isShow = true;
+                //  }
+
+                $('.box').toggle();
+
+
+
+
+
+            })
+
+
+
+
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #p1 {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='box'>
+        <p id='p1'>alex1</p>
+        <p id='p2'>alex2</p>
+        <ul>
+            <li class='item1'>
+                <h3>张三</h3>
+            </li>
+            <li class='item2'>李四张三2</li>
+            <li class='item3'>王五</li>
+            <li id='empty'>
+                <h4>hello world</h4>
+            </li>
+        </ul>
+        <input type="text" class='user'>
+        <input type="password" class='pwd'>
+        <input type="radio" class='sex'>男
+        <input type="submit" class='sex' value='登录'>
+    </div>
+    <script src='./jquery-3.4.1.js'></script>
+    <script>
+        // 过滤选择器
+        // console.log($('ul li:first'));
+        // console.log($('ul li:last'));
+        // console.log($('ul li:not(.item2)'));
+        // console.log($('ul li:even'));
+        // console.log($('ul li:odd'));
+        // // 非常重要
+        // console.log($('ul li:eq(0)').text());
+        // console.log($('ul li:eq(2)').text());
+        // console.log($('ul li:gt(0)').text());
+        // console.log($('ul li:lt(2)').text());
+
+        // 
+        console.log($('ul li:contains(张三)'));
+        console.log($('ul li:empty'));
+        console.log($('ul li:has(h4)').addClass('a'));
+        console.log($('.box p:hidden'));
+        console.log($('.box p:visible'));
+
+        console.log($('input[type=text]'));
+        console.log($('input[type=password]'));
+        console.log($('input:text'));
+        console.log($('input:radio'));
+        // console.log($('input[type!=radio]'));
+        console.log($('input[type=button]'));
+        
+        if ($('input[type=submit]').length > 0) {
+            $('input[type=submit]').click(function () {
+                alert(111);
+            })
+        }else{
+            throw new Error('获取元素失败');
+        }
+    </script>
+
+</body>
+
+</html>

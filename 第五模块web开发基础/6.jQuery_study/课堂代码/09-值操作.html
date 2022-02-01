@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="content">
+        <ul>
+            <li>
+
+            </li>
+        </ul>
+        <input type="text" value='美女'>
+        <select name="" id="single">
+            <option>苹果</option>
+            <option>香蕉</option>
+        </select>
+
+        <select name="" id="multiple" multiple>
+            <option selected>苹果</option>
+            <option>香蕉</option>
+            <option selected>橘子</option>
+        </select>
+        <input type="checkbox" value='A'> A
+        <input type="checkbox" value='B'> B
+        <input type="radio" value='1'> 男
+        <input type="radio" value='0'> 女
+    </div>
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+        $(function () {
+            // 获取html中的值 既获取文本又获取html
+            console.log($('#content ul li').html());
+            // 设置html中的值
+            $('#content ul li').html(`<img src="./timg.jpg" alt="">
+            <p>小马哥</p>
+            <h3>美女和野兽</h3>`);
+            // 仅仅获取文本的值
+            // console.log($('#content ul li').text());
+            // 获取文本输入框的值
+            // console.log($('input[type=text]').val());
+            // $('input[type=text]').val('帅哥');
+
+            $('#single').val('香蕉');
+            $('#multiple').val(['香蕉','橘子']);
+            // 给input设置值 要使用value属性值的值 不能使用文本的值
+            $('input').val(['B','女']);
+
+        })
+    </script>
+</body>
+
+</html>

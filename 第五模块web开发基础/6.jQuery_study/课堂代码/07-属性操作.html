@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #box{
+            width: 200px;
+            height: 200px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div name = 'b' class='active'></div>
+    <img src="" alt="">
+
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+    // 动态添加获取属性
+    $(function() {
+        // 设置单个属性值
+        // $('div').attr('id','box');
+        // 设置多个值
+        $('div').attr({id:'box',title:'盒子'});
+        console.log($('div').attr('name'));
+        console.log($('div').attr('class'));
+        setTimeout(function() {
+            $('img').attr({
+                src:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1568985509549&di=0bb1a6ced3db2b6be69d27579691f4e1&imgtype=0&src=http%3A%2F%2Fwww.chinadaily.com.cn%2Fhqzx%2Fimages%2Fattachement%2Fjpg%2Fsite385%2F20120924%2F00221918200911ca40e52b.jpg",
+                alt:'美女'
+            })
+        }, 2000);
+        
+    })
+    
+    </script>
+</body>
+</html>

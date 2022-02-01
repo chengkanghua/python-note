@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='box'>小马哥</div>
+    <script src="./index.js"></script>
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+        // jQuery提供了一个解决多个库变量名冲突的方法
+        jQuery.noConflict(); //将jQuery的$变量的控制权交给index.js
+
+        console.log($);
+
+        (function ($) {
+            $(function () {
+                $('#box').css('color', 'red');
+            })
+        })(jQuery);
+    </script>
+
+</body>
+
+</html>
