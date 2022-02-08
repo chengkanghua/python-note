@@ -11,8 +11,16 @@
 		<input type="submit">
 	</form>
 	<script type="text/javascript">
-		console.log(location.host);
+		console.log(location.host);  // 返回服务器ip地址，带端口
+		console.log(location.hostname); // 返回服务器ip地址， 不带端口
+		console.log(location.href);  // 完整url
+		console.log(location.pathname); //端口后的 路径地址
+		console.log(location.port);  //端口号
+		console.log(location.protocol); //协议 http:  https:
+		console.log(location.search);  //地址栏上查询 ?user=mjj&pwd=323
 
+
+		
 	</script>
 </body>
 </html>

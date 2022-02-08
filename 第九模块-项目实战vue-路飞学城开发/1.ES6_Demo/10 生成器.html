@@ -60,8 +60,8 @@
             name:'小马哥',
             age:18
         }
-        obj[Symbol.iterator] = objectEntries;
-        console.log(obj);
+        // obj[Symbol.iterator] = objectEntries;
+        // console.log(obj);
 
         for(let [key,value] of objectEntries(obj)){
             console.log(`${key}:${value}`);  

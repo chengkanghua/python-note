@@ -23,8 +23,8 @@
             },
             methods: {
                handleInput:function(event){
-                   const {value} = event.target;
-                   this.content = value;
+                   const {value} = event.target; //解构赋值 获取输入的数值
+                   this.content = value;   // 这里赋值给content会走到 content对象里的set方法
                },
                handleClick(){
                 //    console.log();

@@ -15,7 +15,7 @@
 			}
 		*/
 		function getQueryString(){
-			// 1.取得去掉问号查询字符串 user=mjj&pwd=123 
+			// 1.取得去掉问号查询字符串 user=mjj&pwd=123  //substring(1) 从索引1取到最后一位，等于去掉0位置的数值
 			var qs = location.search.length > 0 ?  location.search.substring(1): '';
 			// 2.取得每一项 存放到数组中
 			var items = qs.length ?  qs.split('&'): []; //["name=mjj", "pwd=123"]

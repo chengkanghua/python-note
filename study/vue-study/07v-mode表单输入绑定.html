@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+		
+	</head>
+	<body>
+		<div id="app">
+			<p>{{msg}}</p>
+			<input type="text" v-model='msg'>
+			
+			<label for="checkbox">{{checked}}</label>
+			<input type="text" v-model='checked'>
+			
+			<div class="box">
+				<label for="a">黄瓜</label>
+				<input type="checkbox" id='a' value='黄瓜' v-model='checkedNames'>
+				<label for="b">西红柿</label>
+				<input type="checkbox" id='b' value='西红柿' v-model="checkedNames">
+				<label for="c">土豆</label>
+				<input type="checkbox" id='c' value='土豆' v-model="checkedNames">
+				<br />
+				<span>{{checkedNames}}</span>
+			</div>
+			
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					msg:'eric',
+					msg2:'',
+					txt:'',
+					checked:false,
+					checkedNames:[]
+				},
+				methods:{
+					
+				}
+			})
+		</script>
+	</body>
+</html>

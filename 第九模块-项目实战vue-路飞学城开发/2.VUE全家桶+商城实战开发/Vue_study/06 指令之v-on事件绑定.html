@@ -24,7 +24,7 @@
         <button v-on:click.once="handleClick">+1</button>
         <div class='box' :class='{active:isActive}'></div>
         <button @click='changeClick'>切换</button>
-        <input v-on:keyup.up="submit">
+        <input v-on:keyup.up="submit">  <!-- 向上箭头按键触发-->
     </div>
     <script src="./vue.js"></script>
     <script>

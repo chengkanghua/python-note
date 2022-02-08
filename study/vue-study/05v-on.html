@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>v-on 事件绑定</title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+		<style>
+			.box{
+				width: 200px;
+				height:200px;
+				background-color: red;
+			}
+			.active{
+				background-color: green;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<h3>{{ num }}</h3>
+			<button v-on:click.once="handlClick">+1</button>
+			<div class="box" v-bind:class="{active:isActive}"></div>
+			<button @click="changeClick">切换</button>
+			<input v-on:keyup.enter="submit">  <!-- enter 回车触发 -->
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					num:0,
+					isActive:false
+				},
+				methods:{
+					handlClick(){
+						this.num+=1;
+					},
+					changeClick(){
+						this.isActive = !this.isActive;
+					},
+					submit(){
+						alert(1);
+					}
+						
+					
+				}
+			})
+		</script>
+	</body>
+</html>

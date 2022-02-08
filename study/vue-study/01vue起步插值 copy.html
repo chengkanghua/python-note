@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<h1>{{msg}}</h1>
+			<h2>{{2}}</h2>
+			<h2>{{ 'hello '}}</h2>
+			<h2>{{ {id:1} }}</h2>
+			<h3>{{ 1>2 ? '真的':'假的'}}</h3>
+			<h3>{{ txt.split('').reverse().join('') }}</h3>
+			<h2>{{ getContent()}}</h2>
+			<p>{{ msg3 }}</p>
+
+		</div>
+		<script type="text/javascript">
+			// console.log(Vue)
+			const mv = new Vue({
+				el: '#app',
+				data: {
+					msg: 'hello world',
+					txt: 'hello',
+					msg2: 'content',
+					msg3: '<p> 插值语法</p>'
+				},
+				methods: {
+					getContent() {
+						return this.msg + ' ' + this.msg2;
+					}
+				}
+			})
+		</script>
+	</body>
+	
+</html>
