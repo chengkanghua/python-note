@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			{{ content }}
+			<input type="text" v-model="content" @input="handleInput">
+			<button @click="handleClick">获取</button>
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					msg:'',
+				},
+				methods:{
+					handleInput:function(event){
+						const {value} = event.target
+						this.content = value
+					},
+					handleClick(){
+						if (this.content){
+							console.log(this.content)
+						}
+					}
+				},
+				computed:{
+					content:{
+						set:function(newV){
+							this.msg=newV;
+						},
+						get:function(){
+							return this.msg
+						}
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

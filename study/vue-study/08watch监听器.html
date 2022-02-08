@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<input type="text" v-model='msg'>
+			<h3>{{ msg }}</h3>
+			<h3>{{ stus[0].name }}</h3>
+			<button v-on:click='stus[0].name="tom"'>改变</button>
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					msg:'',
+					stus:[{name:'jack'}]
+				},
+				watch:{
+					"msg":function(newV,oldV){
+						if(newV === '100'){
+							console.log('hello')
+						}
+					},
+					"stus":{
+						deep:'true',
+						handler:function(newV,oldV){
+							console.log(newV[0].name,oldV[0].name)
+						}
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

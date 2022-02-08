@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>	
+	</head>
+	<body>
+		<div id="app">
+			<a v-bind:href="res.url" :title="res.title">{{ res.name }}</a>
+			<img v-bind:src="imgSrc" alt="">
+			<h3 class="name" :class="{active:isActive}">v-bind用法</h3>
+			<h4 :style="{color:isColor,fontSize:fontSize+'px'}">hello bind</h4>
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					res:{
+						name:'百度',
+						url: 'http://www.baidu.com',
+						title:'百度一下'
+					},
+					imgSrc:'./images/logo.png',
+					isActive:true,
+					isColor:'green',
+					fontSize:30,
+				}
+			})
+		</script>
+	</body>
+</html>

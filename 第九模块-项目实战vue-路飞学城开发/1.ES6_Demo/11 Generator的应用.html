@@ -41,7 +41,7 @@
             }
         }) */
 
-        /* function* main() {
+        function* main() {
             console.log('main');
 
             let res = yield request(
@@ -64,13 +64,13 @@
                     ite.next(res);
                 }
             })
-        } */
+        }
 
         // 加载loading...页面
         // 数据加载完成...（异步操作）
         // loading关闭掉
 
-        function* load() {
+    /*     function* load() {
             loadUI();
             yield showData();
             hideUI();
@@ -78,6 +78,7 @@
 
         let itLoad = load();
         itLoad.next();
+
         function loadUI() {
             console.log('加载loading...页面');
         }
@@ -92,7 +93,7 @@
         function hideUI() {
             console.log('隐藏loading...页面');
             
-        }
+        } */
         
     </script>
 

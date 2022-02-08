@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div>
+				<ul>
+					<!--为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一 key attribute： 
+					当 Vue 正在更新使用 v-for 渲染的元素列表时，它默认使用“就地更新”的策略-->
+					<li v-for='(item,index) in menus' :key='item.id'>
+						<h3>{{ index}}- id:{{item.id}}:{{item.name}} </h3>
+					</li>
+				</ul>
+				<ol>
+					<li v-for='(val,key) in obj' v-bind:key='key'>
+						{{key}}:{{val}}
+					</li>
+				</ol>
+			</div>
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					menus:[
+						{id:1,name:'大腰子'},
+						{id:2,name:'烤鸡翅'},
+						{id:3,name:'烤韭菜'},
+					],
+					obj:{
+						title:'hello loop',
+						author:'eric'
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

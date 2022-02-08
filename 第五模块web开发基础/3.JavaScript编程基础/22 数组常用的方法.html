@@ -47,30 +47,30 @@
 		// 分割字符串
 		var colors = ['red','blue','green'];
 		var a = colors.join('|');
-		console.log(a);
+		console.log(a,typeof a);
 
 		// 栈(lifo last - in- first - out)方法.  push() pop() 队列方法
 		// push() 往数组的最后一项添加内容
 		var newlength = colors.push('purple');
-		console.log(newlength);
+		console.log(newlength); //4
 		console.log(colors);
 		// pop() 从数组末尾删除最后一项
-		var lastItem = colors.pop();
-		console.log(lastItem);
+		var lastItem = colors.pop(); 	
+		console.log(lastItem); //purple
 		console.log(colors);
 
 		// 队列 fifo  先进先出 unshift() shift() 
-		newlength = colors.unshift('yellow');
-		console.log(newlength);
+		newlength = colors.unshift('yellow');  //放在数组0号位置
+		console.log(newlength);  // 4
 		console.log(colors);
-		var firstItem = colors.shift();
+		var firstItem = colors.shift();   // 从数组0号位置拿出一个
 		console.log(firstItem);
 		console.log(colors);
 
 		var values = [0,3,2,16,15,10];
 		// 数组倒序
-		// values.reverse();
-		// console.log(values);
+		values.reverse();
+		console.log(values);
 
 		// sort() 排序 升序 或者降序
 
@@ -105,8 +105,8 @@
 			*/
 			return b - a;	
 		}
-		// values.sort(compare1); //升序
-		// console.log(values);
+		values.sort(compare1); //升序
+		console.log(values);
 		values.sort(compare2);
 		console.log(values);
 
@@ -155,14 +155,15 @@
 
 			return item > 10
 		});
-		console.log(filterResult);
+		console.log('filter:',filterResult);
 
 		// 5.2 map()方法
 		var mapresult = numbers.map(function(item,index,array){
 			return item * 2;
 		})
-		console.log(mapresult);
+		console.log('map:',mapresult);
 		
+		// for 循环遍历
 		for(var i = 0; i < mapresult.length; i ++){
 			// console.log(mapresult[i]);
 		}

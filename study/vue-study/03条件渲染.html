@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>03条件渲染</title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div v-if='isShow'>
+				显示
+			</div>
+			<div v-else>
+				隐藏
+			</div>
+			<div v-show="show"> my name is eric</div>
+		</div>
+		<script type="text/javascript">
+			new Vue({
+				el:'#app',
+				data:{
+					isShow:Math.random() > 0.5,
+					show: false // document 已经加载只是css样式隐藏了
+				}
+			})
+		</script>
+		
+	</body>
+</html>
