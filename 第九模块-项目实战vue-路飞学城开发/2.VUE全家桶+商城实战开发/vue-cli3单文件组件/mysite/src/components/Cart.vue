@@ -1,6 +1,28 @@
 <template>
     <div>
-        <h2>{{title}}</h2>
+        <!-- <h2>{{title}}</h2> -->
+        <el-table
+        ref="multipleTable"
+        :data="cart"
+        border
+        tooltip-effect="dark"
+        style="width: 50%"
+        @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column prop="title" label="课程" width="120"> </el-table-column>
+        <el-table-column prop="price" label="价格" width="120"> </el-table-column>
+        <el-table-column label="数量"  width="200">
+            <template slot-scope="scope">
+                <el-input-number v-model="scope.row.count"  :min="1" :max="100" label="描述文字"></el-input-number>
+            </template>
+        </el-table-column>
+        <el-table-column label="总价" width="120"> 
+            <template slot-scope="scope">
+                ¥{{ scope.row.count * scope.row.price }}
+            </template>
+        </el-table-column>
+
+  </el-table>
         <table border="1" >
             <tr>
                 <th>#</th>
@@ -37,7 +59,8 @@
         props:['title'],
         data(){
             return {
-                cart:JSON.parse(localStorage.getItem('cart')) || []
+                cart:JSON.parse(localStorage.getItem('cart')) || [],
+                multipleSelection:[]
             }
         },
         watch:{
@@ -66,6 +89,7 @@
             },
             activeCount(){
                 return this.cart.filter(v=>v.active).length
+                // return this.multipleSelection.filter(v => v.active).length;
             },
             total(){
                 // let sum = 0;
@@ -84,6 +108,11 @@
             }
         },
         methods: {
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                console.log(this.multipleSelection)
+            },
+
             setLocalData(n){
                 localStorage.setItem('cart',JSON.stringify(n));
             },
@@ -98,7 +127,19 @@
             },
             add(i){
                  this.cart[i].count++;
-            }
+            },
+            toggleSelection(rows) {
+                if (rows) {
+                rows.forEach(row => {
+                    this.$refs.multipleTable.toggleRowSelection(row);
+                });
+                } else {
+                this.$refs.multipleTable.clearSelection();
+                }
+            },
+            
+
+ 
         },
     }
 </script>
