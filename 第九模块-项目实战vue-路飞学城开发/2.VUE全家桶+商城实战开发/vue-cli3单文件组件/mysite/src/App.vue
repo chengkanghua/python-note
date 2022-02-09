@@ -2,14 +2,17 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <h1>{{ title }}</h1>
+
+  
     <!-- 展示购物车的列表 -->
   <ul>
     <li v-for="(item,index) in cartList" :key="index">
       <h3>{{ item.title}}</h3>
       <p>￥{{ item.price }}</p>
-      <button @click="addCart(index)">添加购物车</button>
+      <el-button @click="addCart(index)" type="success">添加购物车</el-button>
     </li>
   </ul>
+
   <my-cart :cart='cartList' :title='title'> </my-cart>
   </div>
 </template>
@@ -25,7 +28,9 @@ export default {
       //   {id:2,title:'React 实战开发',price:288,active:true,count:1}
       // ]
       cartList:[],
-      title:'购物车'
+      title:'购物车',
+
+
     } 
   },
   async created(){
@@ -43,10 +48,11 @@ export default {
     
   },
   methods:{
-    addCart(i){
-      const good = this.cartList[i];
-      this.$bus.$emit('addCart',good);
-    }
+
+      addCart(i){
+        const good = this.cartList[i];
+        this.$bus.$emit('addCart',good);
+      }
   },
   components: {
     MyCart
