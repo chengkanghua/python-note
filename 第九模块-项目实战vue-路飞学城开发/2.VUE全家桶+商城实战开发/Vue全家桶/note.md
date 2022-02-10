@@ -8,5 +8,8 @@
 
     
 
+安装 vue-router
+cnpm i vue-router -S
 
-
+# 创建项目
+vue create test-router
