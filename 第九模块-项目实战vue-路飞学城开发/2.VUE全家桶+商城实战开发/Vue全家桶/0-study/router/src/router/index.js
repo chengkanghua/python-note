@@ -49,6 +49,14 @@ const routes = [
         component:() => import('../views/Posts.vue')
       }
     ],
+    meta:{
+      requireAuth:true
+    }
+  },
+  {
+    path:'/post',
+    name:'post',
+    component:()=> import('../views/Post.vue')
   },
   {
     path: '/notes',
@@ -75,6 +83,14 @@ const routes = [
     component:() => import('../views/Page.vue'),
     alias:'/aaa'   //别名
 
+  },
+  {
+    path:'/blog',
+    name:'blog',
+    component: ()=> import('../views/Blog.vue'),
+    meta:{
+      requireAuth:true
+    }
   },
   {
     path:'/user-*',

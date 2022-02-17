@@ -26,8 +26,9 @@
                     localStorage.setItem('user',JSON.stringify(data));
                     // 跳转到我的笔记页面
                     this.$router.push({
-                        // path: this.$route.query.redirect
-                        name: 'notes'
+                        // 跳转回之前需要登陆的页面
+                        path: this.$route.query.redirect
+                        // name: 'notes'
                     })
                 },1000);
             }

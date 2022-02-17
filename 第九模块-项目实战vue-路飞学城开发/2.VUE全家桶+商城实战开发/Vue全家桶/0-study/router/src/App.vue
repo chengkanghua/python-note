@@ -13,6 +13,8 @@
       <router-link to="/user/1/posts">/user/1/Posts</router-link>|
       <router-link :to='{name:"notes"}'>我的笔记</router-link>|
       <router-link :to='{name:"editor"}'>编辑</router-link>|
+      <router-link :to="{name:'blog'}">博客</router-link>|
+      <router-link :to='{name:"post"}'>Post</router-link>|
 
     </div>
     <!-- router-view 相当于路由组件的出口 -->
