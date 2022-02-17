@@ -361,7 +361,7 @@ class TestCBV(View):
 
 ## Django的序列化方法
 
-
+.values 序列化结果
 
 ```
 class BooksView(View):
@@ -393,7 +393,7 @@ class MyJson(json.JSONEncoder):
             return json.JSONEncoder.default(self, field)
 ```
 
-
+django serializers
 
 ```
 from django.core import serializers
@@ -421,7 +421,7 @@ class BooksView(View):
 
 ### 序列化
 
-
+第一步 声明序列化类
 
 ```
 class BookSerializer(serializers.Serializer):
@@ -432,7 +432,7 @@ class BookSerializer(serializers.Serializer):
     pub_time = serializers.DateField()
 ```
 
-
+第二步 序列化对象
 
 ```
 from rest_framework.views import APIView
@@ -449,7 +449,7 @@ class BookView(APIView):
 
 ### 外键关系的序列化
 
-
+外键关系的序列化
 
 ```
 # by gaoxin
@@ -491,7 +491,7 @@ class BookSerializer(serializers.Serializer):
 
 Serializer提供了.is_valid() 和.save()方法~~
 
-
+反序列化serializer.py
 
 ```
 # serializers.py 文件
@@ -515,7 +515,7 @@ class BookSerializer(serializers.Serializer):
         return book
 ```
 
-
+反序列化views.py
 
 ```
 class BookView(APIView):
@@ -540,7 +540,7 @@ class BookView(APIView):
 
 当前端给我们发送patch请求的时候，前端传给我们用户要更新的数据，我们要对数据进行部分验证~~
 
-
+PATCH请求serializers.py
 
 ```
 class BookSerializer(serializers.Serializer):
@@ -574,7 +574,7 @@ class BookSerializer(serializers.Serializer):
         return instance
 ```
 
-
+PATCH请求views.py
 
 ```
 class BookView(APIView):
@@ -595,7 +595,7 @@ class BookView(APIView):
 
 如果我们需要对一些字段进行自定义的验证~DRF也给我们提供了钩子方法~~
 
-
+单个字段的验证
 
 ```
 class BookSerializer(serializers.Serializer):
@@ -609,7 +609,7 @@ class BookSerializer(serializers.Serializer):
         return value
 ```
 
-
+多个字段的验证
 
 ```
 class BookSerializer(serializers.Serializer):
@@ -631,7 +631,7 @@ class BookSerializer(serializers.Serializer):
         return attrs
 ```
 
-
+验证器 validators
 
 ```
 def my_validate(value):
@@ -661,7 +661,7 @@ class BookSerializer(serializers.Serializer):
 
 ### 定义一个ModelSerializer序列化器
 
-
+定义ModelSerializer
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -679,7 +679,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 注意：当序列化类MATE中定义了depth时，这个序列化类中引用字段（外键）则自动变为只读
 
-
+外键关系序列化
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -701,7 +701,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 比如我们的选择字段，默认显示的是选择的key，我们要给用户展示的是value。
 
-
+自定义字段
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -720,9 +720,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 ### Meta中其它关键字参数
 
-
-
-
+Meta中参数
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -745,9 +743,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 由于depth会让我们外键变成只读，所以我们再定义一个序列化的类，其实只要去掉depth就可以了~~
 
-
-
-
+post/patch请求序列化类
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -769,9 +765,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 外键关联的对象有很多字段我们是用不到的~都传给前端会有数据冗余~就需要我们自己去定制序列化外键对象的哪些字段~~
 
-
-
-
+SerializerMethodField
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -802,9 +796,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 ### 用ModelSerializer改进上面Serializer的完整版
 
-
-
-
+ModelSerializer
 
 ```
 class BookSerializer(serializers.ModelSerializer):
@@ -899,6 +891,8 @@ request.data 存放的是我们所有的数据，包括post请求的以及put，
 
 ### 第一次封装
 
+APIView视图
+
 ```
 class BookView(APIView):
 
@@ -942,7 +936,7 @@ class BookEditView(APIView):
             return Response("删除的书籍不存在")
 ```
 
-
+第一次封装
 
 ```
 class GenericAPIView(APIView):
@@ -1089,6 +1083,8 @@ actions这个默认参数其实就是我们路由可以进行传参了~~~
 
 ### 第三次封装
 
+路由urls.py
+
 ```
 urlpatterns = [
     # url(r'^book$', BookView.as_view()),
@@ -1098,7 +1094,7 @@ urlpatterns = [
 ]
 ```
 
-
+第三次封装
 
 ```
 from rest_framework.viewsets import ViewSetMixin
@@ -1135,6 +1131,8 @@ class BookView(ModelViewSet):
 
 我们上面的路由传参写的特别多~~框架也帮我们封装好了~
 
+路由
+
 ```
 from .views import BookView
 from rest_framework.routers import DefaultRouter
@@ -1154,8 +1152,8 @@ urlpatterns += router.urls
 
 
 
-我们可以看到~~通过框架我们可以把路由视图都变的非常简单~~
+我们可以看到通过框架我们可以把路由视图都变的非常简单~~
 
-但是需要自定制的时候还是需要我们自己用APIView写~~当不需要那么多路由的时候~也不要用这种路由注册~~
+但是需要自定制的时候还是需要我们自己用APIView写当不需要那么多路由的时候~也不要用这种路由注册~~
 
 总之~~一切按照业务需要去用
