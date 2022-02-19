@@ -25,7 +25,7 @@ class LoginView(APIView):
 
 
 class TestView(APIView):
-    authentication_classes = [MyAuth,]
+    authentication_classes = [MyAuth,]    # 配置局部验证auth
 
     def get(self, request):
         print(request.user)

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'SerDemo',
     'rest_framework',
+    'authDemo',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    # "DEFAULT_VERSIONING_CLASS": "utils.version.MyVersion", # 这里是自定义的认证方法
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.QueryParameterVersioning",
+    "DEFAULT_VERSION": "v1",
+    "ALLOWED_VERSIONS": "v1, v2",
+    # "VERSION_PARAM": "version", # 默认的参数名
+    "VERSION_PARAM": "ver",      #修改默认的参数名
+    # "DEFAULT_AUTHENTICATION_CLASSES": ["utils.auth.MyAuth", ],  #这里配置是全局所有的都走这个认证方法
+    # "DEFAULT_PERMISSION_CLASSES":["utils.permission.MyPermission"],  #全局权限
+    # "DEFAULT_THROTTLE_RATES":{
+    #     "WD":"3/m"         # 每分钟3次访问的限制
+    # }
+
+}
