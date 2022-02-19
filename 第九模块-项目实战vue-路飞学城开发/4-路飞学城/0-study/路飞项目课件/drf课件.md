@@ -1157,3 +1157,720 @@ urlpatterns += router.urls
 但是需要自定制的时候还是需要我们自己用APIView写当不需要那么多路由的时候~也不要用这种路由注册~~
 
 总之~~一切按照业务需要去用
+
+
+
+
+
+# [DRF 版本 认证](https://www.cnblogs.com/GGGG-XXXX/articles/9681444.html)
+
+## DRF的版本
+
+### 版本控制是做什么用的, 我们为什么要用
+
+首先我们要知道我们的版本是干嘛用的呢~~大家都知道我们开发项目是有多个版本的~~
+
+随着我们项目的更新~版本就越来越多~~我们不可能新的版本出了~以前旧的版本就不进行维护了~~~
+
+那我们就需要对版本进行控制~~这个DRF也给我们提供了一些封装好的版本控制方法~~
+
+### 版本控制怎么用
+
+之前我们学视图的时候知道APIView，也知道APIView返回View中的view函数，然后调用的dispatch方法~
+
+那我们现在看下dispatch方法~~看下它都做了什么~~
+
+![img](assets/1349080-20180920151640403-99097843.png)
+
+执行self.initial方法之前是各种赋值，包括request的重新封装赋值，下面是路由的分发，那我们看下这个方法都做了什么~~
+
+![img](assets/1349080-20180920152041356-89025019.png)
+
+我们可以看到，我们的version版本信息赋值给了 request.version 版本控制方案赋值给了 request.versioning_scheme~~
+
+其实这个版本控制方案~就是我们配置的版本控制的类~~
+
+也就是说，APIView通过这个方法初始化自己提供的组件~~
+
+我们接下来看看框架提供了哪些版本的控制方法~~在rest_framework.versioning里~~
+
+![img](assets/1349080-20180920153948564-2059678033.png)
+
+框架一共给我们提供了这几个版本控制的方法~~我们在这里只演示一个~~因为基本配置都是一样的~~
+
+### 详细用法
+
+我们看下放在URL上携带版本信息怎么配置~~
+
+第一步 setting.py
+
+```
+REST_FRAMEWORK = {
+    # 默认使用的版本控制类
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    # 允许的版本
+    'ALLOWED_VERSIONS': ['v1', 'v2'],
+    # 版本使用的参数名称
+    'VERSION_PARAM': 'version',
+    # 默认使用的版本
+    'DEFAULT_VERSION': 'v1',
+}
+```
+
+第二步 urls.py
+
+```
+urlpatterns = [
+    url(r"^versions", MyView.as_view()),
+    url(r"^(?P<version>[v1|v2]+)/test01", TestView.as_view()),
+]
+```
+
+测试试图
+
+```
+class TestView(APIView):
+    def get(self, request, *args, **kwargs):
+        print(request.versioning_scheme)
+        ret = request.version
+        if ret == "v1":
+            return Response("版本v1的信息")
+        elif ret == "v2":
+            return Response("版本v2的信息")
+        else:
+            return Response("根本就匹配不到这个路由")
+```
+
+
+
+其他的版本控制的类，配置方法都差不多~~这里就不一一例举了~~
+
+## DRF的认证
+
+### 认证是干嘛的呢~
+
+我们都知道~我们可以在网站上登录~然后可以有个人中心，对自己信息就行修改~~~
+
+但是我们每次给服务器发请求，由于Http的无状态，导致我们每次都是新的请求~~
+
+那么服务端需要对每次来的请求进行认证，看用户是否登录，以及登录用户是谁~~
+
+那么我们服务器对每个请求进行认证的时候，不可能在每个视图函数中都写认证~~~
+
+一定是把认证逻辑抽离出来~~以前我们可能会加装饰器~或者中间件~~那我们看看DRF框架给我们提供了什么~~~
+
+### 认证怎么用
+
+上面讲版本的时候我们知道~在dispatch方法里~执行了initial方法~~那里初始化了我们的版本~~
+
+如果我们细心我们能看到~版本的下面其实就是我们的认证，权限，频率组件了~~
+
+我们先看看我们的认证组件~~
+
+![img](assets/1349080-20180920164024386-474836909.png)
+
+我们进去我们的认证看下~~
+
+![img](assets/1349080-20180920164124960-1427167148.png)
+
+我们这个权限组件返回的是request.user，那我们这里的request是新的还是旧的呢~~
+
+我们的initial是在我们request重新赋值之后的~所以这里的request是新的~也就是Request类实例对象~~
+
+那这个user一定是一个静态方法~我们进去看看~~
+
+![img](assets/1349080-20180920165156941-1054246595.png)
+
+![img](assets/1349080-20180920171438068-1852431362.png)
+
+我没在这里反复的截图跳转页面~~大家可以尝试着自己去找~~要耐心~~细心~~
+
+我们通过上面基本可以知道我们的认证类一定要实现的方法~~以及返回值类型~~以及配置的参数authentication_classes~
+
+下面我们来看看具体用法~~~
+
+### 认证的详细用法
+
+我们先写个认证的小demo~~我们先建一个用户表~字段为用户名以及对应的token值~~
+
+models.py
+
+```
+# 先在model中注册模型类
+# 并且进行数据迁移
+# 测试我就简写了~
+
+class UserInfo(models.Model):
+    username = models.CharField(max_length=32)
+    token = models.UUIDField()
+```
+
+views.py
+
+```
+# 写视图类并且用post请求注册一个用户
+
+class UserView(APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data["username"]
+        UserInfo.objects.create(username=username, token=uuid.uuid4())
+        return Response("注册成功")
+```
+
+
+
+准备工作完成~我们来开始我们的认证~~
+
+
+
+写一个认证的类
+
+```
+# 注意我们这个认证的类必须实现的方法以及返回值
+class MyAuth(BaseAuthentication):
+
+    def authenticate(self, request):
+        request_token = request.query_params.get("token", None)
+        if not request_token:
+            raise AuthenticationFailed({"code": 1001, "error": "缺少token"})
+        token_obj = UserInfo.objects.filter(token=request_token).first()
+        if not token_obj:
+            raise AuthenticationFailed({"code": 1001, "error": "无效的token"})
+        return token_obj.username, token_obj
+```
+
+
+
+视图级别认证
+
+```
+class TestAuthView(APIView):
+    authentication_classes = [MyAuth, ]
+
+    def get(self, request, *args, **kwargs):
+        return Response("测试认证")
+```
+
+
+
+全局配置认证
+
+```
+REST_FRAMEWORK = {
+    # 默认使用的版本控制类
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    # 允许的版本
+    'ALLOWED_VERSIONS': ['v1', 'v2'],
+    # 版本使用的参数名称
+    'VERSION_PARAM': 'version',
+    # 默认使用的版本
+    'DEFAULT_VERSION': 'v1',
+    # 配置全局认证
+    'DEFAULT_AUTHENTICATION_CLASSES': ["BRQP.utils.MyAuth", ]
+}
+```
+
+
+
+ 
+
+ [DRF 权限 频率](https://www.cnblogs.com/GGGG-XXXX/articles/9682663.html)
+
+## DRF的权限 
+
+### 权限是什么
+
+大家之前都应该听过权限~那么我们权限到底是做什么用的呢~~
+
+大家都有博客~或者去一些论坛~一定知道管理员这个角色~
+
+比如我们申请博客的时候~一定要向管理员申请~也就是说管理员会有一些特殊的权利~是我们没有的~~
+
+这些对某件事情决策的范围和程度~我们叫做权限~~权限是我们在项目开发中非常常用到的~~
+
+那我们看DRF框架给我们提供的权限组件都有哪些方法~~
+
+### 权限组件源码
+
+我们之前说过了DRF的版本和认证~也知道了权限和频率跟版本认证都是在initial方法里初始化的~~
+
+![img](assets/1349080-20180921101534586-2075314120.png)
+
+![img](assets/1349080-20180921101800544-1449178273.png)
+
+其实我们版本，认证，权限，频率控制走的源码流程大致相同~~大家也可以在源码里看到~~
+
+我们的权限类一定要有has_permission方法~否则就会抛出异常~~这也是框架给我提供的钩子~~
+
+我们先看到在rest_framework.permissions这个文件中~存放了框架给我们提供的所有权限的方法~~
+
+![img](assets/1349080-20180921102244087-1438766866.png)
+
+我这里就不带着大家详细去看每一个了~大家可以去浏览一下每个权限类~看看每个都是干嘛的~~
+
+这里主要说下BasePermission 这个是我们写权限类继承的一个基础权限类~~~ 
+
+### 权限的详细用法
+
+在这里我们一定要清楚一点~我们的Python代码是一行一行执行的~那么执行initial方法初始化这些组件的时候~~
+
+也是有顺序的~~我们的版本在前面~然后是认证，然后是权限~ 最后是频率~~所以大家要清楚~~
+
+我们的权限执行的时候~我们的认证已经执行结束了~~~
+
+前提在model中的UserInfo表中加了一个字段~用户类型的字段~~做好数据迁移~~
+
+ 第一步 写权限类
+
+```
+class MyPermission(BasePermission):
+    message = "VIP用户才能访问"
+
+    def has_permission(self, request, view):
+        """
+        自定义权限只有vip用户能访问，
+        注意我们初始化时候的顺序是认证在权限前面的，所以只要认证通过~
+        我们这里就可以通过request.user,拿到我们用户信息
+        request.auth就能拿到用户对象
+        """
+        if request.user and request.auth.type == 2:
+            return True
+        else:
+            return False
+
+```
+
+
+
+局部视图注册
+
+```
+class TestAuthView(APIView):
+    authentication_classes = [MyAuth, ]
+    permission_classes = [MyPermission, ]
+
+    def get(self, request, *args, **kwargs):
+        print(request.user)
+        print(request.auth)
+        username = request.user
+        return Response(username)
+
+```
+
+
+
+ 全局注册 settings.py
+
+```
+REST_FRAMEWORK = {
+    # 默认使用的版本控制类
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    # 允许的版本
+    'ALLOWED_VERSIONS': ['v1', 'v2'],
+    # 版本使用的参数名称
+    'VERSION_PARAM': 'version',
+    # 默认使用的版本
+    'DEFAULT_VERSION': 'v1',
+    # 配置全局认证
+    # 'DEFAULT_AUTHENTICATION_CLASSES': ["BRQP.utils.MyAuth", ]
+    # 配置全局权限
+    "DEFAULT_PERMISSION_CLASSES": ["BROP.utils.MyPermission"]
+}
+
+```
+
+
+
+## DRF的频率
+
+### 频率限制是做什么的
+
+开放平台的API接口调用需要限制其频率，以节约服务器资源和避免恶意的频繁调用。
+
+我们的DRF提供了一些频率限制的方法，我们看一下。
+
+### 频率组件源码
+
+版本，认证，权限，频率这几个组件的源码是一个流程，这里就不再带大家走源码了~
+
+相信大家可以自己看懂了~~下面我们谈谈频率组件实现的原理~~
+
+### 频率组件原理
+
+DRF中的频率控制基本原理是基于访问次数和时间的，当然我们可以通过自己定义的方法来实现。
+
+当我们请求进来，走到我们频率组件的时候，DRF内部会有一个字典来记录访问者的IP，
+
+以这个访问者的IP为key，value为一个列表，存放访问者每次访问的时间，
+
+{ IP1: [第三次访问时间，第二次访问时间，第一次访问时间]，}
+
+把每次访问最新时间放入列表的最前面，记录这样一个数据结构后，通过什么方式限流呢~~
+
+如果我们设置的是10秒内只能访问5次，
+
+　　-- 1，判断访问者的IP是否在这个请求IP的字典里
+
+　　-- 2，保证这个列表里都是最近10秒内的访问的时间
+
+　　　　　　判断当前请求时间和列表里最早的(也就是最后的)请求时间的查
+
+　　　　　　如果差大于10秒，说明请求以及不是最近10秒内的，删除掉，
+
+　　　　　　继续判断倒数第二个，直到差值小于10秒
+
+　　-- 3，判断列表的长度(即访问次数)，是否大于我们设置的5次，
+
+　　　　　　如果大于就限流，否则放行，并把时间放入列表的最前面。
+
+### 频率组件的详细用法
+
+频率组件的配置方式其实跟上面的组件都一样，我们看下频率组件的使用。
+
+
+
+自定义的频率限制类
+
+```
+# by gaoxin
+from rest_framework.throttling import BaseThrottle
+import time
+
+VISIT_RECORD = {}
+
+
+class MyThrottle(BaseThrottle):
+
+    def __init__(self):
+        self.history = None
+
+    def allow_request(self, request, view):
+        # 实现限流的逻辑
+        # 以IP限流
+        # 访问列表 {IP: [time1, time2, time3]}
+        # 1, 获取请求的IP地址
+        ip = request.META.get("REMOTE_ADDR")
+        # 2，判断IP地址是否在访问列表
+        now = time.time()
+        if ip not in VISIT_RECORD:
+            # --1， 不在 需要给访问列表添加key，value
+            VISIT_RECORD[ip] = [now,]
+            return True
+            # --2 在 需要把这个IP的访问记录 把当前时间加入到列表
+        history = VISIT_RECORD[ip]
+        history.insert(0, now)
+        # 3， 确保列表里最新访问时间以及最老的访问时间差 是1分钟
+        while history and history[0] - history[-1] > 60:
+            history.pop()
+        self.history = history
+        # 4，得到列表长度，判断是否是允许的次数
+        if len(history) > 3:
+            return False
+        else:
+            return True
+
+    def wait(self):
+        # 返回需要再等多久才能访问
+        time = 60 - (self.history[0] - self.history[-1])
+        return time
+```
+
+
+
+
+
+配置自定义频率限制
+
+```
+REST_FRAMEWORK = {
+    # ......
+    # 频率限制的配置
+    "DEFAULT_THROTTLE_CLASSES": ["Throttle.throttle.MyThrottle"],
+    }
+}
+```
+
+
+
+
+
+配置自定义频率限制
+
+```
+from rest_framework.throttling import SimpleRateThrottle
+
+
+class MyVisitThrottle(SimpleRateThrottle):
+    scope = "WD"
+
+    def get_cache_key(self, request, view):
+        return self.get_ident(request)
+```
+
+
+
+
+
+配置频率限制
+
+```
+REST_FRAMEWORK = {
+    # 频率限制的配置
+    # "DEFAULT_THROTTLE_CLASSES": ["Throttle.throttle.MyVisitThrottle"],
+    "DEFAULT_THROTTLE_CLASSES": ["Throttle.throttle.MyThrottle"],
+    "DEFAULT_THROTTLE_RATES":{
+        'WD':'5/m',         #速率配置每分钟不能超过5次访问，WD是scope定义的值，
+
+    }
+}
+```
+
+
+
+ 我们可以在postman  或者DRF自带的页面进行测试都可以~~*
+
+
+
+# [DRF的分页](https://www.cnblogs.com/GGGG-XXXX/articles/9867882.html)
+
+## DRF的分页
+
+### 为什么要使用分页
+
+其实这个不说大家都知道，大家写项目的时候也是一定会用的，
+
+我们数据库有几千万条数据，这些数据需要展示，我们不可能直接从数据库把数据全部读取出来，
+
+这样会给内存造成特别大的压力，有可能还会内存溢出，所以我们希望一点一点的取，
+
+那展示的时候也是一样的，总是要进行分页显示，我们之前自己都写过分页。
+
+DRF给我们提供了三种分页方式，我们看下他们都是什么样的~~
+
+分页组件的使用
+
+DRF提供的三种分页
+
+```
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination, CursorPagination
+
+```
+
+
+
+全局配置
+
+```
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 2
+}
+```
+
+ 
+
+#### 第一种 PageNumberPagination 看第n页，每页显示n条数据
+
+http://127.0.0.1:8000/book?page=2&size=1
+
+自定义分页类
+
+```
+class MyPageNumber(PageNumberPagination):
+    page_size = 2  # 每页显示多少条
+    page_size_query_param = 'size'  # URL中每页显示条数的参数
+    page_query_param = 'page'  # URL中页码的参数
+    max_page_size = None  # 最大页码数限制
+```
+
+
+
+视图
+
+```
+class BookView(APIView):
+    def get(self, request):
+        book_list = Book.objects.all()
+        # 分页
+        page_obj = MyPageNumber()
+        page_article = page_obj.paginate_queryset(queryset=book_list, request=request, view=self)
+        
+        ret = BookSerializer(page_article, many=True)
+        return Response(ret.data)
+```
+
+
+
+返回带页码链接的响应
+
+```
+class BookView(APIView):
+    def get(self, request):
+        book_list = Book.objects.all()
+        # 分页
+        page_obj = MyPageNumber()
+        page_article = page_obj.paginate_queryset(queryset=book_list, request=request, view=self)
+
+        ret = BookSerializer(page_article, many=True)
+        # return Response(ret.data)
+        # 返回带超链接 需返回的时候用内置的响应方法
+        return page_obj.get_paginated_response(ret.data)
+```
+
+
+
+#### 第二种 LimitOffsetPagination 在第n个位置 向后查看n条数据
+
+http://127.0.0.1:8000/book?offset=2&limit=1
+
+
+
+自定义的分页类
+
+```
+class MyLimitOffset(LimitOffsetPagination):
+    default_limit = 1
+    limit_query_param = 'limit'
+    offset_query_param = 'offset'
+    max_limit = 999
+```
+
+
+
+视图
+
+```
+# 视图和上面的大体一致
+# 只有用的分页类不同，其他都相同
+class BookView(APIView):
+    def get(self, request):
+        book_list = Book.objects.all()
+        # 分页
+        page_obj = MyLimitOffset()
+        page_article = page_obj.paginate_queryset(queryset=book_list, request=request, view=self)
+
+        ret = BookSerializer(page_article, many=True)
+        # return Response(ret.data)
+        # 返回带超链接 需返回的时候用内置的响应方法
+        return page_obj.get_paginated_response(ret.data)
+```
+
+
+
+#### 第三种 CursorPagination 加密游标的分页 把上一页和下一页的id记住
+
+自定义分页类
+
+```
+class MyCursorPagination(CursorPagination):
+    cursor_query_param = 'cursor'
+    page_size = 1
+    ordering = '-id'
+```
+
+
+
+视图
+
+```
+class BookView(APIView):
+    def get(self, request):
+        book_list = Book.objects.all()
+        # 分页
+        page_obj = MyCursorPagination()
+        page_article = page_obj.paginate_queryset(queryset=book_list, request=request, view=self)
+
+        ret = BookSerializer(page_article, many=True)
+        # return Response(ret.data)
+        # 返回带超链接 需返回的时候用内置的响应方法
+        return page_obj.get_paginated_response(ret.data)
+```
+
+
+
+# [DRF的解析器和渲染器](https://www.cnblogs.com/GGGG-XXXX/articles/9893090.html)
+
+## 解析器
+
+解析器的作用就是服务端接收客户端传过来的数据，把数据解析成自己想要的数据类型的过程。
+
+本质就是对请求体中的数据进行解析。
+
+在了解解析器之前~大家要先知道Accept以及ContentType请求头。
+
+Accept是告诉对方我能解析什么样的数据，通常也可以表示我想要什么样的数据。
+
+ContentType是告诉对方我给你的是什么样的数据类型。
+
+那大家想一下，解析器工作原理的本质应该是什么~~~~~
+
+就是拿到请求的ContentType来判断前端给我的数据类型是什么，然后我们去拿相应的解析器去解析数据。
+
+### Django的解析器
+
+我们请求进来请求体中的数据在request.body中，那也就证明，解析器会把解析好的数据放入request.body
+
+我们在视图中可以打印request的类型，能够知道request是WSGIRequest这个类。
+
+我们可以看下这个类的源码~~~我们是怎么拿到request.POST数据的~~
+
+![img](assets/1349080-20181101213812039-777970781.png)
+
+ ![img](assets/1349080-20181101214452306-1863513209.png)
+
+application/x-www-form-urlencoded不是不能上传文件，是只能上传文本格式的文件，
+
+multipart/form-data是将文件以二进制的形式上传，这样可以实现多种类型的文件上传
+
+一个解析到request.POST,  request.FILES中。
+
+也就是说我们之前能在request中能到的各种数据是因为用了不同格式的数据解析器~
+
+那么我们的DRF能够解析什么样的数据类型呢~~~
+
+### DRF的解析器
+
+我们想一个问题~什么时候我们的解析器会被调用呢~~ 是不是在request.data拿数据的时候~
+
+我们说请求数据都在request.data中，那我们看下这个Request类里的data~~
+
+![img](assets/1349080-20181101215859481-464070699.png)
+
+![img](assets/1349080-20181101222833057-197078913.png)
+
+![img](assets/1349080-20181101222923878-2026687358.png)
+
+![img](assets/1349080-20181101223011038-554055908.png)
+
+![img](assets/1349080-20181101223134656-1316106836.png)
+
+![img](assets/1349080-20181101223557951-1907964700.png)
+
+得到解析器后，调用解析器里的parse方法~~
+
+![img](assets/1349080-20181101223740015-592379964.png)
+
+ 那说到这里~我们看下DRF配置的默认的解析器的类都有哪些~~
+
+![img](assets/1349080-20181101224007010-1071706876.png)
+
+也就是说我们的DRF支持Json，Form表单的请求，包括多种文件类型的数据~~~~
+
+![img](assets/1349080-20181101224410838-1416579854.png)
+
+可以在我们的视图中配置视图级别的解析器~~~
+
+![img](assets/1349080-20181101224451197-1980707355.png)
+
+这就是我们DRF的解析器~~~
+
+## DRF的渲染器
+
+渲染器就是友好的展示数据~~
+
+DRF给我们提供的渲染器有~~
+
+![img](assets/1349080-20181101224819663-1578637231.png)
+
+我们在浏览器中展示的DRF测试的那个页面~就是通过浏览器的渲染器来做到的~~
+
+当然我们可以展示Json数据类型~~~~渲染器比较简单~~~~ 
