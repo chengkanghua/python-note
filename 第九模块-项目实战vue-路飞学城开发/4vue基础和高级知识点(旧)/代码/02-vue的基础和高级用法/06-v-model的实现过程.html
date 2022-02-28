@@ -7,12 +7,11 @@
 <body>
 	<div id="app">
 		<!-- v-model这个指令很好理解,其实它就是一个语法糖 (甜甜的) 它是oninput事件和绑定value的实现 -->
-		<input type="text"  :value = 'text' @input = 'valueChange'>
+		<input type="text"  :value = 'text' @input="valueChange" >
 		<h3>{{ text }}</h3>
 
 	</div>
-	<script type="text/javascript" src="./node_modules/vue/dist/vue.min.js"></script>
-
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
 	<script type="text/javascript">
 		
 		new Vue({

@@ -26,31 +26,32 @@
         <h3>{{msg}}</h3>
         <h2 v-text='msg2'></h2>
         <p v-html='msg2'></p>
-        <div class="box" v-if='isShow'>
-        </div>
-        <div class="box" v-show='isShow'></div>
+        <div class="box" v-if='isShow'>box </div>
+        <hr>
         <div v-if='Math.random() > 0.5'>
             此值大于0.5
         </div>
         <div v-else>
             此值小于0.5
         </div>
+
         <ul>
             <li v-for='(item,index) in menuList'>
-                <h3>{{index}}--菜名:{{item.name}}</h3>
-                <p>价格{{item.price}}</p>
+                <h3>{{index}}:菜名:{{item.name}}  price: {{item.price}}  </h3>
             </li>
         </ul>
+
         <ul>
             <li v-for='(value,key) in object'>
                 {{key}}--{{value}}
             </li>
         </ul>
+        <!--  v-bind:class 绑定class active 条件isGreen为true-->
         <div class="wrap" v-bind:class='{active:isGreen}'></div>
         <a v-bind:href="href">路飞</a>
         <!-- <img src="" alt=""> -->
     </div>
-    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
     <script type="text/javascript">
     // innerHTML innerText
     new Vue({

@@ -8,11 +8,13 @@ from .serializers import RegisterSerializer
 from Course.models import Account
 import redis
 import uuid
+import hashlib
 # Create your views here.
 
 class RegisterView(APIView):
     def post(self,request):
         res = BaseResponse()
+        print(request.data)
         ser_obj = RegisterSerializer(data=request.data)
         if ser_obj.is_valid():
             ser_obj.save()
@@ -26,8 +28,12 @@ class LoginView(APIView):
     def post(self,request):
         res = BaseResponse()
         username = request.data.get("username", "")
-        pwd = request.data.get("pwd", "")
-        user_obj = Account.objects.filter(username=username, pwd=pwd).first()
+        pwd = request.data.get("password", "")
+        # print(request.data,pwd)
+        pwd_salt = "luffy_password" + pwd
+        md5_str = hashlib.md5(pwd_salt.encode()).hexdigest()
+
+        user_obj = Account.objects.filter(username=username, pwd=md5_str).first()
         if not user_obj:
             res.code = 1030
             res.error = "用户名或密码错误"
@@ -39,11 +45,12 @@ class LoginView(APIView):
             token = uuid.uuid4()
             # conn.set(str(token), user_obj.id, ex=10)
             conn.set(str(token), user_obj.id)
-            res.data = token
+            res.access_token = token
         except Exception as e:
             print(e)
             res.code = 1031
             res.error = "创建令牌失败"
+        res.username = username
         return Response(res.dict)
 
 class TestView(APIView):

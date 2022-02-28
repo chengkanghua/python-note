@@ -195,7 +195,7 @@ yarn-error.log*
 *.sln
 *.sw?
 
-
+node_modules
 
 # 忽略虚拟环境目录
 /study/django3.2_orm/

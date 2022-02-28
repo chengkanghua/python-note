@@ -27,14 +27,14 @@
 
 		<!-- <div class="box" v-on:click = 'showHanlder()' v-if='isShow'></div> -->
 		<button  v-on:click='showHanlder'>{{btnText}}</button>
-		<div class="box"  v-if='isShow'></div>
+		<div class="box" v-if='isShow'></div>
 
 		<div class="isGreen" v-bind:class = '{active:isYellow}'></div>
 		<button v-on:click='changeColor'>切换</button>
 
 		<!-- v-if 和v-on 来实现页面中DOM的创建和销毁 -->
 	</div>
-	<script type="text/javascript" src="./node_modules/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
 	<script type="text/javascript">
 		
 		var app = new Vue({

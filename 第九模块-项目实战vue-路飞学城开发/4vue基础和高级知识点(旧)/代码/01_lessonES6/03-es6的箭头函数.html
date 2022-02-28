@@ -17,7 +17,6 @@
 		alert(add(1,2));
 		*/
 		
-
 		/*
 		// 函数对象
 		var add  = function (a,b) {
@@ -34,8 +33,8 @@
 		alert(add(3,7))
 		*/
 
-		/*
-		var person = {
+		
+	/* 	var person = {
 			name:"alex",
 			age: 20,
 			fav:function () {
@@ -44,40 +43,36 @@
 				console.log(this.age);
 			}
 		};
-
 		person.fav();
-		*/
+		 */
 
-		/*
-		var person = {
+		
+/* 		var person = {
 			name:"alex",
 			age: 20,
 			fav: () => {
 				// this的指向发生了改变,指向了定义person的父级对象 window
 				console.log('喜欢AV');
-				// this指的是当前的对象
+				// this指的是window
 				console.log(this);
 			}
 		};
-
-		person.fav();
-		*/
-		/*
-		var person = {
+		person.fav(); */
+		
+		
+		/* var person = {
 			name:"alex",
 			age: 20,
 			fav: function () {
-				// this的指向发生了改变,指向了定义person的父级对象 window
 				console.log('喜欢AV');
 				// this指的是当前的对象
 				console.log(this);
 				console.log(arguments[0])
 			}
 		};
-
 		person.fav('哈哈哈');
-		*/
-		var person = {
+		 */
+	/* 	var person = {
 			name:"alex",
 			age: 20,
 			fav: (content) =>{
@@ -85,11 +80,20 @@
 				console.log('喜欢AV');
 				// this指的是当前的对象
 				console.log(this);
-				// console.log(arguments)
+				// console.log(arguments)  // 引用错误
 			}
 		};
+		person.fav('哈哈哈'); */
 
-		person.fav('哈哈哈');
+		var person = {
+			name:"alex",
+			age:20,
+			fav: (content)=>{
+				console.log(this)
+				console.log(content)
+			}
+		}
+		person.fav("hahah")
 
 	</script>
 </body>

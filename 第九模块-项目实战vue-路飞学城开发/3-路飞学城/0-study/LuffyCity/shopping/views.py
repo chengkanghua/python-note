@@ -45,7 +45,7 @@ class ShoppingCarView(APIView):
         # 1, 获取前端传过来的数据以及user_id
         course_id = request.data.get("course_id", "")
         price_policy_id = request.data.get("price_policy_id", "")
-        user_id = request.user.pk
+        user_name = request.data.get("username","")
         # 2, 校验数据的合法性
         # 2.1 校验课程id合法性
         course_obj = Course.objects.filter(id=course_id).first()
@@ -67,32 +67,51 @@ class ShoppingCarView(APIView):
             res.error = "价格策略id不合法"
             return Response(res.dict)
         # 3，构建redisKEY
-        key = SHOPPINGCAR_KEY % (user_id, course_id)
+        key = SHOPPINGCAR_KEY % (user_name, course_id)
         # 4，构建数据结构
+        current_price_policy = price_policy_dict.get(price_policy_id)
+        # print(current_price_policy)
         course_info = {
             "id": course_obj.id,
             "title": course_obj.title,
             "course_img": str(course_obj.course_img),
             "price_policy_dict": json.dumps(price_policy_dict, ensure_ascii=False),
-            "default_price_policy_id": price_policy_id
+            "default_price_policy_id": price_policy_id,
+            "coursePrice":current_price_policy.get("price"),
+            "valid_period":current_price_policy.get("valid_period"),
+            "valid_period_display":current_price_policy.get('valid_period_display'),
         }
+
+
+        # print(course_info)
+
         # 5  写入redis
+        if CONN.exists(key):
+            res.data = "该套餐已更新"
+        else:
+            res.data = "加入购物车成功"
+
         CONN.hmset(key, course_info)
-        res.data = "加入购物车成功"
         return Response(res.dict)
 
-    def get(self, request):
+    def get(self, request,username):
         res = BaseResponse()
         # 1, 拼接redis key
-        user_id = request.user.pk
-        shopping_car_key = SHOPPINGCAR_KEY % (user_id, "*")
+        # user_id = request.user.pk
+        # print(username)
+        shopping_car_key = SHOPPINGCAR_KEY % (username, "*")
         # 2, 去redis中读取数据
         # 2.1 匹配所有的keys
         # 3，构建数据结构展示
         all_keys = CONN.scan_iter(shopping_car_key)
         ret = []
         for key in all_keys:
-            ret.append(CONN.hgetall(key))
+            item = CONN.hgetall(key)
+            str_dict = item.get('price_policy_dict')
+            price_policy_dict = json.loads(str_dict)
+            item['price_policy_dict'] = price_policy_dict
+            ret.append(item)
+            # print(item)
         res.data = ret
         return Response(res.dict)
 
@@ -125,18 +144,17 @@ class ShoppingCarView(APIView):
         # course_list = [course_id, ]
         res = BaseResponse()
         # 1 获取前端传来的数据以及user_id
-        course_list = request.data.get("course_list", "")
-        user_id = request.user.pk
-        # 2 校验course_id是否合法
-        for course_id in course_list:
-            key = SHOPPINGCAR_KEY % (user_id, course_id)
-            if not CONN.exists(key):
-                res.code = 1045
-                res.error = "课程ID不合法"
-                return Response(res.dict)
-            # 3， 删除redis数据
-            CONN.delete(key)
-        res.data = "删除成功"
+        username =  request.data.get("username", "")
+        course_id = request.data.get("index", "")
+        key = 'SHOPPINGCAR_%s_%s' %(username,course_id)
+        print(key)
+
+        # 3， 删除redis数据
+        reply = CONN.delete(key)
+        if reply:
+            res.data = "删除成功"
+        else:
+            res.data = '不存在的购物车数据'
         return Response(res.dict)
 
 

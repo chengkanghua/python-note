@@ -53,35 +53,35 @@ art-template库：模板引擎渲染，高性能的渲染DOM    (我们后端的
    1. 
 
     	1.要初始化npm的项目 :  
-    
-        npm init  --yes 自动生成一个package.json文件
-             {
-              "name": "vue_lesson",
-              "version": "1.0.0",
-              "description": "这是我的vue的第一个项目",
-              "main": "index.js",
-              "scripts": {
-                "test": "echo \"Error: no test specified\" && exit 1"
-              },
-              "author": "mjj",
-              "license": "ISC",
-              "dependencies": {
-                "vue": "^2.5.16"
-              }
-            }
-         2.npm install vue --save
-            npm install jquery --save
-            
-         3.下载包  npm  uninstall vue --save
-         
-         4.下载所有的依赖包 npm install
-            
+    	 
+    	 npm init  --yes 自动生成一个package.json文件
+    	      {
+    	       "name": "vue_lesson",
+    	       "version": "1.0.0",
+    	       "description": "这是我的vue的第一个项目",
+    	       "main": "index.js",
+    	       "scripts": {
+    	         "test": "echo \"Error: no test specified\" && exit 1"
+    	       },
+    	       "author": "mjj",
+    	       "license": "ISC",
+    	       "dependencies": {
+    	         "vue": "^2.5.16"
+    	       }
+    	     }
+    	  2.npm install vue --save
+    	     npm install jquery --save
+    	     
+    	  3.下载包  npm  uninstall vue --save
+    	  
+    	  4.下载所有的依赖包 npm install
+   
 
 #### vue的起步
 
    - 引包:    <script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
    - 创建实例化对象
-        
+     
 ```javascript
 new Vue({
 el:'#app',//目的地
@@ -468,12 +468,15 @@ console.log('组件被停用了');
 #### 获取更新之后的dom添加事件的特殊情况
 
 ```javascript
-$nextTick 是在下次Dom更新循环结束之后执行的延迟回调，在修改数据之后使用$nextTick ，则可以在回调中获取更新之后的DOM
+$nextTick 是在下次Dom更新循环结束之后执行的延迟回调，在修改数据之后使用$nextTick ，	
+	则可以在回调中获取更新之后的DOM
+
+
+
 ```
 
 
 ​    
-
 
 
 
