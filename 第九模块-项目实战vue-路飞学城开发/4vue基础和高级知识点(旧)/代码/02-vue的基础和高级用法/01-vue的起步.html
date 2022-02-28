@@ -8,20 +8,21 @@
 	<div id="app">
 		<!-- 模板语法 主要的作用是插值{{}}   angualr {{}}   react {}-->
 		<h3>{{ msg }}</h3>
-		<h3>{{ msg+ 'hello'}}</h3>
+		<h3>{{ msg+ ' hello'}}</h3>
 		<h4>{{1< 1 ? '真的':'假的'}}</h4>
 		<!-- 可以插入字符串 -->
 		<h5>{{'hello'}}</h5>
 		<p>{{'hello world'.split('').reverse().join('')}}</p>
 		<h3>{{ {name:'role'} }}</h3>
+		<span>{{ a }}</span>
 		<!-- 不能使用if - else -->
-
 		<!-- {{}}模板语法的设计 只是为了简单的运算 -->
 	</div>
 
 	<!-- 1.先引包 -->
-	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
-
+<!-- 	<script type="text/javascript" src="./node_modules/vue/dist/vue.js"></script>
+ -->	
+ 	<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
 	<script type="text/javascript">
 		// 小结：
 		// 1.引包 具备Vue对象
@@ -31,10 +32,7 @@
 		// 5.页面中存在该目的地的 目的地同字符串描述，同jq方式一样
 			
 
-
-		
 		// 2.创建vue实例化对象
-
 		var app  = new Vue({
 			// 发生行为的目的地,
 			el:'#app',
@@ -51,9 +49,8 @@
 				a:20
 			}
 		});
-		// app.a = 10;
+		app.a = 10;
 		console.log(app);
-
 		console.log(app.$el===document.getElementById('app'));
 
 		// 在vue实例化对象之后,这个对象中属性 前面会有$,主要是跟我们自己定义的属性区分

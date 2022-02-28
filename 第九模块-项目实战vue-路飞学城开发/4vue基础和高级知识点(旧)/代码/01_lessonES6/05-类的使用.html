@@ -25,7 +25,7 @@
 
 
 		// es6中创建对象的方式 使用class
-		class Person{
+		/* class Person{
 			constructor(name,age){
 				this.name = name;
 				this.age = age;
@@ -33,12 +33,27 @@
 			showName(){
 				alert(this.name)
 			}
-
-
 		};
 
 		var p2 = new Person('张三',20);
 		p2.showName();
+ */
+
+class Person{
+	constructor(name,age){
+		this.name=name
+		this.age=age
+	}
+	showName(){
+		alert(`我的名字${this.name},年龄${this.age}`)
+	}
+}
+var p1 = new Person('李四',33)
+p1.showName()
+
+
+
+
 	</script>
 </body>
 </html>
