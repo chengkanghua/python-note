@@ -8,7 +8,7 @@
 	<div id="app">
 		<App></App>
 	</div>
-	<script type="text/javascript" src="./node_modules/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
 	<script type="text/javascript">
 		// 钩子函数
 //  beforeCreate
@@ -42,30 +42,30 @@
 		},
 		beforeCreate(){
 			// 组件创建之前
-			console.log(this.msg);
+			console.log('beforeCreate:',this.msg);
 		},
 		 created(){
 		 	// 组件创建之后
 		 	// 使用该组件，就会触发以上的钩子函数，created中可以操作数据，发送ajax，并且可以实现vue==》页面的影响  应用：发送ajax请求
-		 	console.log(this.msg);
+		 	console.log('created:',this.msg);
 		 	// this.msg = '嘿嘿黑';
 		 },
 		 beforeMount(){
 		 	// 装载数据到DOM之前会调用
-		 	console.log(document.getElementById('app'));
+		 	console.log('beforeMount:',document.getElementById('app'));
 		 },
 		  mounted(){
 		  	// 这个地方可以操作DOM
 		 	// 装载数据到DOM之后会调用 可以获取到真实存在的DOM元素，vue操作以后的DOM
-		 	console.log(document.getElementById('app'));
+		 	console.log('mounted:',document.getElementById('app'));
 		 },
 		 beforeUpdate(){
 		 	// 在更新之前，调用此钩子，应用：获取原始的DOM
-		 	console.log(document.getElementById('app').innerHTML);
+		 	console.log('beforeUpdate',document.getElementById('app').innerHTML);
 		 },
 		 updated(){
 		 	// 在更新之前，调用此钩子，应用：获取最新的DOM
-		 	console.log(document.getElementById('app').innerHTML);
+		 	console.log('updated',document.getElementById('app').innerHTML);
 		},
 		beforeDestroy(){
 			console.log('beforeDestroy');
@@ -90,7 +90,7 @@
 		},
 		template:`
 			<div>
-				<keep-alive>
+				<keep-alive>   <!-- keep-alive 把组件缓存起来, 组件再次显示只是activated,记录还保存着. -->
 					<Test v-if = 'isShow'></Test>
 				</keep-alive>
 				

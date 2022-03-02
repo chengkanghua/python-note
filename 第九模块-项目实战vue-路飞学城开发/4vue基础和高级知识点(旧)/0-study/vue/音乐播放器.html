@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>music autoplay</title>
+    <style>
+        *{
+            padding: 0;
+            margin:0;
+        }
+        ul{
+            list-style:none;
+        }
+        ul li {
+            margin:15px 30px;
+            padding: 1px;
+        }
+        ul li.active{
+            background-color:cadetblue;
+        }
+    </style>
+</head>
+<body>
+    <div id="music">
+        <audio :src="currentSrc" controls autoplay></audio>
+        <ul>
+            <li v-for = '(item,index) in musics' @click = 'chickHandler(index)' :class = '{active:currentIndex == index}'>
+                <h3>{{ item.id}}:歌名:{{item.name}} 歌手:{{item.author}}</h3>
+            </li>
+        </ul>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
+    <script>
+        var musicData = [{
+            id:1,
+            name: '于荣光 - 少林英雄',
+            author: '于荣光',
+            songSrc: '../../代码/02-vue的基础和高级用法/static/于荣光 - 少林英雄.mp3'
+        },
+        {
+            id: 2,
+            name: 'Joel Adams - Please Dont Go',
+            author: 'Joel Adams',
+            songSrc: '../../代码/02-vue的基础和高级用法/static/Joel Adams - Please Dont Go.mp3'
+        },
+        {
+            id: 3,
+            name: 'MKJ - Time',
+            author: 'MKJ',
+            songSrc: '../../代码/02-vue的基础和高级用法/static/MKJ - Time.mp3'
+        },
+        {
+            id: 4,
+            name: 'Russ - Psycho (Pt. 2)',
+            author: 'Russ',
+            songSrc: '../../代码/02-vue的基础和高级用法/static/Russ - Psycho (Pt. 2).mp3'
+        }
+        ];
+        
+        new Vue({
+            el:'#music',
+            data(){
+                return{
+                    musics:musicData,
+                    currentIndex:0
+                }
+            },
+            methods:{
+                chickHandler(index){
+                    this.currentIndex = index;
+                }
+            },
+            computed:{
+                currentSrc(){
+                    return this.musics[this.currentIndex].songSrc
+                },
+            },
+            
+        })
+    
+    </script>
+</body>
+</html>

@@ -9,16 +9,18 @@ import json
 from flask import Flask
 from flask import request
 from flask import Response
+from flask_cors import CORS
 
 
 
 app = Flask(__name__)
 
+CORS(app)
 # 默认是get请求
 @app.route("/")
 def index():
     resp = Response("<h2>首页</h2>")
-    resp.headers["Access-Control-Allow-Origin"] = "*"
+    # resp.headers["Access-Control-Allow-Origin"] = "*"
     return resp
 
 
@@ -48,9 +50,9 @@ def create():
 
     resp = Response(json.dumps(data))
 
-    resp.headers["Access-Control-Allow-Origin"] = "*"
-
+    # resp.headers["Access-Control-Allow-Origin"] = "*"
     return resp
+
 
 
 if __name__ == '__main__':
