@@ -8,17 +8,16 @@
 
 <body>
     <div id="app"></div>
-    <script type="text/javascript" src="./node_modules/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.js"></script>
     <script type="text/javascript">
-    	
+     // component 创建公共组件	
     Vue.component('subComp',{
     	template:`<div></div>`
     })
 
-
     var App = {
         template: `<div>
-        					<subComp ref = 'subc'></subComp>
+        				<subComp ref = 'subc'></subComp>
 					<button ref = 'btn'>我是按钮</button>
 					<p ref = 'sb'>alex</p>
 			</div>`,
@@ -32,10 +31,10 @@
             console.log(this.$refs.btn); //undefined
         },
         mounted() {
-        	  console.log(this);
-           console.log(this.$refs.btn);
-           // 如果是给组件绑定的ref  = 'subc'属性那么this.$refs.subc取到的是组件对象
-           console.log(this.$refs.subc);
+            console.log(this);
+            console.log(this.$refs.btn);
+            // 如果是给组件绑定的ref  = 'subc'属性那么this.$refs.subc取到的是组件对象
+            console.log(this.$refs.subc);
 
            var op = this.$refs.sb;
            this.$refs.btn.onclick = function() {
@@ -48,9 +47,7 @@
     new Vue({
         el: '#app',
         data() {
-            return {
-
-            }
+            return { }
         },
         template: `<App />`,
         components: {
