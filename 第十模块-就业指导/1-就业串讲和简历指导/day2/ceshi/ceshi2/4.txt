@@ -1,0 +1,75 @@
+import os
+def getallsize(pathvar):
+	size = 0
+	lst = os.listdir(pathvar)
+	# print(lst)
+	for i in lst:
+		pathvar2 = os.path.join(pathvar,i)
+		# 判断是否是文件
+		if os.path.isfile(pathvar2):
+			size = os.path.getsize(pathvar2)
+			print(size)
+		# 判断是否是文件夹
+
+pathvar = r"E:\python26_27\two\ceshi"
+res = getallsize(pathvar)
+import os
+def getallsize(pathvar):
+	size = 0
+	lst = os.listdir(pathvar)
+	# print(lst)
+	for i in lst:
+		pathvar2 = os.path.join(pathvar,i)
+		# 判断是否是文件
+		if os.path.isfile(pathvar2):
+			size = os.path.getsize(pathvar2)
+			print(size)
+		# 判断是否是文件夹
+
+pathvar = r"E:\python26_27\two\ceshi"
+res = getallsize(pathvar)
+import os
+def getallsize(pathvar):
+	size = 0
+	lst = os.listdir(pathvar)
+	# print(lst)
+	for i in lst:
+		pathvar2 = os.path.join(pathvar,i)
+		# 判断是否是文件
+		if os.path.isfile(pathvar2):
+			size = os.path.getsize(pathvar2)
+			print(size)
+		# 判断是否是文件夹
+
+pathvar = r"E:\python26_27\two\ceshi"
+res = getallsize(pathvar)
+import os
+def getallsize(pathvar):
+	size = 0
+	lst = os.listdir(pathvar)
+	# print(lst)
+	for i in lst:
+		pathvar2 = os.path.join(pathvar,i)
+		# 判断是否是文件
+		if os.path.isfile(pathvar2):
+			size = os.path.getsize(pathvar2)
+			print(size)
+		# 判断是否是文件夹
+
+pathvar = r"E:\python26_27\two\ceshi"
+res = getallsize(pathvar)
+import os
+def getallsize(pathvar):
+	size = 0
+	lst = os.listdir(pathvar)
+	# print(lst)
+	for i in lst:
+		pathvar2 = os.path.join(pathvar,i)
+		# 判断是否是文件
+		if os.path.isfile(pathvar2):
+			size = os.path.getsize(pathvar2)
+			print(size)
+		# 判断是否是文件夹
+
+pathvar = r"E:\python26_27\two\ceshi"
+res = getallsize(pathvar)
