@@ -187,10 +187,35 @@
       class Child2(parent):
           pass
       ```
-
       
-
+50. 参考下面的代码片段
+    
+    ```python
+    class Context:
+        pass
+    
+    with Content() as ctx:
+        ctx.do_something()
+    请在Context类下添加代码完成该类的实现
+    ```
+    
+    
+    
+    # 第二部分 可选题
+    
+    1.   如何获取列表中第二大的值？
+    2.   简述Python内存管理机制。
+    3.   简述Python的垃圾回收机制。
+    4.   请用两个队列实现一个栈。
+    5.   请用Python实现一个链表。
+    6.   请用Python实现链表的逆转。 
+    
+    
+    
       
+    
+      
+    
 
 
 
