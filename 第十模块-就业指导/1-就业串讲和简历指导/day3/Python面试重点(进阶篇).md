@@ -291,7 +291,7 @@ https://www.cnblogs.com/clschao/articles/9578922.html
 
 35.   数据库优化方案？
 
-      读写分离
+      读写分离  主从复制 binlog日志
 
       分库分表
 

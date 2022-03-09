@@ -1,0 +1,216 @@
+{
+  "id": "c4b6ba50-fcf9-40fd-be91-0705d7006319",
+  "version": "2.0",
+  "name": "s267",
+  "url": "https://www.baidu.com",
+  "tests": [{
+    "id": "466a239e-d55b-4a97-99c7-619f6c2e14b3",
+    "name": "case_01",
+    "commands": [{
+      "id": "8757e063-7123-4c83-b1a7-e396954be2d3",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "b62cedb8-07d4-4fea-98fc-96ed5f31cc17",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1108x549",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "af6e775d-cd77-41f1-a2be-7bb50bcecff1",
+      "comment": "",
+      "command": "click",
+      "target": "id=kw",
+      "targets": [
+        ["id=kw", "id"],
+        ["name=wd", "name"],
+        ["css=#kw", "css:finder"],
+        ["xpath=//input[@id='kw']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span/input", "xpath:idRelative"],
+        ["xpath=//span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b2206f0b-a4d2-4904-b5ff-8a338d72eeda",
+      "comment": "",
+      "command": "type",
+      "target": "id=kw",
+      "targets": [
+        ["id=kw", "id"],
+        ["name=wd", "name"],
+        ["css=#kw", "css:finder"],
+        ["xpath=//input[@id='kw']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span/input", "xpath:idRelative"],
+        ["xpath=//span/input", "xpath:position"]
+      ],
+      "value": "听雨危楼 -博客园"
+    }, {
+      "id": "7c081c88-90c1-4d77-b003-0e44d08f9416",
+      "comment": "",
+      "command": "click",
+      "target": "id=su",
+      "targets": [
+        ["id=su", "id"],
+        ["css=#su", "css:finder"],
+        ["xpath=//input[@id='su']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span[2]/input", "xpath:idRelative"],
+        ["xpath=//span[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "47e5a698-1da7-45a2-93e1-4c32fd8e0ff4",
+      "comment": "",
+      "command": "click",
+      "target": "id=su",
+      "targets": [
+        ["id=su", "id"],
+        ["css=#su", "css:finder"],
+        ["xpath=//input[@id='su']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span[2]/input", "xpath:idRelative"],
+        ["xpath=//span[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "7679ff38-aff1-498f-bc30-7ad8d8aa9621",
+      "comment": "",
+      "command": "click",
+      "target": "id=kw",
+      "targets": [
+        ["id=kw", "id"],
+        ["name=wd", "name"],
+        ["css=#kw", "css:finder"],
+        ["xpath=//input[@id='kw']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span/input", "xpath:idRelative"],
+        ["xpath=//span/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a16cef0a-6db3-4421-9bc9-0fa62e932572",
+      "comment": "",
+      "command": "type",
+      "target": "id=kw",
+      "targets": [
+        ["id=kw", "id"],
+        ["name=wd", "name"],
+        ["css=#kw", "css:finder"],
+        ["xpath=//input[@id='kw']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span/input", "xpath:idRelative"],
+        ["xpath=//span/input", "xpath:position"]
+      ],
+      "value": "听雨危楼"
+    }, {
+      "id": "5cb3adfa-93b3-4b0a-ad49-bac26789e85c",
+      "comment": "",
+      "command": "click",
+      "target": "id=su",
+      "targets": [
+        ["id=su", "id"],
+        ["css=#su", "css:finder"],
+        ["xpath=//input[@id='su']", "xpath:attributes"],
+        ["xpath=//form[@id='form']/span[2]/input", "xpath:idRelative"],
+        ["xpath=//span[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "99b6e17c-4205-4e65-90a4-a0187120ea2a",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=听雨危楼 - 博客园",
+      "targets": [
+        ["linkText=听雨危楼 - 博客园", "linkText"],
+        ["xpath=//div[@id='1']/h3/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, 'https://www.baidu.com/link?url=dI7sf3Ripx9cV36Q2DbCi7uqzr3ZjmKZBAkpzs-B_683s6_rntPINJtqOkSNbkJZ&wd=&eqid=81e552df00000a63000000035ebce238')]", "xpath:href"],
+        ["xpath=//h3/a", "xpath:position"],
+        ["xpath=//a[contains(.,'听雨危楼 - 博客园')]", "xpath:innerText"]
+      ],
+      "value": "",
+      "opensWindow": true,
+      "windowHandleName": "win1479",
+      "windowTimeout": 2000
+    }, {
+      "id": "068848a4-5300-4640-8d20-9ca5445a2ecb",
+      "comment": "",
+      "command": "storeWindowHandle",
+      "target": "root",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6855a0fd-98af-4a4c-838d-7cfac3c4bc5d",
+      "comment": "",
+      "command": "selectWindow",
+      "target": "handle=${win1479}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "90be3e71-b445-4d80-8f1d-cc74166b672f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.day:nth-child(1) .postTitle2",
+      "targets": [
+        ["css=.day:nth-child(1) .postTitle2", "css:finder"],
+        ["xpath=//a[contains(text(),'[置顶]    技术栈')]", "xpath:link"],
+        ["xpath=//div[@id='mainContent']/div/div/div[2]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, 'https://www.cnblogs.com/Neeo/p/10864123.html')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4f140d0e-7572-4f36-909f-8583a47c5fce",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Python",
+      "targets": [
+        ["linkText=Python", "linkText"],
+        ["css=.toc li:nth-child(1) > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Python')]", "xpath:link"],
+        ["xpath=//div[@id='cnblogs_post_body']/div/ul/li/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '#python')]", "xpath:href"],
+        ["xpath=//div/div[2]/div/div/ul/li/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Python')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ca3fbdfc-e48c-404e-8ce8-adf2fc734783",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c6bab0b6-9eb8-464a-b899-e491d53cb86e",
+      "comment": "",
+      "command": "selectWindow",
+      "target": "handle=${root}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c35edafe-1cba-4199-a6a4-f0fb55380318",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3f8ddbd7-c6d9-428c-9962-906f20dd2449",
+      "comment": "",
+      "command": "selectWindow",
+      "target": "handle=${undefined}",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "0e8bd56f-51dc-4cbd-a50d-63c3aaf08d8e",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["466a239e-d55b-4a97-99c7-619f6c2e14b3"]
+  }],
+  "urls": [],
+  "plugins": []
+}
