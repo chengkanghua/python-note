@@ -434,8 +434,8 @@ git init
 
 ```bash
 # 针对当前项目配置用户名和邮箱
-git config user.name 'mooluo'
-git config user.email '649641514@qq.com'
+git config user.name '程康华'
+git config user.email 'chengkanghua@foxmail.com'
 
 # 针对当前电脑进行全局配置，意味着以后所有的项目都使用这个账号信息
 # git config --global user.name 'mooluo'
@@ -544,6 +544,11 @@ git branch
 # git push origin --delete test  # 例如：删除远程仓库origin中的test
 
 git checkout -b develop   # 创建本地分支develop, develop在自定义分支模型(git-flow)中属于开发分支
+
+# GITEE传入公钥以后每次PUSH依然需要输入密码    原因  根本原因是 clone时 用的地址不对，应该是用SSH地址。
+# 如果已经clone并且项目比较大那修改配置的Remote地址为SSH地址就好了
+
+git remote set-url origin git@gitee.com:******.git
 ```
 
 
