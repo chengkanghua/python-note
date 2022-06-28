@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    function a(e) {
+        return window.atob && decodeURIComponent(window.atob(e).split("").map((function (e) {
+                return "%" + ("00" + e.charCodeAt(0).toString(16)).slice(-2)
+            }
+        )).join(""))
+    }
+    var data= "eyJsYXRlc3Rfd2Vla2x5X2ZlZWRfaWQiOjIwMjEzODAxLCJseW54X3NlcnZlciI6eyJ0ZW1wbGF0ZV9jaGFubmVsIjoidG91dGlhb19seW54X21haW4iLCJ0ZW1wbGF0ZV9rZXkiOiJkeW5hbWljLWlubm92YXRpdmUtdmlkZW8tY2F0ZWdvcmllcy1jZWxsIn0sImx5bnhfdGVtcGxhdGVfY2hhbm5lbCI6ImR5bmFtaWNfaW5ub3ZhdGl2ZV92aWRlb19jYXRlZ29yaWVzX2NlbGwiLCJ2ZXJzaW9uX2NvZGUiOjB9";
+    let res = a(data);
+    console.log(res);
+</script>
+</body>
+</html>
