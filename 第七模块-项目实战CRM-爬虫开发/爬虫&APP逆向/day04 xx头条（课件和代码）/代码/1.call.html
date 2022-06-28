@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    function Foo(name, age) {
+        this.name = name;
+        this.age = age;
+
+        function _0987123() {
+            console.log(arguments); // 11,22,33 ; 77,88,99   this
+            return 666
+        }
+
+        this["sign"] = _0987123;
+
+        this._0001 = function () {
+            console.log("传过来的所有参数：",arguments);
+            return 666
+        }
+    }
+
+    var obj = new Foo("武沛齐", 20)
+    console.log(obj.name);
+    console.log(obj.age);
+    var v1 = obj._0001(); // 可以调用
+
+    // 直接执行
+    var v2 = obj.sign(11,22,33);
+    console.log('v2=', v2);
+
+    // call执行函数，可以让函数名动态起来。
+    // var v3 = obj.sign.call(obj,77,88,99);
+    var v3 = obj['sign'].call(obj,77,88,99);
+    console.log('call v3=', v3);
+
+    // 参数问题
+    var v4 = obj._0001(11,22,33,44); // 可以调用
+
+</script>
+
+</body>
+</html>
