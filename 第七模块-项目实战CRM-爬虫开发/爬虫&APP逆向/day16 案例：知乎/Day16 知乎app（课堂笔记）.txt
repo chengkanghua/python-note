@@ -1,0 +1,157 @@
+Day16 知乎app
+
+目标：知乎搜索我们定制的内容。
+特别：
+	- JS逆向
+	- APP逆向
+	- 知乎：app逆向 + js逆向（appview)
+节奏：
+	- app逆向过程（正常）
+	- 弯路
+	- 重新思考和设计（搞定）
+
+版本：v5.32.1
+	https://www.wandoujia.com/apps/584215/history_v1031
+	这个版本需要登录就可以实现搜索。
+
+
+本质上就是三件事：
+	1. x-udid  x-ac-udid）
+	2. x-hd
+	3. x-zse-96
+
+1.获取x-udid
+	- 先搞定 /v1/device/ 请求，返回值 udid
+		- 请求体不是问题
+		- 请求头
+			Authorization: oauth 8d5227e0aaaa4797a763ac64e0c3b8 【固定值】
+
+			x-req-signature: 5953353fb9ef51148fae88331a7d812a455e195b
+				- libencrypt.so文件 , encrypt（硬核破解、frida-rpc)
+					- 静态
+					- 动态
+
+				- 参数到底是什么？
+				  encrypt(String str, String str2, String str3, String str4, String str5, String str6, String str7)
+
+					参数str= 2
+					参数str2= null
+					参数str3= null
+					参数str4= app_build=1031&app_version=5.32.1&bt_ck=1&bundle_id=com.zhihu.android&cp_ct=8&cp_fq=2016000&cp_tp=0&cp_us=100.0&d_n=Redmi%208A&fr_mem=202&fr_st=42809&latitude=0.0&longitude=0.0&mc_ad=E0%3A1F%3A88%3AAA%3AB3%3A39&mcc=cn&nt_st=1&ph_br=Xiaomi&ph_md=Redmi%208A&ph_os=Android%2010&ph_sn=unknown&pvd_nm=%E4%B8%AD%E5%9B%BD%E8%81%94%E9%80%9A&tt_mem=256&tt_st=51140&tz_of=28800
+					参数str5= 1355
+					参数str6= 1636642368（时间戳）
+					参数str7= dd49a835-56e7-4a0f-95b5-efd51ea5397f（固定）
+
+					s = "dd49a835-56e7-4a0f-95b5-efd51ea5397f" （加盐）
+
+						s = (env2->functions->GetStringUTFChars)(env2, str7, 0);
+					    v26 = (env2->functions->GetStringUTFChars)(env2, str4, 0);
+					    v27 = (env2->functions->GetStringUTFChars)(env2, str5, 0);
+					    v28 = (env2->functions->GetStringUTFChars)(env2, str6, 0);
+					    v29 = env2->functions->GetStringUTFChars;
+					    src = v27;
+					    
+					    v40 = v11 = str
+					    v39 = v26;
+
+						v23 = malloc(v44 + v41 + v42 + v43 + 1);
+				      	strcpy(v23, src); # str5=1355
+				      	strcat(v23, v40); # str=2
+				      	strcat(v23, v39); # str4=请求体
+				      	strcat(v23, v25); # str6=1636642368（时间戳）
+
+					v23 = 加密的数据
+					v23 = str5 + str + str4 + str4
+
+				j_hmac_sha1(v23,长度(v23), s, 长度(s), &v52);
+
+
+			注意事项：hook，一定要清空数据，再次发送请求。
+	- 获取udid
+
+
+2.获取x-hd
+	- 搞定 /guests/token 请求，返回 hd   guest id
+
+
+	AAAduxdPChRLBU6R3-oJeLUu1qveoPsynYM=
+	1d339b19b63c636217bf443f7b5fcd7b
+
+
+3.获取x-zse-96	
+	- 搜索：没搜到
+	- 请求：没有返回 x-zse-96 
+
+	内部算法：
+		s = zse93 + URL参数 + cookie中的d_c0
+		1. 对s字符串进行md5加密
+		2. 基于js中的encrypt对 md5字符串 再进行加密。
+		3. 最后再进行拼接 2.0_  + 内容
+
+	思考：我觉得内部发送请求时，一定会加入这个参数，一般都会用到 HashMap.put （有时有些字符串不会以为字符串的形式存在）。、
+
+
+
+
+	s = "101_3_2.0+/api/v4/search_v3?t=general&q=%E5%95%8A%E5%93%88%E5%93%88%E5%93%88%E5%93%88%E5%93%88&correction=1&offset=0&limit=20&filter_fields=&lc_idx=0&show_all_topics=0&search_source=Normal+"ALDZ2_r0ExKPTi0pK
+	29fzASLbErLqovVVMM=|1603356933""
+
+	s= zse93 + "/api/v4/search_v3?t=general&q=%E5%95%8A%E5%93%88%E5%93%88%E5%93%88%E5%93%88%E5%93%88&correction=1&offset=0&limit=20&filter_fields=&lc_idx=0&show_all_topics=0&search_source=Normal" + "ALDZ2_r0ExKPTi0pK29fzASLbErLqovVVMM=|1603356933\"
+
+	d_c0="ALDZ2_r0ExKPTi0pK29fzASLbErLqovVVMM=|1603356933"
+
+
+	a()( l()(s) )
+
+	函数a(   函数(s)   )
+		    md5加密
+
+   38f6164aa3428c327bc483f9fdd14384
+   38f6164aa3428c327bc483f9fdd14384
+
+   a_ty2690H9xYb8S0f_28ncU020NXk_20ZwxqSAUqNUYx
+   a_ty2690H9xYb8S0f_28ncU020NXk_20ZwxqSAUqNUYx
+
+
+	a()=函数a = b = function(e) {
+        return __g._encrypt(encodeURIComponent(e))
+    };
+
+    exejs -> 调用这个函数（38f6164aa3428c327bc483f9fdd14384）
+
+
+
+    l() 函数 = function g(e, t, n) {
+        return t ? n ? v(t, e) : h(v(t, e)) : n ? O(e) : h(O(e))
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
