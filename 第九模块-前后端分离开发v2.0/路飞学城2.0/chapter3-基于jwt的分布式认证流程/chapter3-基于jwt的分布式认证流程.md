@@ -173,7 +173,7 @@ components/Header.vue，代码：
       <div class="header">
         <div class="content">
           <div class="logo">
-            <router-link to="/"><img src="../assets/logo.png" alt=""></router-link>
+            <router-link to="/"><img src="../assets/logo.svg" alt=""></router-link>
           </div>
           <ul class="nav">
               <li v-for="item in nav.header_nav_list">
@@ -229,6 +229,296 @@ nav.get_header_nav().then(response=>{
 });
 
 </script>
+```
+
+```css
+<style scoped>
+.header-box{
+  height: 72px;
+}
+.header{
+  width: 100%;
+  height: 72px;
+  box-shadow: 0 0.5px 0.5px 0 #c9c9c9;
+  position: fixed;
+  top:0;
+  left: 0;
+  right:0;
+  margin: auto;
+  z-index: 99;
+  background: #fff;
+}
+.header .content{
+  max-width: 1366px;
+  width: 100%;
+  margin: 0 auto;
+}
+.header .content .logo a{
+  width: 150px;
+  height: auto;
+  margin-right: 50px;
+
+  cursor: pointer;
+
+}
+.header .content .logo{
+  height: 72px;
+  line-height: 72px;
+  margin: 0 20px;
+  float: left;
+  cursor: pointer; /* 设置光标的形状为爪子 */
+}
+.header .content .logo img{
+  width: 150px;
+  vertical-align: middle;
+  margin: -40px;
+}
+.header .nav li{
+  float: left;
+  height: 80px;
+  line-height: 80px;
+  margin-right: 30px;
+  font-size: 16px;
+  color: #4a4a4a;
+  cursor: pointer;
+}
+.header .nav li span{
+  padding-bottom: 16px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.header .nav li span a{
+  display: inline-block;
+}
+.header .nav li .this{
+  color: #4a4a4a;
+  border-bottom: 4px solid #ffc210;
+}
+.header .nav li:hover span{
+  color: #000;
+}
+
+/*首页导航全局搜索*/
+.search-warp {
+  position: relative;
+  float: left;
+  margin-left: 24px;
+}
+.search-warp .showhide-search {
+  width: 20px;
+  height: 24px;
+  text-align: right;
+  position: absolute;
+  display: inline-block;
+  right: 0;
+  bottom: 24px;
+  padding: 0 8px;
+  border-radius: 18px;
+}
+.search-warp .showhide-search i {
+  display: block;
+  height: 24px;
+  color: #545C63;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 24px;
+  width: 20px;
+}
+.search-area {
+  float: right;
+  position: relative;
+  height: 40px;
+  padding-right: 36px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  zoom: 1;
+  background: #F3F5F6;
+  border-radius: 4px;
+  margin: 16px 0;
+  width: 324px;
+  box-sizing: border-box;
+  font-size: 0;
+  -webkit-transition: width 0.3s;
+  -moz-transition: width 0.3s;
+  transition: width 0.3s;
+}
+.search-area .search-input {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #9199A1;
+  line-height: 24px;
+  height: 40px;
+  width: 100%;
+  float: left;
+  border: 0;
+  -webkit-transition: background-color 0.3s;
+  -moz-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  background-color: transparent;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.search-area .search-input.w100 {
+  width: 100%;
+}
+.search-area .hotTags {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 32px;
+}
+.search-area .hotTags a {
+  display: inline-block;
+  padding: 4px 8px;
+  height: 16px;
+  font-size: 14px;
+  color: #9199A1;
+  line-height: 16px;
+  margin-top: 8px;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search-area .hotTags a:hover {
+  color: #F21F1F;
+}
+.search-area input::-webkit-input-placeholder {
+  color: #A6A6A6;
+}
+.search-area input::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #A6A6A6;
+}
+.search-area input:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #A6A6A6;
+}
+.search-area input:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #A6A6A6;
+}
+.search-area .btn_search {
+  float: left;
+  cursor: pointer;
+  width: 30px;
+  height: 38px;
+  text-align: center;
+  -webkit-transition: background-color 0.3s;
+  -moz-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+}
+.search-area .search-area-result {
+  position: absolute;
+  left: 0;
+  top: 57px;
+  width: 300px;
+  margin-bottom: 20px;
+  border-top: none;
+  background-color: #fff;
+  box-shadow: 0 8px 16px 0 rgba(7, 17, 27, 0.2);
+  font-size: 12px;
+  overflow: hidden;
+  display: none;
+  z-index: 800;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.search-area .search-area-result.hot-hide {
+  top: 47px;
+}
+.search-area .search-area-result.hot-hide .hot {
+  display: none;
+}
+.search-area .search-area-result.hot-hide .history {
+  border-top: 0;
+}
+.search-area .search-area-result h2 {
+  font-size: 12px;
+  color: #1c1f21;
+  line-height: 12px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.search-area .search-area-result .hot {
+  padding: 12px 0 8px 12px;
+  box-sizing: border-box;
+}
+.search-area .search-area-result .hot .hot-item {
+  background: rgba(84, 92, 99, 0.1);
+  border-radius: 12px;
+  padding: 4px 12px;
+  line-height: 16px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 12px;
+  color: #545c63;
+}
+.search-area .search-area-result .history {
+  border-top: 1px solid rgba(28, 31, 33, 0.1);
+  box-sizing: border-box;
+}
+.search-area .search-area-result .history li {
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #787d82;
+  cursor: pointer;
+}
+.search-area .search-area-result .history li:hover,
+.search-area .search-area-result .history li .light {
+  color: #1c1f21;
+  background-color: #edf0f2;
+}
+
+
+.header .login-bar{
+  margin-top: 20px;
+  height: 80px;
+  float: right;
+}
+.header .login-bar .shop-cart{
+  float: left;
+  margin-right: 20px;
+  border-radius: 17px;
+  background: #f7f7f7;
+  cursor: pointer;
+  font-size: 14px;
+  height: 28px;
+  width: 88px;
+  line-height: 32px;
+  text-align: center;
+}
+.header .login-bar .shop-cart:hover{
+  background: #f0f0f0;
+}
+.header .login-bar .shop-cart img{
+  width: 15px;
+  margin-right: 4px;
+  margin-left: 6px;
+}
+.header .login-bar .shop-cart span{
+  margin-right: 6px;
+}
+.header .login-bar .login-box{
+  float: left;
+  height: 28px;
+  line-height: 30px;
+}
+.header .login-bar .login-box span{
+  color: #4a4a4a;
+  cursor: pointer;
+}
+.header .login-bar .login-box span:hover{
+  color: #000000;
+}
+</style>
 ```
 
 
@@ -313,27 +603,27 @@ import Login from "../components/Login.vue"
 src/router/index.js，代码：
 
 ```javascript
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter,createWebHistory} from 'vue-router'
 
 // 路由列表
 const routes = [
   {
     meta:{
-        title: "浮光在线教育-首页",
-        keepAlive: true
+      title:"luffy2.0-站点首页",
+      keepalive:true
     },
-    path: '/',         // uri访问地址
-    name: "Home",
+    path:'/', //url访问地址
+    name:"Home",
     component: ()=> import("../views/Home.vue")
   },
   {
     meta:{
-        title: "浮光在线教育-用户登录",
-        keepAlive: true
+      title:"luffy2.0-用户登录",
+      keepalive: true
     },
-    path:'/login',      // uri访问地址
-    name: "Login",
-    component: ()=> import("../views/Login.vue")
+    path:'/login',
+    name:"Login",
+    component:()=>import("../views/Login.vue")
   }
 ]
 
@@ -485,7 +775,7 @@ from django.views.static import serve # 静态文件代理访问模块
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'uploads/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
-    path("", include("home.urls")),
+    path("home/", include("home.urls")),
     path("users/", include("users.urls")),
 ]
 ```
@@ -544,6 +834,11 @@ AUTH_USER_MODEL = 'users.User'
    cd /home/moluo/Desktop/luffycity/docs
    mysqldump -uroot -p123 luffycity > 03_20_luffycity.sql
 
+​````
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+(base) kanghua@ubuntu:~/Desktop/luffycity/docs$ mysqldump -uroot -p luffycity > 03_20_luffycity.sql
+Enter password: 
+​````
 2. 注释掉users.User代码以及AUTH_USER_MODEL配置项，然后执行数据迁移回滚操作，把冲突的所有表迁移记录全部归零
    cd ~/Desktop/luffycity/luffycityapi
    # python manage.py migrate <子应用目录> zero
@@ -612,7 +907,8 @@ python代码举例：
 ```python
 import base64, json
 header_data = {"typ": "jwt", "alg": "HS256"}
-header = base64.b64encode( json.dumps(header_data).encode() ).decode()
+# json.dumps先序列化成json字符串 , encode()将 str 类型转换成 bytes 类型
+header = base64.b64encode( json.dumps(header_data).encode() ).decode()  
 print(header) # eyJ0eXAiOiAiand0IiwgImFsZyI6ICJIUzI1NiJ9
 ```
 
@@ -664,6 +960,19 @@ if __name__ == '__main__':
     # eyJzdWIiOiAicm9vdCIsICJleHAiOiAxNjQ3Nzc0Mjk1LCAiaWF0IjogMTY0Nzc3MDY5NSwgIm5hbWUiOiAid2FuZ3hpYW9taW5nIiwgImF2YXRhciI6ICIxLnBuZyIsICJ1c2VyX2lkIjogMSwgImFkbWluIjogdHJ1ZSwgImFjY19wd2QiOiAiUWlMQ0poYkdjaU9pSklVekkxTmlKOVFpTENKaGJHY2lPaUpJVXpJMU5pSjlRaUxDSmhiR2NpT2lKSVV6STFOaUo5In0=
 
 ```
+
+Js console
+
+```js
+payload = "eyJzdWIiOiAicm9vdCIsICJleHAiOiAxNjQ3Nzc0Mjk1LCAiaWF0IjogMTY0Nzc3MDY5NSwgIm5hbWUiOiAid2FuZ3hpYW9taW5nIiwgImF2YXRhciI6ICIxLnBuZyIsICJ1c2VyX2lkIjogMSwgImFkbWluIjogdHJ1ZSwgImFjY19wd2QiOiAiUWlMQ0poYkdjaU9pSklVekkxTmlKOVFpTENKaGJHY2lPaUpJVXpJMU5pSjlRaUxDSmhiR2NpT2lKSVV6STFOaUo5In0="
+'eyJzdWIiOiAicm9vdCIsICJleHAiOiAxNjQ3Nzc0Mjk1LCAiaWF0IjogMTY0Nzc3MDY5NSwgIm5hbWUiOiAid2FuZ3hpYW9taW5nIiwgImF2YXRhciI6ICIxLnBuZyIsICJ1c2VyX2lkIjogMSwgImFkbWluIjogdHJ1ZSwgImFjY19wd2QiOiAiUWlMQ0poYkdjaU9pSklVekkxTmlKOVFpTENKaGJHY2lPaUpJVXpJMU5pSjlRaUxDSmhiR2NpT2lKSVV6STFOaUo5In0='
+JSON.parse(atob(payload))
+{sub: 'root', exp: 1647774295, iat: 1647770695, name: 'wangxiaoming', avatar: '1.png', …}
+JSON.parse(atob(payload)).avatar
+'1.png'
+```
+
+
 
 
 
@@ -1092,12 +1401,9 @@ const loginhandler = ()=>{
     return;  // 在函数/方法中，可以阻止代码继续往下执行
   }
 
-  // 发送请求
-  user.login({
-    username: user.account,
-    password: user.password
-  }).then(response=>{
-    // 保存token，并根据用户的选择，是否记住密码
+  // 登录请求处理
+  user.login().then(response=>{
+     // 保存token，并根据用户的选择，是否记住密码
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     console.log(response.data.token);
@@ -1113,7 +1419,9 @@ const loginhandler = ()=>{
     ElMessage.success("登录成功！");
     console.log("登录成功！");
     // 关闭登录弹窗
+
   }).catch(error=>{
+    ElMessage.error("登录失败！");
     console.log(error);
   })
 }
@@ -1150,25 +1458,24 @@ const loginhandler = ()=>{
     return false // 在函数/方法中，可以阻止代码继续往下执行
   }
 
-  // 发送请求
-  user.user_login({
-    username: user.username,
-    password: user.password
-  }).then(response=>{
-    // 保存token，并根据用户的选择，是否记住密码
-    localStorage.removeItem("token")
-    sessionStorage.removeItem("token")
+   // 登录请求处理
+  user.login().then(response=>{
+     // 保存token，并根据用户的选择，是否记住密码
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    console.log(response.data.token);
     if(user.remember){ // 判断是否记住登录状态
       // 记住登录
       localStorage.token = response.data.token
     }else{
       // 不记住登录，关闭浏览器以后就删除状态
-      sessionStorage.token = response.data.token
+      sessionStorage.token = response.data.token;
     }
     // 保存token，并根据用户的选择，是否记住密码
     // 成功提示
-    ElMessage.success("登录成功！")
-    // 关闭登录弹窗，对外发送一个登录成功的信息
+    ElMessage.success("登录成功！");
+    console.log("登录成功！");
+     // 关闭登录弹窗，对外发送一个登录成功的信息
     user.account = ""
     user.password = ""
     user.mobile = ""
@@ -1177,7 +1484,8 @@ const loginhandler = ()=>{
     emit("successhandle")
 
   }).catch(error=>{
-    ElMessage.error("登录异常！")
+    ElMessage.error("登录失败！");
+    console.log(error);
   })
 }
 
@@ -1203,6 +1511,7 @@ const state = reactive({
   show_login: false,
 })
 
+// 获取头部导航
 nav.get_header_nav().then(response=>{
   nav.header_nav_list = response.data;
 })
@@ -1591,7 +1900,7 @@ export default createStore({
 main.js中注册vuex，代码：
 
 ```javascript
-import { createApp } from 'vue'
+s
 import App from './App.vue'
 import router from "./router";
 import store from "./store"
@@ -1606,58 +1915,67 @@ createApp(App).use(router).use(store).mount('#app')
 
 ```vue
 <script setup>
-import user from "../api/user"
+import {reactive} from "vue";
 import { ElMessage } from 'element-plus'
-const emit = defineEmits(["login_success",])
+import user from "../api/user";
+const emit = defineEmits(["successhandle",])
 
 import {useStore} from "vuex"
 const store = useStore()
 
+const state = reactive({
+  login_type: 0,
+  username:"",
+  password:"",
+})
+
+// 登录处理
 const loginhandler = ()=>{
-  // 登录处理
-  if(user.username.length<1 || user.password.length<1){
+  // 验证数据
+  if(user.account.length<1 || user.password.length<1){
     // 错误提示
-    ElMessage.error('错了哦，用户名或密码不能为空！');
-    return false // 在函数/方法中，可以阻止代码继续往下执行
+    console.log("错了哦，用户名或密码不能为空！");
+    ElMessage.error("错了哦，用户名或密码不能为空！");
+    return ;
   }
 
-  // 发送请求
-  user.user_login({
-    username: user.username,
-    password: user.password
-  }).then(response=>{
-    // 保存token，并根据用户的选择，是否记住密码
-    localStorage.removeItem("token")
-    sessionStorage.removeItem("token")
+  // 登录请求处理
+  user.login().then(response=>{
+     // 保存token，并根据用户的选择，是否记住密码
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    console.log(response.data.token);
     if(user.remember){ // 判断是否记住登录状态
       // 记住登录
       localStorage.token = response.data.token
     }else{
       // 不记住登录，关闭浏览器以后就删除状态
-      sessionStorage.token = response.data.token
+      sessionStorage.token = response.data.token;
     }
+
     // vuex存储用户登录信息，保存token，并根据用户的选择，是否记住密码
     let payload = response.data.token.split(".")[1]  // 载荷
     let payload_data = JSON.parse(atob(payload)) // 用户信息
     console.log(payload_data)
     store.commit("login", payload_data)
 
+    // 保存token，并根据用户的选择，是否记住密码
     // 成功提示
-    ElMessage.success("登录成功！")
-    // 关闭登录弹窗，对外发送一个登录成功的信息
+    ElMessage.success("登录成功！");
+    console.log("登录成功！");
+     // 关闭登录弹窗，对外发送一个登录成功的信息
     user.account = ""
     user.password = ""
     user.mobile = ""
     user.code = ""
     user.remember = false
-    emit("login_success")
+    emit("successhandle")
 
   }).catch(error=>{
+    ElMessage.error("登录失败！");
     console.log(error);
-    ElMessage.error("登录异常！")
   })
 }
-
 </script>
 ```
 
@@ -1731,30 +2049,34 @@ const loginhandler = ()=>{
 
 ```vue
 <script setup>
+import {UserFilled, List, Setting, Position} from '@element-plus/icons-vue'
 import Login from "./Login.vue"
-
-import nav from "../api/nav"
-import {reactive} from "vue"
+import {reactive} from "vue";
+import nav from "../api/nav";
 import {useStore} from "vuex"
 const store = useStore()
 
 const state = reactive({
+  // is_login: true,  // 登录状态
   show_login: false,
 })
 
+// 获取头部导航
 nav.get_header_nav().then(response=>{
   nav.header_nav_list = response.data;
-})
+}).catch(error=>{
+  console.log(error);
+});
+
 
 // 用户登录成功以后的处理
 const login_success = (token)=>{
   state.show_login = false
 }
-
 </script>
 ```
 
-因为vuex默认是保存数据在内存中的，所以基于浏览器开发的网页，如果在F5刷新网页时会存在数据丢失的情况。所以我们可以把store数据永久存储到localStorage中。这里就需要使用插件vuex-persistedstate来实现。
+因为vuex默认是保存数据在内存中的，所以基于浏览器开发的网页，如果在F5刷新网页时会存在数据丢失的情况。所以我们可以把store数据永久存储到localStorage中。这里就需要使用插件vuex-persistedstate来实现。 
 
 在前端项目的根目录下执行安装命令
 
@@ -1838,6 +2160,7 @@ const routes = [
     meta:{
         title: "luffy2.0-个人中心",
         keepAlive: true,
+      	authorization:true,
     },
     path: '/user',
     name: "User",
@@ -1994,10 +2317,10 @@ const logout = ()=>{
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "客户端注销登录状态"
-git push
+git push origin feature/user
 ```
 
 
@@ -2047,8 +2370,8 @@ git push
 在验证应用的基本配置中记录下我们接下来需要使用的2个重要配置信息.
 
 ```python
-应用ID   CaptchaAppId    2059674751 
-应用秘钥  AppSecretKey   04LwtDUlnQxumWnItAw4OPA**              (*号也为Key值，请不要忽略或者删除)
+应用ID   CaptchaAppId    2029921598
+应用秘钥  AppSecretKey   0TpKDSegIcNJ8lunxvGGY_w**             (*号也为Key值，请不要忽略或者删除)
 ```
 
 ![image-20211112102218700](assets/image-20211112102218700.png)
@@ -2056,8 +2379,8 @@ git push
 因为后面要python对接腾讯云服务器，所以通过访问管理，API秘钥管理提取当前腾讯云账号的SecretId和SecretKey。
 
 ```bash
-SecretId: AKIDSggmeI7z2qSUHoaf18zb4JKdZv61PEZf
-SecretKey: 06xbzB7VabOyY3asztbkdIfqlovtLYXG
+SecretId: AKIDxhEUU6TZT6TaQzIK8gkZ7YjeJhpgGZc0
+SecretKey: YzEG4cuyyrWx85mDLIyOXR5RXP0LRHrB
 ```
 
 接下来在应用中心点击右边的系统代码集成，把验证码集成到项目中就可以。
@@ -2080,7 +2403,7 @@ https://ssl.captcha.qq.com/TCaptcha.js
 components/Login.vue，代码：
 
 ```vue
-    <button class="login_btn" @click="show_captcha">登录</button>
+<button class="login_btn" @click="show_captcha">登录</button>
 ```
 
 ```vue
@@ -2095,7 +2418,7 @@ const store = useStore()
 
 // 显示验证码
 const show_captcha = ()=>{
-  var captcha1 = new TencentCaptcha('2059674751', (res)=>{
+  var captcha1 = new TencentCaptcha('2029921598', (res)=>{
       // 接收验证结果的回调函数
       /* res（验证成功） = {ret: 0, ticket: "String", randstr: "String"}
          res（客户端出现异常错误 仍返回可用票据） = {ret: 0, ticket: "String", randstr: "String", errorCode: Number, errorMessage: "String"}
@@ -2187,10 +2510,11 @@ export default user;
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "客户端集成腾讯云验证码"
-git push
+git push origin feature/user
+
 ```
 
 
@@ -2274,21 +2598,25 @@ class TencentCloudAPI(object):
             raise TencentCloudSDKException
 ```
 
+
+
+
+
 settings/dev.py，保存腾讯云验证码的配置信息，保存代码：
 
 ```python
 # 腾讯云API接口配置
 TENCENTCLOUD = {
     # 腾讯云访问秘钥ID
-    "SecretId": "AKIDSggmeI7z2qSUHoaf18zb4JKdZv61PEZf",
+    "SecretId": "AKIDxhEUU6TZT6TaQzIK8gkZ7YjeJhpgGZc0",
     # 腾讯云访问秘钥key
-    "SecretKey": "06xbzB7VabOyY3asztbkdIfqlovtLYXG",
+    "SecretKey": "YzEG4cuyyrWx85mDLIyOXR5RXP0LRHrB",
     # 验证码API配置
     "Captcha": {
         "endpoint": "captcha.tencentcloudapi.com", # 验证码校验服务端域名
         "CaptchaType": 9,  # 验证码类型，固定为9
-        "CaptchaAppId": 2059674751,  # 验证码应用ID
-        "AppSecretKey": "04LwtDUlnQxumWnItAw4OPA**", # 验证码应用key
+        "CaptchaAppId": 2029921598,  # 验证码应用ID
+        "AppSecretKey": "0TpKDSegIcNJ8lunxvGGY_w**", # 验证码应用key
     },
 }
 ```
@@ -2339,10 +2667,11 @@ urlpatterns = [
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "服务端重写登录视图实现验证码的操作结果验证"
-git push
+git push origin feature/user
+
 ```
 
 
@@ -2655,6 +2984,8 @@ export default router
 
 ### 客户端监听手机号格式是否正确
 
+views/Register.vue
+
 ```vue
 <script setup>
 import {reactive, defineEmits,watch} from "vue"
@@ -2685,8 +3016,6 @@ watch(() => state.mobile, (mobile, prevMobile) => {
 users/views，视图代码：
 
 ```python
-
-
 from rest_framework.views import APIView
 from .models import User
 
@@ -2811,10 +3140,10 @@ watch(()=>user.mobile, (mobile, prevMobile) => {
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "注册功能实现流程-验证手机号是否已经注册!"
-git push
+git push origin feature/user
 ```
 
 
@@ -2900,7 +3229,7 @@ class UserRegisterModelSerializer(serializers.ModelSerializer):
         return user
 ```
 
-默认头像配置，`settings.constants`，代码：
+默认头像配置，`settings.constants`，utils/constants.py代码：
 
 ```python
 # 默认头像
@@ -2952,6 +3281,7 @@ import {useStore} from "vuex"
 import "../utils/TCaptcha"
 import user from "../api/user";
 import settings from "../settings";
+import router from "../router";  // 实测最后一步跳转首页提示router未定义 加上这句
 const store = useStore()
 
 // 监听数据mobile是否发生变化
@@ -3081,7 +3411,7 @@ export default {
     // api服务端所在地址
     host: "http://api.luffycity.cn:8000", // ajax服务度地址
     // 防水墙验证码的应用ID
-    captcha_app_id: "2019894193",  // IP应用ID
+    captcha_app_id: "2029921598",  // IP应用ID
 }
 ```
 
@@ -3252,10 +3582,11 @@ class UserRegisterModelSerializer(serializers.ModelSerializer):
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "注册功能实现流程-保存用户注册信息!"
-git push
+git push origin feature/user
+
 ```
 
 
@@ -3319,10 +3650,11 @@ SESSION_CACHE_ALIAS = "session"
 在登录后的平台控制台下获取以下信息：
 
 ```
-ACCOUNT SID：8a216da863f8e6c20164139687e80c1b
-AUTH TOKEN : 6dd01b2b60104b3dbc88b2b74158bac6
-AppID(默认)：8a216da863f8e6c20164139688400c21
+ACCOUNT SID：8a216da881ad97540181d8e645e20809
+AUTH TOKEN : e9aacc7819774ca39916f472c6083684
+AppID(默认)：8a216da881ad97540181d8e646e70810
 Rest URL(生产)： https://app.cloopen.com:8883
+
 ```
 
 ![image-20220505153622072](assets/image-20220505153622072.png)
@@ -3375,9 +3707,9 @@ def send_sms(tid, mobile, datas):
 ```python
 # 容联云短信
 RONGLIANYUN = {
-    "accId": '8a216da863f8e6c20164139687e80c1b',
-    "accToken": '6dd01b2b60104b3dbc88b2b74158bac6',
-    "appId": '8a216da863f8e6c20164139688400c21',
+    "accId": '8a216da881ad97540181d8e645e20809',
+    "accToken": 'e9aacc7819774ca39916f472c6083684',
+    "appId": '8a216da881ad97540181d8e646e70810',
     "reg_tid": 1,      # 注册短信验证码的模板ID
     "sms_expire": 300, # 短信有效期，单位：秒(s)
     "sms_interval": 60,# 短信发送的冷却时间，单位：秒(s)
@@ -3512,10 +3844,11 @@ urlpatterns = [
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "注册功能实现流程-服务端提供短信发送API接口!"
-git push
+git push origin feature/user
+
 ```
 
 
@@ -3702,7 +4035,7 @@ const user = reactive({
     },
     register(data){
         data.mobile = this.mobile
-        data.re_password = this.mobile
+        data.re_password = this.re_password
         data.password = this.password
         data.sms_code = this.code
         // 用户注册请求
@@ -3719,10 +4052,11 @@ export default user;
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity/
 git add .
 git commit -m "注册功能实现流程-客户端请求发送短信并实现短信倒计时冷却提示!"
-git push
+git push origin feature/user
+
 ```
 
 
@@ -3938,7 +4272,6 @@ luffycityapi/utils/authenticate.py，代码：
 ```python
 from rest_framework_jwt.settings import api_settings
 
-
 def generate_jwt_token(user):
     """
     生成jwt token
@@ -3953,10 +4286,10 @@ def generate_jwt_token(user):
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity/
 git add .
 git commit -m "注册功能实现流程-服务端校验短信验证码!"
-git push
+git push origin feature/user
 ```
 
 

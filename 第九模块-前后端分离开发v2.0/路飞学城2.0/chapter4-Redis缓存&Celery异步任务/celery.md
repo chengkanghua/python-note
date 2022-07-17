@@ -222,7 +222,7 @@ app.config_from_object("mycelery.config")
 # 自动注册任务
 app.autodiscover_tasks(["mycelery.sms","mycelery.email"])
 # 运行celery
-# 终端下: celery -A mycelery.main worker -l info
+# 终端下: celery -A mycelery.main worker -l info    #django运行的时候 终端下celery 也要运行才能短信发送成功
 ```
 
 在需要使用django配置的任务中，直接加载配置，所以我们把注册的短信发送功能，整合成一个任务函数，mycelery.sms.tasks，代码：
@@ -266,7 +266,6 @@ def send_sms(tid, mobile, datas):
 只需要完成2个步骤，分别是**导入异步任务**和**调用异步任务**。users/views.py，代码：
 
 ```python
-
 import random
 from django_redis import get_redis_connection
 from django.conf import settings
@@ -313,10 +312,10 @@ class SMSAPIView(APIView):
 上面就是使用celery并执行异步任务的第一种方式，适合在一些无法直接集成celery到项目中的场景。
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity/
 git add .
 git commit -m "feature: celery作为一个单独项目运行，执行异步任务"
-git push
+git push origin  feature/user
 ```
 
 
@@ -361,9 +360,11 @@ settings/dev.py，django配置中新增celery相关配置信息，代码：
 
 # Celery异步任务队列框架的配置项[注意：django的配置项必须大写，所以这里的所有配置项必须全部大写]
 # 任务队列
-CELERY_BROKER_URL = 'redis://:123456@127.0.0.1:6379/14'
+# CELERY_BROKER_URL = 'redis://:123456@127.0.0.1:6379/14'
+CELERY_BROKER_URL = 'redis://:@127.0.0.1:6379/14'
 # 结果队列
-CELERY_RESULT_BACKEND = 'redis://:123456@127.0.0.1:6379/15'
+# CELERY_RESULT_BACKEND = 'redis://:123456@127.0.0.1:6379/15'
+CELERY_RESULT_BACKEND = 'redis://:@127.0.0.1:6379/15'
 # 时区，与django的时区同步
 CELERY_TIMEZONE = TIME_ZONE
 # 防止死锁
@@ -540,4 +541,12 @@ celery后面还可以使用supervisor进行后台托管运行。还可以针对�
 supervisor会在celery以外关闭了以后，自动重启celery。
 
 
+
+```bash
+
+cd ~/Desktop/luffycity/
+git add .
+git commit -m "feature: celery作为第三方模块集成到项目中，执行异步任务"
+git push origin  feature/user
+```
 
