@@ -729,6 +729,11 @@ hvals key
 2) "17"
 3) "1"
 ```
+获取哈希的所有成员域值对
+
+```python
+hgetall key
+```
 
 #### 删除指定键的域/属性
 
@@ -933,11 +938,7 @@ llen key
 llen brother
 ```
 
-获取哈希的所有成员域值对
 
-```python
-hgetall key
-```
 
 
 
@@ -1148,7 +1149,7 @@ zscore key member
 排名从0开始计算
 
 ```bash
-srank key member      # score从小到大的排名
+srank key member      # score从小到大的排名   # redis 5.0版本有这个命令。4.0没有
 zrevrank key member   # score从大到小的排名
 ```
 
@@ -1313,7 +1314,7 @@ if __name__ == '__main__':
     # redis = Redis(host="127.0.0.1", port=6379, password="", db=0)
 
     # # 字符串
-    # # set name xiaoming
+    # # set name xiaomin
     # redis.set("name", "xiaoming")
 
     # # setex sms_13312345678 30 500021
