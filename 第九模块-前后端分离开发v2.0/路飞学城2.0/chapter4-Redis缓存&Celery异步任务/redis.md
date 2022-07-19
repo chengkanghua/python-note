@@ -1,4 +1,4 @@
-mysql是一种关系型数据库（RDB、RMDBS）。
+mysql是一种关系型数据库（RDB、RMDBS）。
 
 # 数据库类型
 
