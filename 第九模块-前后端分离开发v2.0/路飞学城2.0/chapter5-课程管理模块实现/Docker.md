@@ -89,6 +89,24 @@ sudo docker run hello-world
 
 我们获取镜像文件，可以直接去官方网站上获取: https://hub.docker.com/
 
+```
+Ubuntu 20.04|18.04下安装
+需要添加Kubic project的repository
+
+. /etc/os-release
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+
+# 然后使用apt进行安装
+sudo apt update
+sudo apt -y install podman
+————————————————
+
+原文链接：https://blog.csdn.net/lovewinner/article/details/123677859
+```
+
+
+
 # Docker/podman 命令
 
 docker在ubuntu使用过程中，需要左边加上sudo，而podman不需要。同时下面所有的命令在docker和podman里面是通用的。
