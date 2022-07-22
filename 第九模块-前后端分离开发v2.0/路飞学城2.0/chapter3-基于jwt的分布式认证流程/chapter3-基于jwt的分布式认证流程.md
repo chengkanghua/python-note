@@ -1900,7 +1900,7 @@ export default createStore({
 main.js中注册vuex，代码：
 
 ```javascript
-s
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from "./router";
 import store from "./store"
@@ -2141,7 +2141,7 @@ import store from "../store";
 const routes = [
   {
     meta:{
-        title: "首页-浮光在线",
+        title: "首页",
         keepAlive: true
     },
     path: '/',         // uri访问地址
@@ -2150,7 +2150,7 @@ const routes = [
   },
   {
     meta:{
-        title: "用户登录-浮光在线",
+        title: "用户登录",
         keepAlive: true
     },
     path:'/login',      // uri访问地址
