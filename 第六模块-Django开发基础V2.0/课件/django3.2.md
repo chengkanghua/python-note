@@ -2967,9 +2967,1255 @@ def index(request):
 </html>
 ```
 
+## 8.4、FBV与CBV
+
+> 1 FBV ：function based view
+>
+> 2 BCV：class based view
+
+### 8.4.1、前后端分离模式
+
+在开发Web应用中，有两种应用模式：
+
+1. 前后端不分离[客户端看到的内容和所有界面效果都是由服务端提供出来的。]
+
+![前后端不分离](django3.2.assets/depended_frontend_backend-20220722201858785.png)
+
+1. 前后端分离【把前端的界面效果(html，css，js分离到另一个服务端，python服务端只需要返回数据即可)】
+
+前端形成一个独立的网站，服务端构成一个独立的网站
+
+![img](django3.2.assets/indepent_frontend_backend-16318493319127.png)
+
+### 8.4.2、api接口
+
+应用程序编程接口（Application Programming Interface，API接口），就是应用程序对外提供了一个操作数据的入口，这个入口可以是一个函数或类方法，也可以是一个url地址或者一个网络地址。当客户端调用这个入口，应用程序则会执行对应代码操作，给客户端完成相对应的功能。
+
+当然，api接口在工作中是比较常见的开发内容，有时候，我们会调用其他人编写的api接口，有时候，我们也需要提供api接口给其他人操作。由此就会带来一个问题，api接口往往都是一个函数、类方法、或者url或其他网络地址，不断是哪一种，当api接口编写过程中，我们都要考虑一个问题就是这个接口应该怎么编写？接口怎么写的更加容易维护和清晰，这就需要大家在调用或者编写api接口的时候要有一个明确的编写规范！！！
+
+为了在团队内部形成共识、防止个人习惯差异引起的混乱，我们都需要找到一种大家都觉得很好的接口实现规范，而且这种规范能够让后端写的接口，用途一目了然，减少客户端和服务端双方之间的合作成本。
+
+目前市面上大部分公司开发人员使用的接口实现规范主要有：restful、RPC。
+
+RPC（ Remote Procedure Call ）: 翻译成中文:远程过程调用[远程服务调用]. 从字面上理解就是访问/调用远程服务端提供的api接口。这种接口一般以服务或者过程式代码提供。
+
+- 服务端提供一个**唯一的访问入口地址**：http://api.xxx.com/ 或 http://www.xx.com/api 或者基于其他协议的地址
+
+- 客户端请求服务端的时候，所有的操作都理解为动作(action)，一般web开发时，对应的就是HTTP请求的post请求
+
+- 通过**请求体**参数，指定要调用的接口名称和接口所需的参数
+
+  action=get_all_student&class=301&sex=1
+
+  m=get_all_student&sex=1&age=22
+
+  command=100&sex=1&age=22
+
+rpc接口多了,对应函数名和参数就多了,前端在请求api接口时难找.对于年代久远的rpc服务端的代码也容易出现重复的接口
+
+restful: 翻译成中文: 资源状态转换.(表征性状态转移)
+
+- 把服务端提供的所有的数据/文件都看成资源， 那么通过api接口请求数据的操作，本质上来说就是对资源的操作了.
+
+  因此，restful中要求，我们把当前接口对外提供哪种资源进行操作，就把**资源的名称写在url地址**。
+
+- web开发中操作资源，最常见的最通用的无非就是增删查改，所以restful要求在地址栏中声明要操作的资源是什么。然后通过**http请求动词**来说明对该资源进行哪一种操作.
+
+  > POST http://www.xxx.com/api/students/ 添加学生数据
+  >
+  > GET http://www.xxx.com/api/students/ 获取所有学生
+  >
+  > GET http://www.xxx.com/api/students/1/ 获取id=pk的学生
+  >
+  > DELETE http://www.xxx.com/api/students/1/ 删除id=pk的一个学生
+  >
+  > PUT http://www.xxx.com/api/students/1/ 修改一个学生的全部信息 [id,name,sex,age,]
+  >
+  > PATCH http://www.xxx.com/api/students/1/ 修改一个学生的部分信息[age]
+
+也就是说，我们仅需要通过url地址上的资源名称结合HTTP请求动作，就可以说明当前api接口的功能是什么了。restful是以资源为主的api接口规范，体现在地址上就是资源就是以名词表达。rpc则以动作为主的api接口规范，体现在接口名称上往往附带操作数据的动作。
+
+### 8.4.3、RESTful API规范
+
+![restful](django3.2.assets/restful.gif)
+
+REST全称是Representational State Transfer，中文意思是表述（编者注：通常译为表征）性状态转移。 它首次出现在2000年Roy Fielding的博士论文中。
+
+RESTful是一种专门为Web 开发而定义API接口的设计风格，尤其适用于前后端分离的应用模式中。
+
+这种风格的理念认为后端开发任务就是提供数据的，对外提供的是数据资源的访问接口，所以在定义接口时，客户端访问的URL路径就表示这种要操作的数据资源。
+
+而对于数据资源分别使用POST、DELETE、GET、UPDATE等请求动作来表达对数据的增删查改。
+
+| GET      | /students  | 获取所有学生       |
+| :------- | :--------- | :----------------- |
+| 请求方法 | 请求地址   | 后端操作           |
+| POST     | /students  | 增加学生           |
+| GET      | /students/ | 获取编号为pk的学生 |
+| PUT      | /students/ | 修改编号为pk的学生 |
+| DELETE   | /students/ | 删除编号为pk的学生 |
+
+restful规范是一种通用的规范，不限制语言和开发框架的使用。事实上，我们可以使用任何一门语言，任何一个框架都可以实现符合restful规范的API接口。
+
+参考文档：http://www.runoob.com/w3cnote/restful-architecture.html
+
+接口实现过程中，会存在**幂等性**。所谓幂等性是指代**客户端发起多次同样请求时，是否对于服务端里面的资源产生不同结果**。如果**多次请求**，服务端**结果**还是**一样**，则属于**幂等接口**，如果多次请求，服务端产生结果是不一样的，则属于**非幂等接口**。
+
+| 请求方式  | 是否幂等 | 是否安全 |
+| :-------- | :------- | :------- |
+| GET       | 幂等     | 安全     |
+| POST      | 不幂等   | 不安全   |
+| PUT/PATCH | 幂等     | 不安全   |
+| DELETE    | 幂等     | 不安全   |
+
+### 8.4.4、CBV使用
+
+之前我们用的视图函数叫FBV（也就是函数型视图函数），这里我们来试试CBV（类视图函数）的写法。类视图函数可以让代码看起来更简洁，用起来更方便。
+
+```python
+# FBV
+# def index(request):
+#     if request.method == "GET":
+#
+#         return HttpResponse("GET")
+#     elif request.method == "POST":
+#
+#         return HttpResponse("POST")
+#
+#     elif request.method == "DELETE":
+#         return HttpResponse("DELETE")
+
+# CBV模式: 基于restful开发
+
+class IndexView(View):
+
+    def get(self, request):
+        return HttpResponse("CBV GET")
+
+    def post(self, request):
+        return HttpResponse("CBV POST")
 
 
-# 九、Django3.0的异步机制
+class BookView(View):
+
+    def get(self, request):
+        # 获取数据
+        book_list = Book.objects.all()
+
+        # 序列化：json
+        data_json = serializers.serialize("json", book_list)
+
+        return HttpResponse(data_json, content_type="json")
+```
+
+
+
+```python
+# FBV模式
+# path('index/', views.index),
+# CBV模式
+path("index/",views.IndexView.as_view()),
+path("books/",views.BookView.as_view())
+```
+
+## 8.5、csrftoken（跨站请求伪造）
+
+CSRF（Cross-Site Request Forgery，跨站点伪造请求）是一种网络攻击方式，该攻击可以在受害者毫不知情的情况下以受害者名义伪造请求发送给受攻击站点，从而在未授权的情况下执行在权限保护之下的操作，具有很大的危害性。具体来讲，可以这样理解CSRF攻击：攻击者盗用了你的身份，以你的名义发送恶意请求，对服务器来说这个请求是完全合法的，但是却完成了攻击者所期望的一个操作，比如以你的名义发送邮件、发消息，盗取你的账号，添加系统管理员，甚至于购买商品、虚拟货币转账等。
+
+```
+-- 企业邮箱
+-- pornhub.com
+```
+
+[参考文章](https://www.pianshen.com/article/62531249043/)
+
+token其实就是一个令牌，用于用户验证的，token的诞生离不开CSRF。正是由于上面的Cookie/Session的状态保持方式会出现CSRF，所以才有了token。
+
+- 解除中间件注释
+
+![img](django3.2.assets/v2-48184dcedfa833a81ed801e6050f3e3e_1440w.jpg)
+
+- 无csrf_token数据的post请求
+
+![img](django3.2.assets/v2-77374da1a47fa241039f9fe1e5eadbc1_1440w.jpg)
+
+### 8.5.1、基本使用
+
+#### 一、form表单提交
+
+在html页面form表单中直接添加{% csrf_token%}
+
+![屏幕快照 2021-10-31 下午10.30.29](assets/屏幕快照 2021-10-31 下午10.30.29.png)
+
+#### 二、ajax提交
+
+方式1：放在请求数据中。
+
+```python
+$.ajax({
+  url: '/csrf_test/',
+  method: 'post',
+  data: {'name': $('[name="name"]').val(),
+         'password': $('[name="password"]').val(),
+         'csrfmiddlewaretoken':$('[name="csrfmiddlewaretoken"]').val()           
+        },
+  success: function (data) {
+    console.log('成功了')
+    console.log(data)           },
+})
+```
+
+
+
+方式2：放在请求头
+
+```python
+$.ajax({
+            url: '/csrf_test/',
+            method: 'post',
+            headers:{'X-CSRFToken':'token值'},  // 注意放到引号里面
+            data:{}
+}
+```
+
+
+
+### 8.5.2、全局使用，局部禁csrf
+
+#### (1) 在视图函数上加装饰器
+
+```python
+from django.views.decorators.csrf import csrf_exempt,csrf_protect
+@csrf_exempt
+def 函数名(request):  # 加上装饰器后,这个视图函数,就没有csrf校验了
+```
+
+#### (2) 视图类
+
+```python
+from django.views.decorators.csrf import csrf_exempt,csrf_protect
+from django.utils.decorators import method_decorator
+@method_decorator(csrf_exempt,name='dispatch')
+class index(View):
+    def get(self,request):
+        return HttpResponse("GET")
+    def post(self,request):
+        return HttpResponse("POST")
+```
+
+
+
+## 8.6、ORM进阶
+
+### 8.6.1、queryset特性
+
+#### （1）可切片
+
+使用Python 的切片语法来限制`查询集`记录的数目 。它等同于SQL 的`LIMIT` 和`OFFSET` 子句。
+
+```python
+>>> Article.objects.all()[:5]   # (LIMIT 5)
+>>> Article.objects.all()[5:10]    # (OFFSET 5 LIMIT 5)
+```
+
+
+
+不支持负的索引（例如`Article.objects.all()[-1]`）。通常，`查询集` 的切片返回一个新的`查询集` —— 它不会执行查询。
+
+#### （2）可迭代
+
+```python
+articleList=models.Article.objects.all()
+
+for article in articleList:
+    print(article.title)
+```
+
+
+
+#### （3）惰性查询
+
+`查询集` 是惰性执行的 —— 创建`查询集`不会带来任何数据库的访问。你可以将过滤器保持一整天，直到`查询集` 需要求值时，Django 才会真正运行这个查询。
+
+```python
+queryResult=models.Article.objects.all() # not hits database
+print(queryResult) # hits database
+for article in queryResult:
+    print(article.title)    # hits database
+```
+
+
+
+一般来说，只有在“请求”`查询集` 的结果时才会到数据库中去获取它们。当你确实需要结果时，`查询集` 通过访问数据库来*求值*。 关于求值发生的准确时间。
+
+#### （4）缓存机制
+
+每个`查询集`都包含一个缓存来最小化对数据库的访问。理解它是如何工作的将让你编写最高效的代码。
+
+在一个新创建的`查询集`中，缓存为空。首次对`查询集`进行求值 —— 同时发生数据库查询 ——Django 将保存查询的结果到`查询集`的缓存中并返回明确请求的结果（例如，如果正在迭代`查询集`，则返回下一个结果）。接下来对该`查询集` 的求值将重用缓存的结果。
+
+请牢记这个缓存行为，因为对`查询集`使用不当的话，它会坑你的。例如，下面的语句创建两个`查询集`，对它们求值，然后扔掉它们：
+
+```python
+queryset = Book.objects.all()
+print(queryset) # hit database
+print(queryset) # hit database
+```
+
+
+
+> 注：简单地打印查询集不会填充缓存。
+
+这意味着相同的数据库查询将执行两次，显然倍增了你的数据库负载。同时，还有可能两个结果列表并不包含相同的数据库记录，因为在两次请求期间有可能有Article被添加进来或删除掉。为了避免这个问题，只需保存`查询集`并重新使用它：
+
+```python
+queryset = Book.objects.all()
+ret = [i for i in queryset] # hit database
+print(queryset) # 使用缓存
+print(queryset) # 使用缓存
+```
+
+
+
+何时查询集会被缓存?
+
+> 1. 遍历queryset时
+> 2. if语句（为了避免这个，可以用exists()方法来检查是否有数据）
+
+所以单独queryset的索引或者切片都不会缓存。
+
+```python
+queryset = Book.objects.all()
+one = queryset[0] # hit database
+two = queryset[1] # hit database
+print(one)
+print(two)
+```
+
+
+
+#### （5）exists()与iterator()方法
+
+##### exists
+
+简单的使用if语句进行判断也会完全执行整个queryset并且把数据放入cache，虽然你并不需要这些 数据！为了避免这个，可以用exists()方法来检查是否有数据：
+
+```python
+ if queryResult.exists():
+    #SELECT (1) AS "a" FROM "blog_article" LIMIT 1; args=()
+        print("exists...")
+```
+
+
+
+##### iterator
+
+当queryset非常巨大时，cache会成为问题。
+
+处理成千上万的记录时，将它们一次装入内存是很浪费的。更糟糕的是，巨大的queryset可能会锁住系统 进程，让你的程序濒临崩溃。要避免在遍历数据的同时产生queryset cache，可以使用iterator()方法 来获取数据，处理完数据就将其丢弃。
+
+```python
+objs = Book.objects.all().iterator()
+# iterator()可以一次只从数据库获取少量数据，这样可以节省内存
+for obj in objs:
+    print(obj.title)
+#BUT,再次遍历没有打印,因为迭代器已经在上一次遍历(next)到最后一次了,没得遍历了
+for obj in objs:
+    print(obj.title)
+```
+
+
+
+当然，使用iterator()方法来防止生成cache，意味着遍历同一个queryset时会重复执行查询。所以使 #用iterator()的时候要当心，确保你的代码在操作一个大的queryset时没有重复执行查询。
+
+queryset的cache是用于减少程序对数据库的查询，在通常的使用下会保证只有在需要的时候才会查询数据库。 使用exists()和iterator()方法可以优化程序对内存的使用。不过，由于它们并不会生成queryset cache，可能 会造成额外的数据库查询。　
+
+总结:在使用缓存机制还是生成器机制的选择上如果是，数据量大情况主要使用生成器；数据少使用次数多的情况使用缓存机制。
+
+### 8.6.2、中介模型
+
+处理类似搭配 pizza 和 topping 这样简单的多对多关系时，使用标准的`ManyToManyField` 就可以了。但是，有时你可能需要关联数据到两个模型之间的关系上。
+
+例如，有这样一个应用，它记录音乐家所属的音乐小组。我们可以用一个`ManyToManyField` 表示小组和成员之间的多对多关系。但是，有时你可能想知道更多成员关系的细节，比如成员是何时加入小组的。
+
+对于这些情况，Django 允许你指定一个中介模型来定义多对多关系。 你可以将其他字段放在中介模型里面。源模型的`ManyToManyField` 字段将使用`through` 参数指向中介模型。对于上面的音乐小组的例子，代码如下：
+
+```python
+from django.db import models
+ 
+class Person(models.Model):
+    name = models.CharField(max_length=128)
+ 
+    def __str__(self):              # __unicode__ on Python 2
+        return self.name
+ 
+class Group(models.Model):
+    name = models.CharField(max_length=128)
+    members = models.ManyToManyField(Person, through='Membership')
+ 
+    def __str__(self):              # __unicode__ on Python 2
+        return self.name
+ 
+class Membership(models.Model):
+    person = models.ForeignKey(Person)
+    group = models.ForeignKey(Group)
+    date_joined = models.DateField()
+    invite_reason = models.CharField(max_length=64)
+```
+
+
+
+既然你已经设置好`ManyToManyField` 来使用中介模型（在这个例子中就是`Membership`），接下来你要开始创建多对多关系。你要做的就是创建中介模型的实例：
+
+```python
+>>> ringo = Person.objects.create(name="Ringo Starr")
+>>> paul = Person.objects.create(name="Paul McCartney")
+>>> beatles = Group.objects.create(name="The Beatles")
+>>> m1 = Membership(person=ringo, group=beatles,
+...     date_joined=date(1962, 8, 16),
+...     invite_reason="Needed a new drummer.")
+>>> m1.save()
+>>> beatles.members.all()
+[<Person: Ringo Starr>]
+>>> ringo.group_set.all()
+[<Group: The Beatles>]
+>>> m2 = Membership.objects.create(person=paul, group=beatles,
+...     date_joined=date(1960, 8, 1),
+...     invite_reason="Wanted to form a band.")
+>>> beatles.members.all()
+[<Person: Ringo Starr>, <Person: Paul McCartney>]
+```
+
+
+
+与普通的多对多字段不同，你不能使用`add`、 `create`和赋值语句（比如，`beatles.members = [...]`）来创建关系：
+
+```python
+# THIS WILL NOT WORK
+>>> beatles.members.add(john)
+# NEITHER WILL THIS
+>>> beatles.members.create(name="George Harrison")
+# AND NEITHER WILL THIS
+>>> beatles.members = [john, paul, ringo, george]
+```
+
+
+
+为什么不能这样做？ 这是因为你不能只创建 `Person`和 `Group`之间的关联关系，你还要指定 `Membership`模型中所需要的所有信息；而简单的`add`、`create` 和赋值语句是做不到这一点的。所以它们不能在使用中介模型的多对多关系中使用。此时，唯一的办法就是创建中介模型的实例。
+
+`remove()`方法被禁用也是出于同样的原因。但是`clear()` 方法却是可用的。它可以清空某个实例所有的多对多关系：
+
+```python
+>>> # Beatles have broken up
+>>> beatles.members.clear()
+>>> # Note that this deletes the intermediate model instances
+>>> Membership.objects.all()
+[]
+```
+
+
+
+### 8.6.3、数据库表反向生成模型类
+
+众所周知，Django较为适合原生开发，即通过该框架搭建一个全新的项目，通过在修改models.py来创建新的数据库表。但是往往有时候，我们需要利用到之前的已经设计好的数据库，数据库中提供了设计好的多种表单。那么这时如果我们再通过models.py再来设计就会浪费很多的时间。所幸Django为我们提供了inspecdb的方法。他的作用即使根据已经存在对的mysql数据库表来反向映射结构到models.py中.
+
+我们在展示django ORM反向生成之前，我们先说一下怎么样正向生成代码。
+
+> 正向生成，指的是先创建model.py文件，然后通过django内置的编译器，在数据库如mysql中创建出符合model.py的表。
+>
+> 反向生成，指的是先在数据库中create table，然后通过django内置的编译器，生成model代码。
+
+```python
+python manage.py inspectdb > models文件名
+```
+
+
+
+### 8.6.4、查询优化
+
+#### （1）exists()
+
+判断查询集中是否有数据，如果有则返回True，没有则返回False
+
+#### （2）select_related()
+
+对于一对一字段（OneToOneField）和外键字段（ForeignKey），可以使用select_related 来对QuerySet进行优化。
+
+select_related 返回一个`QuerySet`，当执行它的查询时它沿着外键关系查询关联的对象的数据。它会生成一个复杂的查询并引起性能的损耗，但是在以后使用外键关系时将不需要数据库查询。
+
+简单说，在对QuerySet使用select_related()函数后，Django会获取相应外键对应的对象，从而在之后需要的时候不必再查询数据库了。
+
+下面的例子解释了普通查询和`select_related()` 查询的区别。
+
+查询id=2的的书籍的出版社名称,下面是一个标准的查询：
+
+```python
+# Hits the database.
+book= models.Book.objects.get(nid=2)
+# Hits the database again to get the related Blog object.
+print(book.publish.name)
+```
+
+
+
+如果我们使用select_related()函数：
+
+```python
+books=models.Book.objects.select_related("publish").all()
+for book in books:
+     #  Doesn't hit the database, because book.publish
+     #  has been prepopulated in the previous query.
+     print(book.publish.name)
+```
+
+
+
+##### 多外键查询
+
+这是针对publish的外键查询，如果是另外一个外键呢？让我们一起看下：
+
+```python
+book=models.Book.objects.select_related("publish").get(nid=1)
+print(book.authors.all())
+```
+
+
+
+观察logging结果，发现依然需要查询两次，所以需要改为：
+
+```python
+book=models.Book.objects.select_related("publish","").get(nid=1)
+print(book.publish)
+```
+
+
+
+或者：
+
+```python
+book=models.Article.objects
+　　　　　　　　　　　　　.select_related("publish")
+　　　　　　　　　　　　　.select_related("")
+　　　　　　　　　　　　　.get(nid=1)  # django 1.7 支持链式操作
+print(book.publish)
+```
+
+
+
+#### （3）prefetch_related()
+
+对于多对多字段（ManyToManyField）和一对多字段，可以使用prefetch_related()来进行优化。
+
+prefetch_related()和select_related()的设计目的很相似，都是为了减少SQL查询的数量，但是实现的方式不一样。后者是通过JOIN语句，在SQL查询内解决问题。但是对于多对多关系，使用SQL语句解决就显得有些不太明智，因为JOIN得到的表将会很长，会导致SQL语句运行时间的增加和内存占用的增加。若有n个对象，每个对象的多对多字段对应Mi条，就会生成Σ(n)Mi 行的结果表。
+
+prefetch_related()的解决方法是，分别查询每个表，然后用Python处理他们之间的关系。
+
+```python
+# 查询所有文章关联的所有标签
+books=models.Book.objects.all()
+for book in books:
+    print(book.authors.all())  #4篇文章: hits database 5
+```
+
+
+
+改为prefetch_related：
+
+```python
+# 查询所有文章关联的所有标签
+books=models.Book.objects.prefetch_related("authors").all()
+for book in books:
+    print(book.authors.all())  #4篇文章: hits database 2
+```
+
+
+
+#### （4）extra
+
+```python
+extra(select=None, where=None, params=None, 
+      tables=None, order_by=None, select_params=None)
+```
+
+
+
+有些情况下，Django的查询语法难以简单的表达复杂的 `WHERE` 子句，对于这种情况, Django 提供了 `extra()` `QuerySet`修改机制 — 它能在 `QuerySet`生成的SQL从句中注入新子句
+
+extra可以指定一个或多个 `参数`,例如 `select`, `where` or `tables`. 这些参数都不是必须的，但是你至少要使用一个!要注意这些额外的方式对不同的数据库引擎可能存在移植性问题.(因为你在显式的书写SQL语句),除非万不得已,尽量避免这样。
+
+##### 参数之select
+
+The `select` 参数可以让你在 `SELECT` 从句中添加其他字段信息，它应该是一个字典，存放着属性名到 SQL 从句的映射。
+
+```
+queryResult=models.Article
+　　　　　　　　　　　.objects.extra(select={'is_recent': "create_time > '2017-09-05'"})
+```
+
+结果集中每个 Entry 对象都有一个额外的属性is_recent, 它是一个布尔值，表示 Article对象的create_time 是否晚于2017-09-05.
+
+##### 参数之`where` / `tables`
+
+您可以使用`where`定义显式SQL `WHERE`子句 - 也许执行非显式连接。您可以使用`tables`手动将表添加到SQL `FROM`子句。
+
+`where`和`tables`都接受字符串列表。所有`where`参数均为“与”任何其他搜索条件。
+
+举例来讲：
+
+```python
+queryResult=models.Article
+　　　　　　　　　　　.objects.extra(where=['nid in (3，4) OR title like "py%" ','nid>2'])
+```
+
+
+
+## 8.7、上传文件
+
+### 8.7.1、form表单上传文件
+
+```html
+<h3>form表单上传文件</h3>
+
+
+<form action="/upload_file/" method="post" enctype="multipart/form-data">
+    <p><input type="file" name="upload_file_form"></p>
+    <input type="submit">
+</form>
+```
+
+
+
+```python
+def index(request):
+    return render(request,"index.html")
+
+def upload_file(request):
+    print("FILES:",request.FILES)
+    print("POST:",request.POST)
+    return HttpResponse("上传成功!")
+```
+
+
+
+### 8.7.2、Ajax(基于FormData)
+
+FormData是什么呢？
+
+XMLHttpRequest Level 2添加了一个新的接口`FormData`.利用`FormData对象`,我们可以通过JavaScript用一些键值对来模拟一系列表单控件,我们还可以使用XMLHttpRequest的`send()`方法来异步的提交这个"表单".比起普通的ajax,使用`FormData`的最大优点就是我们可以异步上传一个二进制文件.
+
+所有主流浏览器的较新版本都已经支持这个对象了，比如Chrome 7+、Firefox 4+、IE 10+、Opera 12+、Safari 5+。
+
+```html
+<h3>Ajax上传文件</h3>
+
+<p><input type="text" name="username" id="username" placeholder="username"></p>
+<p><input type="file" name="upload_file_ajax" id="upload_file_ajax"></p>
+
+<button id="upload_button">提交</button>
+{#注意button标签不要用在form表单中使用#}
+
+<script>
+    $("#upload_button").click(function(){
+
+        var username=$("#username").val();
+        var upload_file=$("#upload_file_ajax")[0].files[0];
+
+        var formData=new FormData();
+        formData.append("username",username);
+        formData.append("upload_file_ajax",upload_file);
+
+
+        $.ajax({
+            url:"/upload_file/",
+            type:"POST",
+            data:formData,
+            contentType:false,
+            processData:false,
+
+            success:function(){
+                alert("上传成功!")
+            }
+        });
+
+
+    })
+</script>
+```
+
+
+
+```python
+def index(request):
+  
+    return render(request,"index.html")
+  
+  
+def upload_file(request):
+    print("FILES:",request.FILES)
+    print("POST:",request.POST)
+    return HttpResponse("上传成功!")
+```
+
+
+
+
+
+### 8.7.3、ImageField 和 FileField
+
+ImageField 和 FileField 可以分别对图片和文件进行上传到指定的文件夹中。
+
+1. 在下面的 models.py 中 ：
+
+picture = models.ImageField(upload_to=‘avatars/’, default=“avatars/default.png”,blank=True, null=True) 注:定义 ImageField 字段时必须制定参数 upload_to这个字段要写相对路径，
+
+这个参数会加在 settings.py 中的 MEDIA_ROOT后面, 形成一个路径, 这个路径就是上 传图片的存放位置，默认在Django项目根路径下，也就是MEDIA_ROOT默认是Django根目录
+
+所以要先设置好 mysite/settings.py中的 settings.py 中的 MEDIA_ROOT
+
+```python
+class Userinfo(models.Model):
+    name = models.CharField(max_length=32)
+    avatar_img = models.FileField("avatars/") 
+```
+
+
+
+```python
+username = request.POST.get("username")
+#获取文件对象
+file = request.FILES.get("file")   
+#插入数据，将图片对象直接赋值给字段
+user = Userinfo.objects.create(name=username,avatar_img=file)
+```
+
+
+
+
+
+Django会在项目的根目录创建avatars文件夹，将上传文件下载到该文件夹中，avatar字段保存的是文件的相对路径。
+
+1. 在 mysite/settings.py中 :
+
+```python
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")
+MEDIA_URL='/media/'
+```
+
+
+
+> MEDIA_ROOT:存放 media 的路径, 这个值加上 upload_to的值就是真实存放上传图片文件位置
+>
+> MEDIA_URL:给这个属性设值之后,静态文件的链接前面会加上这个值，如果设置这个值，则UserInfo.avatar.url自动替换成：/media/avatars/default.png，可以在模板中直接调用：。
+
+3.url.py:
+
+```python
+from django.views.static import serve
+# 添加media 配置
+re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+```
+
+
+
+浏览器可以直接访问http://127.0.0.1:8000/media/yuan/avatars/%E7%86%8A%E7%8C%AB.webp，即我们的用户上传文件。
+
+最后再给大家补充一个用户文件夹路径
+
+```python
+def user_directory_path(instance, filename):
+    return os.path.join(instance.name,"avatars", filename)
+
+class Userinfo(models.Model):
+    name = models.CharField(max_length=32)
+    avatar_img = models.FileField(upload_to=user_directory_path)  
+```
+
+
+
+4.FileField 和 ImageFiled 相同。
+
+### 8.7.4、导入表格批量创建数据
+
+```python
+# Create your tests here.
+def multi_create(request):
+    # 将接受到的excel文件转到mysql
+    # （1）下载文件到服务器
+
+    emp_excel = request.FILES.get("emp_excel")
+    print(emp_excel) # 期末题目（陕西联通）.xlsx
+    print(emp_excel.name) # "期末题目（陕西联通）.xlsx"
+    # 下载文件
+    with open("files/"+emp_excel.name,"wb") as f:
+
+        for line in emp_excel:
+            f.write(line)
+
+
+    # 读取excel，批量导入到mysql中
+
+    import os
+    from openpyxl import load_workbook
+    file_path = os.path.join("files",emp_excel.name)
+
+    # 加载某一个excel文件
+    wb = load_workbook(file_path)
+    # 获取sheet对象
+    print("wb.sheetnames",wb.sheetnames)
+    worksheet = wb.worksheets[0]
+
+    for row in worksheet.iter_rows(min_row=3):
+        print(row)
+        if row[0].value == None:
+            break
+        Employee.objects.create(name=row[0].value,
+                                age=row[1].value,
+                                ruzhi_date=row[2].value,
+                                dep=row[3].value,
+                                salary=row[4].value,
+                                )
+
+
+
+    return redirect("/index/")
+```
+
+
+
+## 8.8、websocket的实现
+
+### 8.8.1、websocket的实现
+
+http请求的特点：
+
+> 短链接
+>
+> 基于请求响应
+>
+> 基于TCP
+>
+> 无状态保存
+
+`WebSocket`是一种在单个`TCP`连接上进行全双工通讯的协议。`WebSocket`允许服务端主动向客户端推送数据。在`WebSocket`协议中，客户端浏览器和服务器只需要完成一次握手就可以创建持久性的连接，并在浏览器和服务器之间进行双向的数据传输。
+
+![img](django3.2.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpbndvdw==,size_16,color_FFFFFF,t_70.png)
+
+在一个HTTP访问周期里，如果要执行一个长时间任务，为了避免浏览器等待，后台必须使用异步动作。与此同时也要满足实时需求，用户提交了任务后可以随时去访问任务详情页面，在这里用户能够实时地看到任务的执行进度。
+
+针对异步任务处理，我们使用了Celery把任务放到后台执行。Celery 是一个基于python开发的分布式异步消息任务队列，通过它可以轻松的实现任务的异步处理，关于它的使用方法《网易乐得RDS设计》也有提到。Celery在处理一个任务的时候，会把这个任务的进度记录在数据库中。
+
+实现任务的后台执行后，下一步就要解决实时地更新进度信息到网页的问题。从上一步可以知道，数据库中已经存在了任务的进度信息，网页直接访问数据库就可以拿到数据。但是数据库中的进度信息更新的速率不固定，如果使用间隔时间比较短的ajax轮询来访问数据库，会产生很多无用请求，造成资源浪费。综合考虑，我们决定使用WebSocket来实现推送任务进度信息的功能。网站是使用Django搭建的，原生的MTV(模型-模板-视图)设计模式只支持Http请求。幸好Django开发团队在过去的几年里也看到实时网络应用的蓬勃发展，发布了Channels，以插件的形式为Django带来了实时能力。下面两张图展示了原生Django与集成Channels的Django。
+
+WebSocket的请求头中重要的字段：
+
+> Connection和Upgrade：表示客户端发起的WebSocket请求
+>
+> Sec-WebSocket-Version：客户端所使用的WebSocket协议版本号，服务端会确认是否支持该版本号
+>
+> Sec-WebSocket-Key：一个Base64编码值，由浏览器随机生成，用于升级request WebSocket的响应头中重要的字段
+
+HTTP/1.1 101 Swi tching Protocols：切换协议，WebSocket协议通过HTTP协议来建立运输层的TCP连接
+
+> Connection和Upgrade：表示服务端发起的WebSocket响应 Sec-WebSocket-Accept：表示服务器接受了客户端的请求，由Sec-WebSocket-Key计算得来
+
+WebSocket协议的优点：
+
+> 支持双向通信，实时性更强 数据格式比较轻量，性能开销小，通信高效 支持扩展，用户可以扩展协议或者实现自定义的子协议(比如支持自定义压缩算法等)
+
+WebSocket协议的缺点：
+
+> 少部分浏览器不支持，浏览器支持的程度与方式有区别 长连接对后端处理业务的代码稳定性要求更高，后端推送功能相对复杂 成熟的HTTP生态下有大量的组件可以复用，WebSocket较少
+
+WebSocket的应用场景：
+
+> 即时聊天通信，网站消息通知 在线协同编辑，如腾讯文档 多玩家在线游戏，视频弹幕，股票基金实施报价
+
+### 8.8.2、Channels组件
+
+Channels为Django带来了一些新特性，最明显的就是添加了对WebSocket的支持。Channels最重要的部分也可以看做是任务队列，消息被生产者推到通道，然后传递给监听通道的消费者之一。它与传统的任务队列的主要的区别在于Channels通过网络工作，使生产者和消费者透明地运行在多台机器上，这个网络层就叫做channel layer。Channels推荐使用redis作为它的channel layer backend，但也可以使用其它类型的工具，例如rabbitmq、内存或者IPC。关于Channels的一些基本概念，推荐阅读官方文档。
+
+![img](django3.2.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpbndvdw==,size_16,color_FFFFFF,t_70-20211121090203572.png)
+
+继承`WebSocketConsumer`的连接。
+
+AuthMiddlewareStack：用于WebSocket认证，继承了Cookie Middleware，SessionMiddleware，SessionMiddleware。django的channels封装了django的auth模块，使用这个配置我们就可以在consumer中通过下边的代码获取到用户的信息
+
+```python
+def connect(self):
+    self.user = self.scope["user"]
+```
+
+
+
+self.scope类似于django中的request，包含了请求的type、path、header、cookie、session、user等等有用的信息
+
+配置和使用
+
+> channels==2.1.3
+>
+> channels-redis==2.3.0。
+
+启动 Redis 服务默认使用 6379 端口，Django 将使用该端口连接 Redis 服务。
+
+更新项目配置文件 settings.py 中的 INSTALLED_APPS 项
+
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'app01.apps.App01Config',
+    'channels',
+]
+
+ASGI_APPLICATION = "chat.routing.application"
+
+# WebSocket
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+```
+
+
+
+在 `wsgi.py` 同级目录新增文件 `routing.py`,其作用类型与 `urls.py` ,用于分发`webscoket`请求:
+
+```python
+from django.urls import path
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from table.consumers import TableConsumer
+
+application = ProtocolTypeRouter({
+    # Empty for now (http->django views is added by default)
+    'websocket': AuthMiddlewareStack(
+        URLRouter([
+            path('ws/table/<slug:table_id>/', TableConsumer),
+        ])
+    ),
+})
+```
+
+> `routing.py`路由文件跟`django`的`url.py`功能类似，语法也一样，意思就是访问`ws/table/`都交给TableConsumer处理。
+
+新增 app 名为 `table`,在 `table` 目录下新增 `consumers.py`:
+
+```python
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
+
+class TableConsumer(AsyncJsonWebsocketConsumer):
+    table = None
+
+    async def connect(self):
+        self.table = 'table_{}'.format(self.scope['url_route']['kwargs']['table_id'])
+        # Join room group
+        await self.channel_layer.group_add(self.table, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(self.table, self.channel_name)
+
+    # Receive message from WebSocket
+    async def receive_json(self, content, **kwargs):
+        # Send message to room group
+        self.from_client =  str(self.scope["client"])
+        await self.channel_layer.group_send(self.table, {'type': 'message', 'message': content,"from_client":self.from_client})
+
+    # Receive message from room group
+    async def message(self, event):
+        message = event['message']
+        print("self.scope",self.scope)
+        print("event",event)
+        print("message",message)
+        # Send message to WebSocket
+        print(":::",event["from_client"]+">>>"+message)
+        await self.send_json(event["from_client"]+">>>"+message)
+```
+
+`TableConsumer`类中的函数依次用于处理连接、断开连接、接收消息和处理对应类型的消息，其中`channel_layer.group_send(self.table, {'type': 'message', 'message': content})`方法，`self.table` 参数为当前组的组id， `{'type': 'message', 'message': content}` 部分分为两部分，`type` 用于指定该消息的类型，根据消息类型调用不同的函数去处理消息，而 `message` 内为消息主体。
+
+在 `table` 目录下的 `views.py` 中新增函数：
+
+```python
+from django.shortcuts import render
+
+def table(request, table_id):
+    return render(request, 'table.html', {
+        'room_name_json': table_id
+    })
+```
+
+
+
+```python
+from django.contrib import admin
+from django.urls import path, re_path
+from table.views import table
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    re_path('table/(\d+)', table),
+]
+```
+
+
+
+前端实现WebSocket
+
+WebSocket对象一个支持四个消息：onopen，onmessage，oncluse和onerror，我们这里用了两个onmessage和onclose
+
+> onopen： 当浏览器和websocket服务端连接成功后会触发onopen消息
+>
+> onerror： 如果连接失败，或者发送、接收数据失败，或者数据处理出错都会触发onerror消息
+>
+> onmessage： 当浏览器接收到websocket服务器发送过来的数据时，就会触发onmessage消息，参数e包含了服务端发送过来的数据
+>
+> onclose： 当浏览器接收到websocket服务器发送过来的关闭连接请求时，会触发onclose消息载请注明出处。
+
+在 `table` 的 `templates\table` 目录下新增 `table.html`:
+
+```html
+<!-- chat/templates/chat/room.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+</head>
+<body>
+<textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+<input id="chat-message-input" type="text" size="100"/><br/>
+<input id="chat-message-submit" type="button" value="Send"/>
+</body>
+<script>
+    var roomName = {{ room_name_json }};
+
+    var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/table/' + roomName + '/');
+
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (JSON.stringify(data).slice(1,-1) + '\n');
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify(message));
+
+        messageInputDom.value = '';
+    };
+</script>
+</html>
+```
+
+
+
+# 九、Django3的ASGI
+
+## 9.1、Web应用程序和web服务器
+
+Web应用程序（Web）是一种能完成web业务逻辑，能让用户基于web浏览器访问的应用程序，它可以是一个实现http请求和响应功能的函数或者类，也可以是Django、Flask、sanic等这样的web框架，当然也可以是其他语言的web程序或web框架。
+
+Web服务器（Web Server）是一种运行于网站后台（物理服务器）的软件。Web服务器主要用于提供网页浏览或文件下载服务，它可以向浏览器等Web客户端提供html网页文档，也可以提供其他类型的可展示文档，让客户端用户浏览；还可以提供数据文件下载等。目前世界上最主流的Web服务器有 Nginx 、Apache、IIS、tomcat。
+
+```
+问：Web服务器和Web应用程序的区别？
+答：Web应用程序主要是完成web应用的业务逻辑的处理，Web服务器则主要是应对外部请求的接收、响应和转发。
+    需要使用web服务器启动运行，web应用程序才能被用户访问到。
+    而django框架中，我们之所以只有一个web应用程序就跑起来了，是因为我们在终端执行了一个命令，python manage.py runserver。这个命令启动了django框架中内置提供的测试web服务器。
+
+```
+
+
+
+## 9.2、网关接口
+
+网关接口（Gateway Interface，GI）就是一种为了实现加载动态脚本而运行在Web服务器和Web应用程序中的通信接口，也可以理解为一份协议/规范。只有Web服务器和Web应用程序都实现了网关接口规范以后，双方的通信才能顺利完成。常见的网关接口协议：CGI，FastCGI，WSGI，ASGI。
+
+![image-20210608222947398](django3.2.assets/image-20210608222947398.png)
+
+#### （1）CGI
+
+CGI(Common Gateway Inteface): 字面意思就是通用网关接口，
+
+> 它是外部应用程序与Web服务器之间的接口标准
+
+意思就是它用来规定一个程序该如何与web服务器程序之间通信从而可以让这个程序跑在web服务器上。当然，CGI 只是一个很基本的协议，在现代常见的服务器结构中基本已经没有了它的身影，更多的则是它的扩展和更新。
+
+FastCGI: CGI的一个扩展， 提升了性能，废除了 CGI fork-and-execute （来一个请求 fork 一个新进程处理，处理完再把进程 kill 掉）的工作方式，转而使用一种长生存期的方法，减少了进程消耗，提升了性能。
+
+这里 FastCGI 就应用于前端 server（nginx）与后端 server（uWSGI）的通信中，制定规范等等，让前后端服务器可以顺利理解双方都在说什么（当然 uWSGI 本身并不用 FastCGI, 它有另外的协议）
+
+#### （2）WSGI
+
+WSGI（Python Web Server GateWay Interface）:它是用在 python web 框架编写的应用程序与后端服务器之间的规范（本例就是 Django 和 uWSGI 之间），让你写的应用程序可以与后端服务器顺利通信。在 WSGI 出现之前你不得不专门为某个后端服务器而写特定的 API，并且无法更换后端服务器，而 WSGI 就是一种统一规范， 所有使用 WSGI 的服务器都可以运行使用 WSGI 规范的 web 框架，反之亦然。
+
+WSGI和ASGI，都是基于Python设计的网关接口（Gateway Interface，GI）。
+
+![image-20210608223815714](django3.2.assets/image-20210608223815714.png)
+
+Web服务器网关接口（Python Web Server Gateway Interface，WSGI），是Python为了解决**Web服务器端与客户端之间的通信**基于CGI标准而设计的。实现了WSGI协议的web服务器有：uWSGI、uvicorn、gunicorn。像django框架一般开发中就不会使用runserver来运行，而是采用上面实现了WSGI协议的web服务器来运行。
+
+django中运行runserver命令时，其实内部就启动了wsgiref模块作为web服务器运行的。wsgiref是python内置的一个简单地遵循了wsgi接口规范的web服务器程序。
+
+```python
+from wsgiref.simple_server import make_server
+# application 由wsgi服务器调用、函数对http请求与响应的封装、使得Python专注与HTML
+# environ http 请求 (dist)
+# start_response 响应 (function)
+def application(environ, start_response):
+    # 请求
+    if environ['REQUEST_METHOD'] == 'GET' and environ['PATH_INFO'] == '/':
+        # 响应
+        start_response('200 OK', [('Content-Type', 'text/html')])
+        return [b'<h1>hi, python!</h1>']
+
+if __name__ == '__main__':
+    # 启动服务器 | 这个服务器负责与 wsgi 接口的 application 函数对接数据
+    httpd = make_server('127.0.0.1', 8000, application)
+
+    # 监听请求
+    httpd.serve_forever()
+    
+    
+# 1. 监听8000端口,
+# 2. 把http请求根据WSGI协议将其转换到applcation中的environ参数, 然后调用application函数.
+# 3. wsgiref会把application函数提供的响应头设置转换为http协议的响应头,
+# 4. 把application的返回(return)作为响应体, 根据http协议,生成响应, 返回给浏览器.
+```
+
+
+
+开发中，我们一般使用uWSGI或者Gunicorn作为web服务器运行django。
+
+#### （3）uWSGI
+
+[uWSGI](https://uwsgi-docs.readthedocs.io/) 是一个快速的，自我驱动的，对开发者和系统管理员友好的应用容器服务器，用于接收前端服务器转发的动态请求并处理后发给 web 应用程序。完全由 C 编写，实现了WSGI协议,uwsgi,http等协议。注意：uwsgi 协议是一个 uWSGI服务器自有的协议,用于定义传输信息的类型，常用于uWSGI服务器与其他网络服务器的数据通信中。
+
+uwsgi: 是uWSGI服务器实现的独有的协议， 网上没有明确的说明这个协议是用在哪里的，我个人认为它是用于前端服务器与 uwsgi 的通信规范，相当于 FastCGI的作用。
+
+![image-20220722204201927](django3.2.assets/image-20220722204201927.png)
+
+![在这里插入图片描述](django3.2.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2d5bWFpc3ls,size_16,color_FFFFFF,t_70.png)
+
+![img](django3.2.assets/1454579-20181209002415550-68432975.png)
+
+## 9.3、关于ASGI
+
+### 9.3.1、历史趣谈
+
+2019 年 12 月，[Django](https://so.csdn.net/so/search?from=pc_blog_highlight&q=Django)3.0 发布，它具有一个有趣的新特性——支持 ASGI 服务器。
+
+2003 年，诸如Zope、Quixote之类的各式各样的 [Python](https://so.csdn.net/so/search?from=pc_blog_highlight&q=Python) Web 框架都附带了自己的 Web 服务器，或者拥有自己的本地接口来与流行的网络服务器（如 Apache）进行通信。
+
+成为一名 Python Web 开发人员意味着要全身心投入到一个完整的技术栈中，但是如果需要另一个框架时，则必须重新学习所有内容。可以想象到这会导致碎片化。PEP 333，即 Python Web 服务器网关接口 v1.0，尝试通过定义一个被称为 WSGI（Web Server Gateway Interface）的简单标准接口来解决这个问题。它的卓越之处在于它的简单性。
+
+WSGI 如此流行，以至它不仅被诸如 [Django](https://so.csdn.net/so/search?from=pc_blog_highlight&q=Django) 和 Pylons 之类的大型 Web 框架所采用，还被诸如 Bottle 之类的微框架所采用。
+
+#### 为什么有ASGI的出现
+
+如果我们对 WSGI 非常满意的话，为什么还要提出 ASGI 呢？如果仔细检查网络请求的整个处理流程，那么答案就非常明显了。您可以查看 在Django中网络请求如何工作 的动画。请注意，在数据库查询之后且响应发送之前，框架是如何等待的。这就是同步处理的缺点。
+
+坦白说，直到 2009 年 Node.js 出现时，这种缺陷才变得明显或紧迫。Node.js 的创建者 Ryan Dahl 受到 C10K 问题的困扰，即为什么像 Apache 这样的流行 Web 服务器无法处理 10,000 个或更多的并发连接（给定典型的 Web 服务器硬件，内存将会耗尽）。他思考到 “查询数据库时，软件在做什么？”。
+
+当然，答案是什么也没有发生。它正在等待数据库的响应。Ryan 认为网络服务器根本不应该去等待 I / O 活动。换言之，它应该切换为处理其他请求，并在较慢的活动完成时能得到通知。
+
+越来越明显的是，基于异步事件的架构是解决多种并发问题的正确方法。也许这就是为什么 [Python](https://so.csdn.net/so/search?from=pc_blog_highlight&q=Python) 的创建者 Guido 亲自为 Tulip 项目提供语言级别支持的原因，这个项目后来成为了 asyncio 模块。最终，Python 3.7 添加了新的关键字 async 和 await ，用于支持异步事件循环。这不仅对如何编写 Python 代码而且对代码执行也具有重大意义。
+
+#### Python 的两个世界
+
+虽然使用 Python 编写异步代码非常简单，在函数定义前添加 async 关键字，但是您必须非常小心，不要打破一个重要的规则：不要随意混合使用同步代码和异步代码。
+
+这是因为同步代码可以阻止异步代码中的事件循环。这种情况会使您的应用程序陷入停顿。正如 Andrew Goodwin 所写：这会将您的代码分为两个世界——具有不同库和调用风格的“同步代码”和“异步代码”。
+
+回到 WSGI，这意味着我们无法编写异步可调用对象并将其嵌入。WSGI 是为同步世界编写的。我们将需要一种新的机制来调用异步代码。但是，如果每个人都编写自己的一套机制，我们将回到最初的不兼容地狱。因此，对于异步代码，我们需要一个类似于 WSGI 的新标准。因此，ASGI 诞生了。
+
+ASGI 还有其他一些目的。但是在此之前，让我们看一下两种类似的 Web 应用程序“Hello World”，它们分别采用 WSGI 和 ASGI 风格。
+
+与 WSGI 一样，ASGI 可调用对象可以一个接一个地链接在一起，以处理 Web 请求（以及其他协议请求），即链式调用。实际上，ASGI 是 WSGI 的超集且可以调用 WSGI 可调用对象。ASGI 还支持长时间轮询，慢速流媒体和其他响应类型，而无需侧向加载，从而可以加快响应速度。
+
+因此，ASGI 引入了构建异步 Web 界面和处理双向协议的新方式。客户端或服务器端都无需等待对方进行通信——这可以随时异步发生。现存且以同步代码编写的基于 WSGI 的 Web 框架将不支持这种事件驱动的工作方式。
+
+#### Django 演变
+
+同时，想将所有这些异步优势带给 Django 面临一个重大的问题 —— 所有 Django 代码都是以同步风格编写的。如果我们需要编写任何异步代码，那么需要一个采用异步风格编写的整个 Django 框架的副本。换句话说，创建两个 Django 世界。
+
+好吧，不要惊慌——我们可能不必编写一个完整的副本，因为有聪明的方式可以在两个世界之间重用一些代码。正如领导 Django Async 项目的安德鲁·戈德温（Andrew Godwin）正确地指出的那样，“这是 Django 历史上最大规模的修订之一”。一个雄心勃勃的项目采用异步风格重新实现 ORM、请求处理程序（request handler）、模板渲染器（Template renderer）等组件。这将分阶段进行，并在多个版本中完成。如下是安德鲁的预想（这不视为已提交的时间表）：
+
+- Django 3.0-ASGI 服务器
+- Django 3.1-异步视图
+- Django 3.2 / 4.0-异步 ORM
+
+您可能正在考虑其余的组件，例如模板渲染、表单和缓存等。它们可能仍然保持同步或者其异步实现会纳入到将来的技术路线中。但是以上是 Django 在异步世界中发展的关键里程碑。
+
+### 9.3.2、asgi的使用
+
+ASGI，是构建于WSGI接口规范之上的**异步服务器网关接口**，是WSGI的延伸和扩展。
+
+```
+A指的是Async，异步的意思。
+```
+
+| 协议，规范 | 支持的请求协议（常见，未列全） | 同步/异步 | 支持的框架                                              |
+| :--------- | :----------------------------- | :-------- | :------------------------------------------------------ |
+| CGI        | HTTP                           |           | CGI程序                                                 |
+| WSGI       | HTTP                           | 同步      | django3.0以前，Flask1.0                                 |
+| ASGI       | HTTP，HTTP2，WebSocket等       | 同步/异步 | FastAPI，Quart，Sanic，Tornado，django3.0以后，flask2.0 |
+
+在 Python3.5 之后增加 async/await 特性之后简化了协程操作以后，异步编程变得异常火爆，越来越多开发者投入异步的怀抱。
+
+3.0版本以前，django所提供的所有内部功能都是基于同步编程的。所以，在以往django开发中，针对网络请求，数据库读取等IO操作形成的阻塞，往往会导致项目运行性能的下降。虽然等待I/O操作数微秒时，但是随着流量的增加和操作的频率上升，这一点点的阻塞就会导致整个项目运作的缓慢。而如果换成异步就不会有任何阻塞，还可以同时处理其他任务，从而以较低的延迟处理更多的请求。所以在目前python开发中，越来越多的框架开始支持了异步编程。所以，3.0版本以后，django开始支持异步编程，可以让开发者在django中使用python第三方异步模块，推出了asgi异步web服务器。3.1版本推出了异步视图，当然，目前django的异步编程还不够完善，django中只有极少的功能是支持了异步操作。
+
+![image-20210608235013829](django3.2.assets/image-20210608235013829.png)
+
+Uvicorn 是一个快速的 ASGI 服务器，Uvicorn 是基于 uvloop 和 httptools 构建的，是 Python 异步生态中重要的一员。
+
+Uvicorn 当前支持 HTTP / 1.1 和 WebSockets，将来计划支持HTTP / 2。
+
+文档：https://www.uvicorn.org/
+
+安装uvicorn
+pip install uvicorn
+
+项目根目录下，运行django项目
+
+```
+# uvicorn 主应用目录名.asgi:application --reload
+uvicorn homework.asgi:application --reload
+```
+
+
+
+开发中一般使用gunicorn来管理uvicorn。所以可以一并安装
+
+pip install gunicorn
+
+运行
+
+```
+# gunicorn -w 4 主应用目录名.asgi:application -k uvicorn.workers.UvicornWorker --reload
+gunicorn -w 4 homework.asgi:application -k uvicorn.workers.UvicornWorker --reload
+```
 
 
 
