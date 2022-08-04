@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            padding: 60px;
+        }
+
+        .fixHeader {
+            width: 100%;
+            height: 60px;
+            background-color: red;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+
+        }
+
+        p {
+            width: 200px;
+            height: 200px;
+            background-color: yellow;
+            border: 1px solid green;
+            position: absolute;
+            top: 200px;
+            left: 100px;
+        }
+    </style>
+</head>
+
+<body style="height:2000px;">
+    <div class='fixHeader'></div>
+    <div class="box">
+        <p>
+            小马哥
+        </p>
+    </div>
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+        $(function () {
+            console.log($('.box').css('color'));
+            // 设置值
+            // $('.box').css('color','red');
+            // $('.box').css('fontSize',20);
+            $('.box').css({
+                color: 'red',
+                fontSize: 20
+            })
+            // 获取当前窗口的相对偏移  获取出来是一个对象 里面保存着 top和left属性
+            var offset = $('p').offset();
+            console.log(offset);
+
+            $(window).scroll(function () {
+
+                var scrollTop = $(this).scrollTop();
+                if (scrollTop > offset.top) {
+                    // console.log('导航条该出现了')
+                    $('.fixHeader').stop().fadeIn(400);
+                }else{
+                    $('.fixHeader').stop().fadeOut(400);
+                }
+
+
+            })
+
+
+        })
+    </script>
+
+</body>
+
+</html>

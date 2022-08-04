@@ -3127,7 +3127,7 @@ CSRF（Cross-Site Request Forgery，跨站点伪造请求）是一种网络攻�
 -- pornhub.com
 ```
 
-[参考文章](https://www.pianshen.com/article/62531249043/)
+[参考文章](https://www.pianshen.com/article/62531249043/)     https://blog.csdn.net/besmarterbestronger/article/details/102544093
 
 token其实就是一个令牌，用于用户验证的，token的诞生离不开CSRF。正是由于上面的Cookie/Session的状态保持方式会出现CSRF，所以才有了token。
 
@@ -4223,7 +4223,7 @@ gunicorn -w 4 homework.asgi:application -k uvicorn.workers.UvicornWorker --reloa
 
 -   **原文作者：**[Yuan](http://www.yuan316.com/)
 
--   **原文链接：**[http://www.yuan316.com/post/Django3.0%E6%A1%86%E6%9E%B6/](http://www.yuan316.com/post/Django3.0框架/)
+-   **原文链接：**http://www.yuan316.com/post/Django3.2%E6%A1%86%E6%9E%B6
 
     
 

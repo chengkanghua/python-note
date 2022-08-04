@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .box{
+            width: 200px;
+            height: 200px;
+            background: red;
+            border: 2px solid #000;
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+
+    </div>
+    <script src="./jquery-3.4.1.js"></script>
+    <script>
+        
+        $(function() {
+            // console.log($('.box').css('width'));
+            // width
+            console.log($('.box').width());
+            console.log($('.box').height());
+            // $('.box').width(300);
+            // width+padding
+            console.log($('.box').innerWidth());
+            console.log($('.box').innerHeight());
+            // 包括 width+padding+border
+            console.log($('.box').outerWidth());
+            
+            
+        })
+    
+    </script>
+    
+</body>
+</html>

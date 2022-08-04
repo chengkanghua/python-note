@@ -1,4 +1,0 @@
-# coding:gbk
-
-x=u'ио'
-print(x)

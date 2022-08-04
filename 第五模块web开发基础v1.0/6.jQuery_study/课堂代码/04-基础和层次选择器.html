@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class='box'>
+        <p id='p1'>alex</p>
+        <ul>
+            <li class='item1'>张三</li>
+            <li class='item2'>李四</li>
+            <li class='item3'>王五</li>
+        </ul>
+    </div>
+    <script src='./jquery-3.4.1.js'></script>
+    <script>
+        // jQuery的选择器的作用: 选中当前的元素(返回一个jQuery对象)
+        // id
+        // class
+        // 标签
+        // 后代
+        // 子代
+        // + prev+next
+        // ~
+        // 组合
+        console.log($('#p1'));
+        console.log($('.box'));
+        console.log($('.box #p1'))
+        console.log($('.box li'))
+        console.log($('.box>ul>li'))
+        
+        console.log($('.item1+li'));//获取紧挨着的item1这个li标签的下一个标签
+        console.log($('.item1~li')); //除item1这个li标签之外的标签
+        console.log($('p,ul,li'));
+        
+        
+    </script>
+
+</body>
+
+</html>

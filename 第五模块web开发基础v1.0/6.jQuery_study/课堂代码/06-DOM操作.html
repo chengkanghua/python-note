@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    
+</head>
+
+<body>
+    <h3>小马哥</h3>
+    <div class='box'>
+        
+    </div>
+
+    <div class="wrap">
+        <button>按钮</button>
+    </div>
+
+    <div class="clone">
+        <ul>
+            <li>小马哥</li>
+        </ul>
+    </div>
+
+    <div class="replace">
+        <p>
+            hello
+        </p>
+        <p>world</p>
+    </div>
+    <script src='./jquery-3.4.1.js'></script>
+    <script>
+        $(function() {
+            // 替换节点
+            // $('.replace p').replaceWith('<i>hello</i>');
+            // $('<i>hello</i>').replaceAll('p');
+            
+            // $('.replace p').wrap('<div class="box2"></div>')
+            // 删除包裹的父节点
+            // $('.replace p').unwrap();
+            
+            // 把所有段落内的每个字内容加粗
+            // 取到当前p标签的子内容,用strong标签包括起来
+            $('.replace p').wrapInner('<strong></strong>')
+            var h3Tag = document.createElement('h3');
+            h3Tag.innerText = 'alex';
+            var htmlStr = '<h3>hello world</h3>';
+
+            // append() appendTo()  后置追加
+            // $('.box').append(h3Tag);
+            // 如果是网页中的元素,那么是一种移动现象
+            $('.box').append($('h3'));
+            $('h3').css('color','red');
+            // console.log($('<h4>老村长</h4>').appendTo('.box'));
+            $('<h4>老村长</h4>').appendTo('.box').css('color','green').click(function() {
+                console.log($(this).text());
+            });
+            // 前置追加
+            $('.box').prepend('<a href="#">百度一下</a>');
+            $('<a href="#">百度一下2</a>').prependTo('.box');
+
+            $('h3').after('<h1>wusir</h1>');
+            $('<h2>老男孩</h2>').insertAfter('h1');
+
+
+            $('button').click(function() {
+                // alert(1);
+                // 既删除节点,又删除节点上的事件绑定
+                // console.log($(this).remove());
+                // var btnJq = $(this).remove()
+                // 仅仅删除了节点,事件保留
+                // var btnJq = $(this).detach()
+                // $('.box').prepend(btnJq);
+                // $(this).detach();
+
+                // 清空 div.box
+                // $('.box').empty();
+                // console.log($('.box').text());
+                console.log($('.box').html());
+                // input  val()
+                // 清空
+                $('.box').html('');
+                
+            })
+
+
+            // 克隆元素
+            $('.clone ul li').click(function() {
+                $(this).clone(true).appendTo('.clone ul');
+            })
+        })
+    </script>
+
+</body>
+
+</html>
