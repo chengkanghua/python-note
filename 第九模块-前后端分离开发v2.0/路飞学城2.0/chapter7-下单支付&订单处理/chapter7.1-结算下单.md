@@ -1495,7 +1495,7 @@ body {
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 客户端展示下单结算页面"
 git push

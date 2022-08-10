@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>数组常用的方法</title>
+</head>
+<body>
+	<script type="text/javascript">
+		
+
+		// 操作方法  concat() slice()  splice()
+		// 1.concat()  数组合并
+		var colors = ['red','blue'];
+		var newColors = colors.concat('green');
+	          newColors = newColors.concat({name:'zhangsan'});
+		console.log(newColors);
+
+		//2.slice() 将当前数组中的一个或者多个项创建一个新数组
+		var newcolors = colors.concat({name:"lisi"},['black','purple']);
+		console.log(newcolors); //5
+		// newcolors = newcolors.slice(1,2);
+		newcolors = newcolors.slice(-2,-1); //slice(3,4)
+		console.log(newcolors);
+
+		// 3.splice() 删除 插入 替换
+		// 3.1 删除
+		var names = ['张三','李四','mjj','alex'];
+		// names.splice(0,2);
+		// console.log(names);
+		// 3.2 插入
+		// names.splice(1,0,'熊大大','jack');
+		// console.log(names);
+		// 3.3 替换
+		names.splice(1,1,'xiongdada');
+		console.log(names);
+
+		// 4.位置方法  indexOf() lastIndexOf()
+		var names = ['张三','mjj','王五','mjj','赵六'];
+		// alert(names.indexOf('mjj')); //1
+		// alert(names.lastIndexOf('mjj')); //3
+		// alert(names.indexOf('mjj',2)); //3
+		// alert(names.lastIndexOf('mjj',2)); //1
+		// alert(names.lastIndexOf('mjjxxxx',2)); //如果查不到结果 返回-1
+
+		// 5.迭代方法
+		// 5.1 filter() 将数组的元素进行过滤
+		var numbers = [1,2,3,6,19,4,20];
+
+		var filterResult = numbers.filter(function(item,index,array){
+			console.log('item:'+ item);
+			console.log('index:'+ index);
+			console.log('array:'+ array);
+
+			return item > 10
+		});
+		console.log('filter:',filterResult);
+
+		// 5.2 map()方法
+		var mapresult = numbers.map(function(item,index,array){
+			return item * 2;
+		})
+		console.log('map:',mapresult);
+		
+		// for 循环遍历
+		for(var i = 0; i < mapresult.length; i ++){
+			// console.log(mapresult[i]);
+		}
+		// 5.3 forEach()
+		mapresult.forEach(function(item,index){
+			console.log(item);
+		})
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	</script>
+	
+</body>
+</html>
