@@ -33,7 +33,6 @@ def index(request):
 def addStu(request):
     if request.method == "GET":
         studentModelFormObj = StudentModelForm()
-
         return render(request, "addStu.html", {"studentModelFormObj": studentModelFormObj})
     else:
         # 添加功能
