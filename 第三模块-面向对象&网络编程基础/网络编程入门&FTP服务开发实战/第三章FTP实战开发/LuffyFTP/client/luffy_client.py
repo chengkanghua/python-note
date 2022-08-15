@@ -127,7 +127,7 @@ class FtpClient(object):
             response = self.get_response()
             if response.get('status_code') == 301:# file exist ,ready to receive
                 file_size = response.get('file_size')
-                received_size = 0
+                received_size = 0   # 接收的文件大小
                 f = open(filename,"wb")
                 while received_size < file_size:
                     if file_size - received_size < 8192:#last recv
