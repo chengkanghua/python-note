@@ -63,7 +63,7 @@ djang代码示例：
 
 
 
-### 2. Django的ModelFor
+### 2. Django的ModelForm
 
 
 
