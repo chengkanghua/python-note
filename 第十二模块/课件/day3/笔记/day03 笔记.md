@@ -195,7 +195,7 @@ commit:  注册页面显示
 
 #### 1.2 点击获取验证码
 
-<img src="assets/image-20200316145140300.png" alt="image-20200316145140300" style="zoom:25%;" />
+<img src="assets/image-20200316145140300.png" alt="image-20200316145140300" style="zoom: 33%;" />
 
 ##### 1.2.1 按钮绑定点击事件
 

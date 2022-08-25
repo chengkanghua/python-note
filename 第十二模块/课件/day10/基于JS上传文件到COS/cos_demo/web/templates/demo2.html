@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>示例2：临时凭证上传文件</h1>
+    <input type="file" name="upload_file" id="uploadFile" multiple />
+
+    <script src="{% static 'js/jquery-3.4.1.min.js' %} "> </script>
+    <script src="{% static 'js/cos-js-sdk-v5.min.js' %} "> </script>
+    <script>
+        var cos;
+        $(function () {
+            initCOS();
+            bindChangeFileInput();
+        });
+
+        function initCOS() {
+            cos = new COS({
+                getAuthorization: function (options, callback) {
+                    // 想django后台发送请求，获取临时凭证
+                    $.get('/cos/credential/', {
+                        // 可从 options 取需要的参数
+                    }, function (data) {
+                        var credentials = data && data.credentials;
+                        if (!data || !credentials) return console.error('credentials invalid');
+                        callback({
+                            TmpSecretId: credentials.tmpSecretId,
+                            TmpSecretKey: credentials.tmpSecretKey,
+                            XCosSecurityToken: credentials.sessionToken,
+                            StartTime: data.startTime,
+                            ExpiredTime: data.expiredTime,
+                        });
+                    });
+                }
+            });
+        }
+
+        function bindChangeFileInput() {
+            $("#uploadFile").change(function () {
+                // 获取要上传的所有文件对象列表
+                var files = $(this)[0].files;
+                $.each(files, function (index, fileObject) {
+                    var fileName = fileObject.name;
+                    // 上传文件
+                    cos.putObject({
+                        Bucket: 'wangyang-1251317460', /* 必须 */
+                        Region: 'ap-chengdu',     /* 存储桶所在地域，必须字段 */
+                        Key: fileName,              /* 必须 */
+                        StorageClass: 'STANDARD',
+                        Body: fileObject, // 上传文件对象
+                        onProgress: function (progressData) {
+                            console.log("文件上传进度--->", fileName, JSON.stringify(progressData));
+                        }
+                    }, function (err, data) {
+                        console.log(err || data);
+                    });
+
+                })
+
+            })
+        }
+    </script>
+</body>
+
+</html>
