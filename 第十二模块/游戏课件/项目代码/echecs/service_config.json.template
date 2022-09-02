@@ -1,0 +1,27 @@
+{
+  "auto_op_wait_time": 1,               //自动操作等待时间
+  "manual_op_wait_time": 10,            //手动操作等待时间
+  "manual_op_against_act_time": 10,     //玩家叫牌等待时间
+  "dissolve_wait_time": 15,             //解散房间等待时间
+  "db":{
+    "mysql": {
+      "use_env": "out_test_1",
+      "out_test_1": {
+           "host":"",
+           "port": 40001,
+           "user":"ibb",
+           "passwd":"",
+           "db":""
+      }
+    },
+    "redis":{
+      "use_env": "out_test_1",
+      "out_test_1": {
+           "host": "*.*.*.*",
+           "port": 30001,
+           "db": 0,
+           "password": ""
+      }
+    }
+  }
+}

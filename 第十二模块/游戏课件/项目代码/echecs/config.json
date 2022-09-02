@@ -1,0 +1,51 @@
+{
+    "master":{
+         "rootport":10010,
+         "webport":10009,
+         "log":"logs/masterlog.log"
+    },
+    "servers":{
+          "proxy_1":{
+                "port": 10000,
+                "webport": 10001,
+                "name": "proxy_1",
+                "app": "proxy.start_up",
+                "remoteport":[
+                  {"rootport": 11001, "rootname": "gate_1", "is_available":1},
+                  {"rootport": 11003, "rootname": "gate_2"}
+                ]
+          },
+          "gate_1": {
+                "rootport":11001,
+                "webport":11002,
+                "name":"gate_1",
+                "app":"gate.start_up"
+          },
+          "gate_2": {
+                "rootport":11003,
+                "webport":11004,
+                "name":"gate_2",
+                "app":"gate.start_up"
+          },
+          "room_1":{
+                "rootport": 12001,
+                "webport":12002,
+                "name":"room_1",
+                "app":"game.start_up",
+                "remoteport":[
+                  {"rootport": 11001, "rootname": "gate_1"},
+                  {"rootport": 11003, "rootname": "gate_2"}
+                ]
+          },
+          "room_2":{
+                "rootport": 12003,
+                "webport":12004,
+                "name":"room_2",
+                "app":"game.start_up",
+                "remoteport":[
+                  {"rootport": 11001, "rootname": "gate_1"},
+                  {"rootport": 11003, "rootname": "gate_2"}
+                ]
+          }
+    }
+}

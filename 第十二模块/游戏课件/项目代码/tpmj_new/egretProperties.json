@@ -1,0 +1,41 @@
+{
+	"native": {
+		"path_ignore": []
+	},
+	"publish": {
+		"web": 0,
+		"native": 1,
+		"path": "bin-release"
+	},
+	"egret_version": "5.0.0",
+	"modules": [
+		{
+			"name": "egret",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		},
+		{
+			"name": "game",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		},
+		{
+			"name": "res",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		},
+		{
+			"name": "eui",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		},
+		{
+			"name": "tween",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		},
+		{
+			"name": "socket",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		},
+		{
+			"name": "dragonBones",
+			"path": "${EGRET_APP_DATA}/4.0.3"
+		}
+	]
+}
