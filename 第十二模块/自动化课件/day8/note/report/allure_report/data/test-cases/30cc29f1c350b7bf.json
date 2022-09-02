@@ -1,0 +1,56 @@
+{
+  "uid" : "30cc29f1c350b7bf",
+  "name" : "put接口",
+  "fullName" : "scripts.test_parametrize#test_case",
+  "historyId" : "621b4175c34a9b941a9c3900f31015c9",
+  "time" : {
+    "start" : 1587889521390,
+    "stop" : 1587889521413,
+    "duration" : 23
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "parentSuite",
+    "value" : "scripts"
+  }, {
+    "name" : "suite",
+    "value" : "test_parametrize"
+  }, {
+    "name" : "host",
+    "value" : "LAPTOP-T3E8ATB8"
+  }, {
+    "name" : "thread",
+    "value" : "18872-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "scripts.test_parametrize"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "item",
+    "value" : "{'url': 'http://www.neeo.cc:6001/put', 'method': 'put', 'status': 200, 'title': 'put接口'}"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "30cc29f1c350b7bf.json",
+  "parameterValues" : [ "{'url': 'http://www.neeo.cc:6001/put', 'method': 'put', 'status': 200, 'title': 'put接口'}" ]
+}

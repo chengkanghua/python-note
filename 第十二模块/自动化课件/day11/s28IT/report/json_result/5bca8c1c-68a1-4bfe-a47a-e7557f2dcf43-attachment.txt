@@ -1,0 +1,3 @@
+INFO     接口测试:test_case.py:29 正在进行断言.....
+INFO     接口测试:RequestsHandler.py:33 正在向 http://www.neeo.cc:6002/pinter/com/getSku 发送请求，{'case_num': 'neeo_006', 'title': '查询库存', 'url': 'http://www.neeo.cc:6002/pinter/com/getSku', 'method': 'get', 'params': '{"id":1}', 'data': '', 'json': '', 'cookies': '', 'headers': '', 'except': '{"code": "0", "message": "success"}'}
+INFO     接口测试:test_case.py:43 完成断言，{'code': '0', 'message': 'success'}

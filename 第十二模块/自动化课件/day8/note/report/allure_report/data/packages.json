@@ -1,0 +1,61 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "name" : "packages",
+  "children" : [ {
+    "name" : "scripts.test_parametrize",
+    "children" : [ {
+      "name" : "百度",
+      "uid" : "67cfe338f04df9a6",
+      "parentUid" : "bc5aaf559cb1b2bca546f8474eb9573d",
+      "status" : "passed",
+      "time" : {
+        "start" : 1587889520963,
+        "stop" : 1587889521045,
+        "duration" : 82
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "{'url': 'https://www.baidu.com', 'method': 'get', 'status': 200, 'title': '百度'}" ]
+    }, {
+      "name" : "cnblogs",
+      "uid" : "6842adf76fdb0794",
+      "parentUid" : "bc5aaf559cb1b2bca546f8474eb9573d",
+      "status" : "passed",
+      "time" : {
+        "start" : 1587889521050,
+        "stop" : 1587889521344,
+        "duration" : 294
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "{'url': 'https://www.cnblogs.com/Neeo/articles/11832655.html', 'method': 'get', 'status': 200, 'title': 'cnblogs'}" ]
+    }, {
+      "name" : "post接口",
+      "uid" : "497b5547ed191e56",
+      "parentUid" : "bc5aaf559cb1b2bca546f8474eb9573d",
+      "status" : "passed",
+      "time" : {
+        "start" : 1587889521354,
+        "stop" : 1587889521385,
+        "duration" : 31
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "{'url': 'http://www.neeo.cc:6001/post', 'method': 'post', 'status': 200, 'title': 'post接口'}" ]
+    }, {
+      "name" : "put接口",
+      "uid" : "30cc29f1c350b7bf",
+      "parentUid" : "bc5aaf559cb1b2bca546f8474eb9573d",
+      "status" : "passed",
+      "time" : {
+        "start" : 1587889521390,
+        "stop" : 1587889521413,
+        "duration" : 23
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "{'url': 'http://www.neeo.cc:6001/put', 'method': 'put', 'status': 200, 'title': 'put接口'}" ]
+    } ],
+    "uid" : "scripts.test_parametrize"
+  } ]
+}

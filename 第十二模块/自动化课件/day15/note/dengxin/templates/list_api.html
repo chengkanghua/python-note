@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Index</a></li>
+        <li class="breadcrumb-item active">{{ it_obj.it_name }}</li>
+        <li class="breadcrumb-item active">用例列表</li>
+    </ol>
+{% endblock %}
+
+
+
+{% block content %}
+
+    {#    {% if it_obj %}#}
+    {#        <div class="card card-primary">#}
+    {#            <div class="card-header">#}
+    {#            <a href="{% url 'add_it' %}">添加项目</a>#}
+    {#        </div>#}
+    <table class="table table-striped table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>选择</th>
+            <th>序号</th>
+            <th>名称</th>
+            <th>描述</th>
+            <th>请求url</th>
+            <th>请求类型</th>
+            <th>请求参数</th>
+            <th>预期值</th>
+            <th>用例报告</th>
+            <th>通过状态</th>
+            <th>是否执行</th>
+            <td>操作</td>
+        </tr>
+        </thead>
+
+        <tbody id="chk1">
+        {% for foo in api_obj %}
+            <tr>
+                <td>
+                    <input type="checkbox" value="{{ foo.pk }}" name="checkbox_list">
+                </td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ foo.api_name }}</td>
+                <td title="{{ foo.api_desc }}">{{ foo.api_desc | truncatechars:10 }}</td>
+                <td title="{{ foo.api_url }}">{{ foo.api_url | truncatechars:10 }}</td>
+                <td>{{ foo.api_method }}</td>
+                <td>{{ foo.api_params }}</td>
+                <td>{{ foo.api_expect }}</td>
+                {% if foo.api_report %}
+                    <td><a href="{% url 'download_case_report' foo.pk %}">下载</a></td>
+                {% else %}
+                    <td>无</td>
+                {% endif %}
+
+                <td>{{ foo.get_api_pass_status_display }}</td>
+                <td>{{ foo.get_api_run_status_display }}</td>
+                <td>
+                    <a href="{% url 'delete_api' foo.pk %}" class="btn btn-danger btn-sm">删除</a>
+                    <a href="{% url 'edit_api' foo.pk %}" class="btn btn-info btn-sm">编辑</a>
+                    <a href="{% url 'run_case' foo.pk %}" class="btn btn-info btn-sm">执行</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    <div>
+        <input type="button" value="执行" class="btn btn-success" id="exeute" >
+    </div>
+    {#        </div>#}
+    {#    {% else %}#}
+    {#        没有数据，去 <a href="{% url 'add_it' %}">创建</a>#}
+    {#    {% endif %}#}
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{% static 'sweetalert.min.js' %}"></script>
+    <script>
+        // 批量执行逻辑，
+        /*
+         1. 点击执行按钮，获取到所有选中的CheckBox的值
+            - 点击后，没有找到选中的CheckBox，要给提示信息
+         2. 将多个值发送到后端
+         3. 后端处理完毕，返回前端状态
+        * */
+        $("#exeute").click(function () {
+
+            var chk_value = new Array();
+            $.each($('input[name="checkbox_list"]:checked'), function (index, item) { //遍历，将所有选中的值放到数组中
+                console.log(item, index);
+                chk_value.push($(item).val());
+            });
+
+            if (chk_value.length == 0) {
+                swal({
+                    "title": '没有勾选用例，请至少勾选一个用例后再点击执行！'
+                })
+            } else {
+                console.log(111111, chk_value);
+                // ajax将 数组发送到后端
+
+            }
+
+        });
+
+
+
+
+
+
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

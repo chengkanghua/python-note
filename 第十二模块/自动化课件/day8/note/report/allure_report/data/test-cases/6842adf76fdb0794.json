@@ -1,0 +1,56 @@
+{
+  "uid" : "6842adf76fdb0794",
+  "name" : "cnblogs",
+  "fullName" : "scripts.test_parametrize#test_case",
+  "historyId" : "f0c8c38f498481c864d497d005ea3741",
+  "time" : {
+    "start" : 1587889521050,
+    "stop" : 1587889521344,
+    "duration" : 294
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "parentSuite",
+    "value" : "scripts"
+  }, {
+    "name" : "suite",
+    "value" : "test_parametrize"
+  }, {
+    "name" : "host",
+    "value" : "LAPTOP-T3E8ATB8"
+  }, {
+    "name" : "thread",
+    "value" : "18872-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "scripts.test_parametrize"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "item",
+    "value" : "{'url': 'https://www.cnblogs.com/Neeo/articles/11832655.html', 'method': 'get', 'status': 200, 'title': 'cnblogs'}"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "6842adf76fdb0794.json",
+  "parameterValues" : [ "{'url': 'https://www.cnblogs.com/Neeo/articles/11832655.html', 'method': 'get', 'status': 200, 'title': 'cnblogs'}" ]
+}

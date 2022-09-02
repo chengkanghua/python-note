@@ -1,0 +1,86 @@
+{
+  "uid" : "40f4a6cdf2297cc9",
+  "name" : "token_登录",
+  "fullName" : "scripts.test_case.TestCase#test_case",
+  "historyId" : "597b88e1b3d3d5292909b279b1c69024",
+  "time" : {
+    "start" : 1588236840075,
+    "stop" : 1588236840115,
+    "duration" : 40
+  },
+  "description" : "<b style='color:red'>请求的url:</b>http://www.neeo.cc:6002/pinter/bank/api/login2<hr /><b style='color:red'>预期值: </b>{\"code\": \"2\", \"message\": \"success\"}<hr /><b style='color:red'>实际执行结果: </b>{'code': '0', 'message': 'success', 'data': '404ace1b6df2453a974ed93d5b6f8e8a'}<hr />",
+  "descriptionHtml" : "<p><b style='color:red'>请求的url:</b>http://www.neeo.cc:6002/pinter/bank/api/login2<hr /><b style='color:red'>预期值: </b>{&quot;code&quot;: &quot;2&quot;, &quot;message&quot;: &quot;success&quot;}<hr /><b style='color:red'>实际执行结果: </b>{'code': '0', 'message': 'success', 'data': '404ace1b6df2453a974ed93d5b6f8e8a'}<hr /></p>\n",
+  "status" : "failed",
+  "statusMessage" : "AssertionError: assert not {\"root['code']\": {'new_value': '0', 'old_value': '2'}}\n +  where {\"root['code']\": {'new_value': '0', 'old_value': '2'}} = <built-in method get of DeepDiff object at 0x000001F909BB7D00>('values_changed', None)\n +    where <built-in method get of DeepDiff object at 0x000001F909BB7D00> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}}.get\n +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}} = DeepDiff({'code': '2', 'message': 'success'}, {'code': '0', 'data': '404ace1b6df2453a974ed93d5b6f8e8a', 'message': 'success'})",
+  "statusTrace" : "self = <scripts.test_case.TestCase object at 0x000001F909BBBE80>\nitem = {'case_num': 'neeo_001', 'cookies': '', 'data': '{\"userName\": \"admin\", \"password\": \"1234\"}', 'except': '{\"code\": \"2\", \"message\": \"success\"}', ...}\n\n    @pytest.mark.parametrize('item', excel_data_list)\n    def test_case(self, item):\n        logger().info('正在进行断言.....')\n        except_date, result = RequestsOperate(current_case=item, all_excel_data_list=excel_data_list).get_response_msg()\n        # print(DeepDiff(except_date, result))\n        allure.dynamic.title(item['title'])\n    \n        allure.dynamic.description(\n            \"<b style='color:red'>请求的url:</b>{}<hr />\"\n            \"<b style='color:red'>预期值: </b>{}<hr />\"\n            \"<b style='color:red'>实际执行结果: </b>{}<hr />\".format(item['url'], item['except'], result)\n        )\n    \n    \n>       assert not DeepDiff(except_date, result).get('values_changed', None)\nE       assert not {\"root['code']\": {'new_value': '0', 'old_value': '2'}}\nE        +  where {\"root['code']\": {'new_value': '0', 'old_value': '2'}} = <built-in method get of DeepDiff object at 0x000001F909BB7D00>('values_changed', None)\nE        +    where <built-in method get of DeepDiff object at 0x000001F909BB7D00> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}}.get\nE        +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}} = DeepDiff({'code': '2', 'message': 'success'}, {'code': '0', 'data': '404ace1b6df2453a974ed93d5b6f8e8a', 'message': 'success'})\n\nscripts\\test_case.py:41: AssertionError",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "testStage" : {
+    "description" : "<b style='color:red'>请求的url:</b>http://www.neeo.cc:6002/pinter/bank/api/login2<hr /><b style='color:red'>预期值: </b>{\"code\": \"2\", \"message\": \"success\"}<hr /><b style='color:red'>实际执行结果: </b>{'code': '0', 'message': 'success', 'data': '404ace1b6df2453a974ed93d5b6f8e8a'}<hr />",
+    "status" : "failed",
+    "statusMessage" : "AssertionError: assert not {\"root['code']\": {'new_value': '0', 'old_value': '2'}}\n +  where {\"root['code']\": {'new_value': '0', 'old_value': '2'}} = <built-in method get of DeepDiff object at 0x000001F909BB7D00>('values_changed', None)\n +    where <built-in method get of DeepDiff object at 0x000001F909BB7D00> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}}.get\n +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}} = DeepDiff({'code': '2', 'message': 'success'}, {'code': '0', 'data': '404ace1b6df2453a974ed93d5b6f8e8a', 'message': 'success'})",
+    "statusTrace" : "self = <scripts.test_case.TestCase object at 0x000001F909BBBE80>\nitem = {'case_num': 'neeo_001', 'cookies': '', 'data': '{\"userName\": \"admin\", \"password\": \"1234\"}', 'except': '{\"code\": \"2\", \"message\": \"success\"}', ...}\n\n    @pytest.mark.parametrize('item', excel_data_list)\n    def test_case(self, item):\n        logger().info('正在进行断言.....')\n        except_date, result = RequestsOperate(current_case=item, all_excel_data_list=excel_data_list).get_response_msg()\n        # print(DeepDiff(except_date, result))\n        allure.dynamic.title(item['title'])\n    \n        allure.dynamic.description(\n            \"<b style='color:red'>请求的url:</b>{}<hr />\"\n            \"<b style='color:red'>预期值: </b>{}<hr />\"\n            \"<b style='color:red'>实际执行结果: </b>{}<hr />\".format(item['url'], item['except'], result)\n        )\n    \n    \n>       assert not DeepDiff(except_date, result).get('values_changed', None)\nE       assert not {\"root['code']\": {'new_value': '0', 'old_value': '2'}}\nE        +  where {\"root['code']\": {'new_value': '0', 'old_value': '2'}} = <built-in method get of DeepDiff object at 0x000001F909BB7D00>('values_changed', None)\nE        +    where <built-in method get of DeepDiff object at 0x000001F909BB7D00> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}}.get\nE        +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}} = DeepDiff({'code': '2', 'message': 'success'}, {'code': '0', 'data': '404ace1b6df2453a974ed93d5b6f8e8a', 'message': 'success'})\n\nscripts\\test_case.py:41: AssertionError",
+    "steps" : [ ],
+    "attachments" : [ {
+      "uid" : "eaad861063be66a5",
+      "name" : "log",
+      "source" : "eaad861063be66a5.txt",
+      "type" : "text/plain",
+      "size" : 460
+    } ],
+    "parameters" : [ ],
+    "attachmentsCount" : 1,
+    "shouldDisplayMessage" : true,
+    "stepsCount" : 0,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "parentSuite",
+    "value" : "scripts"
+  }, {
+    "name" : "suite",
+    "value" : "test_case"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestCase"
+  }, {
+    "name" : "host",
+    "value" : "LAPTOP-T3E8ATB8"
+  }, {
+    "name" : "thread",
+    "value" : "556-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "scripts.test_case"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "item",
+    "value" : "{'case_num': 'neeo_001', 'title': 'token_登录', 'url': 'http://www.neeo.cc:6002/pinter/bank/api/login2', 'method': 'post', 'params': '', 'data': '{\"userName\": \"admin\", \"password\": \"1234\"}', 'json': '', 'cookies': '', 'headers': '', 'except': '{\"code\": \"2\", \"message\": \"success\"}'}"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ {
+      "name" : "Product defects",
+      "matchedStatuses" : [ ],
+      "flaky" : false
+    } ],
+    "tags" : [ ]
+  },
+  "source" : "40f4a6cdf2297cc9.json",
+  "parameterValues" : [ "{'case_num': 'neeo_001', 'title': 'token_登录', 'url': 'http://www.neeo.cc:6002/pinter/bank/api/login2', 'method': 'post', 'params': '', 'data': '{\"userName\": \"admin\", \"password\": \"1234\"}', 'json': '', 'cookies': '', 'headers': '', 'except': '{\"code\": \"2\", \"message\": \"success\"}'}" ]
+}

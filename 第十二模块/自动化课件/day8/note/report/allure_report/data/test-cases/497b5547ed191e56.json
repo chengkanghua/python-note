@@ -1,0 +1,56 @@
+{
+  "uid" : "497b5547ed191e56",
+  "name" : "post接口",
+  "fullName" : "scripts.test_parametrize#test_case",
+  "historyId" : "76baefab83260d0ab429a3083df37fa1",
+  "time" : {
+    "start" : 1587889521354,
+    "stop" : 1587889521385,
+    "duration" : 31
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "parentSuite",
+    "value" : "scripts"
+  }, {
+    "name" : "suite",
+    "value" : "test_parametrize"
+  }, {
+    "name" : "host",
+    "value" : "LAPTOP-T3E8ATB8"
+  }, {
+    "name" : "thread",
+    "value" : "18872-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "scripts.test_parametrize"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "item",
+    "value" : "{'url': 'http://www.neeo.cc:6001/post', 'method': 'post', 'status': 200, 'title': 'post接口'}"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "497b5547ed191e56.json",
+  "parameterValues" : [ "{'url': 'http://www.neeo.cc:6001/post', 'method': 'post', 'status': 200, 'title': 'post接口'}" ]
+}

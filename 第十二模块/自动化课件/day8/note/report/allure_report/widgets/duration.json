@@ -1,0 +1,41 @@
+[ {
+  "uid" : "497b5547ed191e56",
+  "name" : "post接口",
+  "time" : {
+    "start" : 1587889521354,
+    "stop" : 1587889521385,
+    "duration" : 31
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "67cfe338f04df9a6",
+  "name" : "百度",
+  "time" : {
+    "start" : 1587889520963,
+    "stop" : 1587889521045,
+    "duration" : 82
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "30cc29f1c350b7bf",
+  "name" : "put接口",
+  "time" : {
+    "start" : 1587889521390,
+    "stop" : 1587889521413,
+    "duration" : 23
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "6842adf76fdb0794",
+  "name" : "cnblogs",
+  "time" : {
+    "start" : 1587889521050,
+    "stop" : 1587889521344,
+    "duration" : 294
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]

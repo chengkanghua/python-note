@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Index</a></li>
+        <li class="breadcrumb-item active">{{ it_obj.it_name }}</li>
+        <li class="breadcrumb-item active">用例列表</li>
+    </ol>
+{% endblock %}
+
+
+
+{% block content %}
+
+{#    {% if it_obj %}#}
+{#        <div class="card card-primary">#}
+{#            <div class="card-header">#}
+{#            <a href="{% url 'add_it' %}">添加项目</a>#}
+{#        </div>#}
+            <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>名称</th>
+                        <th>描述</th>
+                        <th>请求url</th>
+                        <th>请求类型</th>
+                        <th>请求参数</th>
+                        <th>预期值</th>
+                        <th>用例报告</th>
+                        <th>通过状态</th>
+                        <th>是否执行</th>
+                        <td>操作</td>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for foo in api_obj %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ foo.api_name }}</td>
+                            <td title="{{ foo.api_desc }}">{{ foo.api_desc | truncatechars:10 }}</td>
+                            <td title="{{ foo.api_url }}">{{ foo.api_url | truncatechars:10}}</td>
+                            <td>{{ foo.api_method }}</td>
+                            <td>{{ foo.api_params }}</td>
+                            <td>{{ foo.api_expect }}</td>
+                            {% if foo.api_report %}
+                                <a href="">下载</a>
+                            {% else %}
+                                <td>无</td>
+                            {% endif %}
+
+                            <td>{{ foo.get_api_pass_status_display }}</td>
+                            <td>{{ foo.get_api_run_status_display }}</td>
+                            <td>
+                                <a href="{% url 'delete_api' foo.pk %}" class="btn btn-danger btn-sm">删除</a>
+                                <a href="{% url 'edit_api' foo.pk %}" class="btn btn-info btn-sm">编辑</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+            </table>
+        </div>
+{#    {% else %}#}
+{#        没有数据，去 <a href="{% url 'add_it' %}">创建</a>#}
+{#    {% endif %}#}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

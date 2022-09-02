@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+
+{% load static %}
+
+{% block content %}
+
+
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">{{ log_obj.log_run_time }} 的测试报告</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div>
+                <div>
+                    {{ log_obj.log_report|safe }}
+                </div>
+                <div>
+                    <a class="btn btn-success" href="{% url "logs_list" %}">返回上一页</a>
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-success" value="{{ log_obj.pk }}" hidden name="pk">
+                        <button class="btn btn-success" type="submit">下载报告</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.card-body -->
+    </div>
+
+
+{% endblock %}

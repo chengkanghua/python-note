@@ -1,0 +1,19 @@
+{
+	"id": "23bf6d23-bc6b-4d26-803c-a8c5ad609f64",
+	"name": "线上环境",
+	"values": [
+		{
+			"key": "ip",
+			"value": "www.neeo.cc",
+			"enabled": true
+		},
+		{
+			"key": "port",
+			"value": "6002",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2020-04-23T07:56:06.131Z",
+	"_postman_exported_using": "Postman/7.22.1"
+}

@@ -1,0 +1,71 @@
+[ {
+  "uid" : "346a19337822a499",
+  "name" : "cookies_查询余额",
+  "time" : {
+    "start" : 1588236840220,
+    "stop" : 1588236840236,
+    "duration" : 16
+  },
+  "status" : "failed",
+  "severity" : "normal"
+}, {
+  "uid" : "40f4a6cdf2297cc9",
+  "name" : "token_登录",
+  "time" : {
+    "start" : 1588236840075,
+    "stop" : 1588236840115,
+    "duration" : 40
+  },
+  "status" : "failed",
+  "severity" : "normal"
+}, {
+  "uid" : "79d94c611541b7ba",
+  "name" : "普通登录",
+  "time" : {
+    "start" : 1588236840306,
+    "stop" : 1588236840327,
+    "duration" : 21
+  },
+  "status" : "failed",
+  "severity" : "normal"
+}, {
+  "uid" : "11bac7adbaae0db8",
+  "name" : "下单接口",
+  "time" : {
+    "start" : 1588236840245,
+    "stop" : 1588236840282,
+    "duration" : 37
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "56839139f8f97488",
+  "name" : "查询库存",
+  "time" : {
+    "start" : 1588236840286,
+    "stop" : 1588236840302,
+    "duration" : 16
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "f50b39f7c5c195fa",
+  "name" : "token_查询余额",
+  "time" : {
+    "start" : 1588236840155,
+    "stop" : 1588236840188,
+    "duration" : 33
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "7351b4dec71f5650",
+  "name" : "cookies_登录",
+  "time" : {
+    "start" : 1588236840199,
+    "stop" : 1588236840216,
+    "duration" : 17
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]

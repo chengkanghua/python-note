@@ -1,0 +1,138 @@
+{
+  "67044a3444b3b0893646c004bb4ad45a" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "56839139f8f97488",
+      "status" : "passed",
+      "time" : {
+        "start" : 1588236840286,
+        "stop" : 1588236840302,
+        "duration" : 16
+      }
+    } ]
+  },
+  "27df0627900123920d9c0fba15f7352d" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "7351b4dec71f5650",
+      "status" : "passed",
+      "time" : {
+        "start" : 1588236840199,
+        "stop" : 1588236840216,
+        "duration" : 17
+      }
+    } ]
+  },
+  "e672a245af5fff9723d7828058cd9338" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "f50b39f7c5c195fa",
+      "status" : "passed",
+      "time" : {
+        "start" : 1588236840155,
+        "stop" : 1588236840188,
+        "duration" : 33
+      }
+    } ]
+  },
+  "597b88e1b3d3d5292909b279b1c69024" : {
+    "statistic" : {
+      "failed" : 1,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "40f4a6cdf2297cc9",
+      "status" : "failed",
+      "statusDetails" : "AssertionError: assert not {\"root['code']\": {'new_value': '0', 'old_value': '2'}}\n +  where {\"root['code']\": {'new_value': '0', 'old_value': '2'}} = <built-in method get of DeepDiff object at 0x000001F909BB7D00>('values_changed', None)\n +    where <built-in method get of DeepDiff object at 0x000001F909BB7D00> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}}.get\n +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '2'}}} = DeepDiff({'code': '2', 'message': 'success'}, {'code': '0', 'data': '404ace1b6df2453a974ed93d5b6f8e8a', 'message': 'success'})",
+      "time" : {
+        "start" : 1588236840075,
+        "stop" : 1588236840115,
+        "duration" : 40
+      }
+    } ]
+  },
+  "f8e51b8c7975235c69392977d37c15be" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "11bac7adbaae0db8",
+      "status" : "passed",
+      "time" : {
+        "start" : 1588236840245,
+        "stop" : 1588236840282,
+        "duration" : 37
+      }
+    } ]
+  },
+  "f85d11cb45817a68a7f5c045f034434d" : {
+    "statistic" : {
+      "failed" : 1,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "79d94c611541b7ba",
+      "status" : "failed",
+      "statusDetails" : "AssertionError: assert not {\"root['code']\": {'new_value': '0', 'old_value': '1'}}\n +  where {\"root['code']\": {'new_value': '0', 'old_value': '1'}} = <built-in method get of DeepDiff object at 0x000001F90A4ED308>('values_changed', None)\n +    where <built-in method get of DeepDiff object at 0x000001F90A4ED308> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '1'}}}.get\n +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['code']\": {'new_value': '0', 'old_value': '1'}}} = DeepDiff({'code': '1', 'message': 'success'}, {'code': '0', 'data': None, 'message': 'success'})",
+      "time" : {
+        "start" : 1588236840306,
+        "stop" : 1588236840327,
+        "duration" : 21
+      }
+    } ]
+  },
+  "b55a4bf00ea257eda2592d0a042d0979" : {
+    "statistic" : {
+      "failed" : 1,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "346a19337822a499",
+      "status" : "failed",
+      "statusDetails" : "AssertionError: assert not {\"root['message']\": {'new_value': 'success', 'old_value': 'success1'}}\n +  where {\"root['message']\": {'new_value': 'success', 'old_value': 'success1'}} = <built-in method get of DeepDiff object at 0x000001F90A4E0D00>('values_changed', None)\n +    where <built-in method get of DeepDiff object at 0x000001F90A4E0D00> = {'dictionary_item_added': [root['data']], 'values_changed': {\"root['message']\": {'new_value': 'success', 'old_value': 'success1'}}}.get\n +      where {'dictionary_item_added': [root['data']], 'values_changed': {\"root['message']\": {'new_value': 'success', 'old_value': 'success1'}}} = DeepDiff({'code': '0', 'message': 'success1'}, {'code': '0', 'data': '$ 76,342,334', 'message': 'success'})",
+      "time" : {
+        "start" : 1588236840220,
+        "stop" : 1588236840236,
+        "duration" : 16
+      }
+    } ]
+  }
+}

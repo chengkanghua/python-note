@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="alert alert-warning alert-dismissible" id="p1">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h5><i class="icon fas fa-exclamation-triangle"></i> 重要提示!</h5>
+        <span id="error">
+            这里只能上传Excel文件,
+        Excel表格设计字段的时候，参考数据的字段设计，方便上传文件。
+        </span>
+
+    </div>
+    <div class="form-group">
+        <label for="exampleInputFile">文件上传</label>
+        <div class="input-group">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="ajaxFile">
+                <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+            </div>
+            <div class="input-group-append">
+                <span class="input-group-text" id="ajaxBtn">Upload</span>
+            </div>
+        </div>
+    </div>
+    <span >{{ errors }}</span>
+    <div hidden id="it_obj_pk" >{{ it_obj_pk }}</div>
+    {% csrf_token %}
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        // console.log(111111111, $("#it_obj_pk").text());
+        $("#ajaxBtn").click(function () {
+            // 首先，实例化一个formdata对象
+            var formData = new FormData();
+            // 然后使用formdata的append来添加数据，即获取文件对象
+            // var file_obj = $("#ajaxFile")[0].files[0];    // 使用jQuery获取文件对象
+            var file_obj = document.getElementById('ajaxFile').files[0];   // 使用dom也行
+            formData.append('f1', file_obj);
+            // 处理csrftoken
+            formData.append("csrfmiddlewaretoken", $("[name='csrfmiddlewaretoken']").val());
+            // 也可以将其他的数据，以键值对的形式，添加到formData中
+
+            var it_obj_pk = $("#it_obj_pk").text();
+            console.log(111111111, it_obj_pk);
+            formData.append('it_obj_pk', it_obj_pk);
+            $.ajax({
+                url: "/upload/" + it_obj_pk,
+                type: "POST",
+                data: formData,
+                processData: false,  //
+                contentType: false,
+                success: function (dataMsg) {
+                    console.log(dataMsg);
+                    if (dataMsg['status'] == 500) {
+                        $("#p1").attr("class", 'alert alert-danger alert-dismissible');
+                        $("#error").text(dataMsg['errors'])
+                    } else {
+                        window.location.href = dataMsg['path']
+                    }
+
+                }
+            })
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,140 @@
+{
+	"info": {
+		"_postman_id": "bd7b7277-a828-49b6-8695-b51d02faaebd",
+		"name": "集合自动化",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "登录",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "133aeab6-6b35-406a-b94a-f996cdeef70b",
+						"exec": [
+							"pm.test(\"请求成功\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"success\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userName",
+							"value": "{{user}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{pwd}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://www.neeo.cc:6002/pinter/bank/api/login",
+					"protocol": "http",
+					"host": [
+						"www",
+						"neeo",
+						"cc"
+					],
+					"port": "6002",
+					"path": [
+						"pinter",
+						"bank",
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询余额",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "98c3d664-232c-47c1-9fdc-4a89c0a5d650",
+						"exec": [
+							"pm.test(\"响应 状态\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.code).to.eql(\"1\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "testfan-id=d9793848-b564-427f-a17d-167e4607ab09",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://www.neeo.cc:6002/pinter/bank/api/query?userName={{user}}",
+					"protocol": "http",
+					"host": [
+						"www",
+						"neeo",
+						"cc"
+					],
+					"port": "6002",
+					"path": [
+						"pinter",
+						"bank",
+						"api",
+						"query"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "{{user}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "88f2e61c-16bb-4d5f-86fe-3583c3c2c74e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "14173780-075e-40f3-ba75-089b0f58ab95",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"接口状态 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});"
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

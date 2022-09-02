@@ -1,0 +1,56 @@
+{
+  "uid" : "67cfe338f04df9a6",
+  "name" : "百度",
+  "fullName" : "scripts.test_parametrize#test_case",
+  "historyId" : "2940030be0295036ab222f788aeaa587",
+  "time" : {
+    "start" : 1587889520963,
+    "stop" : 1587889521045,
+    "duration" : 82
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "parentSuite",
+    "value" : "scripts"
+  }, {
+    "name" : "suite",
+    "value" : "test_parametrize"
+  }, {
+    "name" : "host",
+    "value" : "LAPTOP-T3E8ATB8"
+  }, {
+    "name" : "thread",
+    "value" : "18872-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "scripts.test_parametrize"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "item",
+    "value" : "{'url': 'https://www.baidu.com', 'method': 'get', 'status': 200, 'title': '百度'}"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "67cfe338f04df9a6.json",
+  "parameterValues" : [ "{'url': 'https://www.baidu.com', 'method': 'get', 'status': 200, 'title': '百度'}" ]
+}

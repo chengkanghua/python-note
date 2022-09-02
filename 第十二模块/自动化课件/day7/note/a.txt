@@ -1,0 +1,21 @@
+.FF
+======================================================================
+FAIL: test_case_02 (__main__.MyCase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "9. 将执行结果输入到指定文本中.py", line 17, in test_case_02
+    self.assertTrue("")
+AssertionError: '' is not true
+
+======================================================================
+FAIL: test_case_03 (__main__.MyCase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "9. 将执行结果输入到指定文本中.py", line 21, in test_case_03
+    self.assertTrue(0)
+AssertionError: 0 is not true
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=2)

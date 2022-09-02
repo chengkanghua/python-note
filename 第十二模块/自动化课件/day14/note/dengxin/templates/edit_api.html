@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">Index</a></li>
+        <li class="breadcrumb-item">{{ it_obj.it_name }}</li>
+        <li class="breadcrumb-item">编辑用例</li>
+    </ol>
+{% endblock %}
+
+
+{% block content %}
+{#    <div class="card-header">#}
+{#        <h3>添加项目</h3>#}
+{#    </div>#}
+{#    <div class="card-body">#}
+        <form action="" method="post" novalidate>
+            {% csrf_token %}
+            {% for foo in api_form_obj %}
+
+                <div>
+                    <label for="{{ foo.id_for_label }}">{{ foo.label }}</label>
+                    {{ foo }}
+                </div>
+                <span style="color: red;">{{ foo.errors.0 }}</span>
+            {% endfor %}
+            <input type="submit" class="btn btn-success" value="提交">
+        </form>
+
+{#    </div>#}
+
+
+
+
+
+{% endblock %}
+
+
