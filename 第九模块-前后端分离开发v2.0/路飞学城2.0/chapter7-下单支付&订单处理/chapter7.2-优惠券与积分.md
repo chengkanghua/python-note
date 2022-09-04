@@ -7,7 +7,8 @@
 ```bash
 git checkout master
 git merge feature/order
-git push 
+git push --set-upstream origin master
+
 
 git checkout -b feature/coupon
 cd luffycityapi/apps
@@ -52,7 +53,7 @@ path("coupon/", include("coupon.urls")),
 `coupon/models.py`，模型创建，代码：
 
 ```python
-from models import BaseModel, models
+from model import BaseModel, models
 from courses.models import CourseDirection, CourseCategory, Course
 from users.models import User
 from orders.models import Order
@@ -220,7 +221,7 @@ admin.site.register(CouponLog, CouponLogModelAdmin)
 提交代码版本
 
 ```bash
-/home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 创建优惠券子应用并设计优惠券的存储数据模型"
 git push --set-upstream origin feature/coupon
@@ -259,7 +260,7 @@ import json
 class CouponDirectionInLine(admin.TabularInline): # admin.StackedInline
     """学习方向的内嵌类"""
     model = CouponDirection
-    fields = ["id","diretion"]
+    fields = ["id","direction"]
 
 class CouponCourseCatInLine(admin.TabularInline): # admin.StackedInline
     """课程分类的内嵌类"""
@@ -366,7 +367,7 @@ INSERT INTO luffycity.ly_coupon_log (id, is_deleted, orders, is_show, created_ti
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 实现后台管理员给用户分发优惠券时自动记录到redis中"
 git push --set-upstream origin feature/coupon
@@ -525,10 +526,10 @@ urlpatterns = [
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 服务端实现获取用户所有优惠券与本次下单的可用优惠券列表"
-git push feature/coupon
+git push 
 ```
 
 
@@ -939,7 +940,7 @@ window.onscroll = ()=>{
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 客户端展示用户本次下单的可用优惠券并重新调整价格"
 git push
@@ -1183,7 +1184,7 @@ class OrderModelSerializer(serializers.ModelSerializer):
 提交代码版本
 
 ```bash
-/home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 服务端在用户选择优惠券以后重新计算订单实付价格"
 git push
@@ -1215,7 +1216,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from stdimage import StdImageField
 from django.utils.safestring import mark_safe
-from models import BaseModel
+from model import BaseModel
 
 
 # Create your models here.
@@ -1309,7 +1310,7 @@ class Order(BaseModel):
     order_desc = models.TextField(null=True, blank=True, max_length=500, verbose_name="订单描述")
     pay_time = models.DateTimeField(null=True, blank=True, verbose_name="支付时间")
     user = models.ForeignKey(User, related_name='user_orders', on_delete=models.DO_NOTHING,verbose_name="下单用户")
-    credit = models.IntegerField(default=0, null=True, blank=True, verbose_name="积分")
+    credit = models.IntegerField(default=0, null=True, blank=True, verbose_name="积分")   #新增积分
 
     class Meta:
         db_table = "fg_order"
@@ -1323,7 +1324,7 @@ class Order(BaseModel):
 数据迁移
 
 ```bash
-cd /home/moluo/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -1339,7 +1340,7 @@ from .models import User,Credit
 class UserModelAdmin(admin.ModelAdmin):
     """用户的模型管理器"""
     list_display = ["id","username","avatar_image","money","credit"]
-    list_editable = ["credit"]
+    list_editable = ["credit"]  
 
     def save_model(self, request, obj, form, change):
         if change:
@@ -1386,6 +1387,7 @@ class Course(BaseModel):
 数据迁移
 
 ```bash
+cd ~/Desktop/luffycity/luffycityapi/
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -1722,7 +1724,7 @@ const order = reactive({
   use_coupon: false,   // 用户是否使用优惠
   coupon_list:[],      // 用户拥有的可用优惠券列表
   select: -1,          // 当前用户选中的优惠券下标，-1表示没有选择
-  credit: 0,           // 当前用户选择抵扣的积分，0表示没有使用积分
+  credit: 0,           // 当前用户选择抵扣的积分，0表示没有使用积分 
   fixed: true,         // 底部订单总价是否固定浮动
   pay_type: 0,         // 支付方式
   credit_to_money: 0,  // 积分兑换现金的比例
@@ -1776,7 +1778,7 @@ get_enable_coupon_list()
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 积分功能实现-上"
 git push
@@ -2061,7 +2063,7 @@ export default order;
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 积分功能实现-中"
 git push
@@ -2097,6 +2099,7 @@ class OrderModelSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "order_number"]
         extra_kwargs = {
             "pay_type": {"write_only": True},
+             "credit": {"write_only":True},
         }
 
     def create(self, validated_data):
@@ -2253,9 +2256,9 @@ class OrderModelSerializer(serializers.ModelSerializer):
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
-git commit -m "feature: 积分功能实现-中"
+git commit -m "feature: 积分功能实现-下"
 git push
 ```
 

@@ -1889,7 +1889,7 @@ window.onscroll = ()=>{
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 确认下单页面中展示购物车勾选商品列表"
 git push
@@ -1922,7 +1922,6 @@ git push --tag
 git checkout -b feature/order
 
 # 创建订单子应用
-cd luffycityapi/luffycityapi/apps
 python ../../manage.py startapp orders
 ```
 
@@ -1980,10 +1979,10 @@ urlpatterns = [
 所以订单号是支付平台那边强制要求在支付时提供给平台的。用于对账。
 ```
 
-``orders/models.py`，订单模型，代码：
+`orders/models.py`，订单模型，代码：
 
 ```python
-from models import BaseModel,models
+from model import BaseModel,models
 from users.models import User
 from courses.models import Course
 # Create your models here.
@@ -2054,7 +2053,7 @@ python manage.py migrate
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature：订单子应用创建以及订单信息和订单项模型的创建"
 git push --set-upstream origin feature/order
@@ -2106,10 +2105,10 @@ class OrdersConfig(AppConfig):
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature：把订单子应用相关的模型注册到admin管理站点"
-git push
+git push origin feature/order
 ```
 
 
@@ -2246,7 +2245,7 @@ class OrderModelSerializer(serializers.ModelSerializer):
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature：服务端提供创建订单的API接口"
 git push
@@ -2568,7 +2567,7 @@ class OrderModelSerializer(serializers.ModelSerializer):
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature：服务端基于事务保证订单生成操作的原子性"
 git push
@@ -2685,7 +2684,7 @@ window.onscroll = ()=>{
 提交版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature：客户端请求生成订单"
 git push
