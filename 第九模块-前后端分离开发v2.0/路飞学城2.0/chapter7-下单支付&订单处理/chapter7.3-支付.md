@@ -37,7 +37,7 @@
 
 ```
 真实的支付宝网关: https://openapi.alipay.com/gateway.do
-沙箱的支付宝网关: https://openapi.alipaydev.com/gateway.do
+沙箱的支付宝网关: https://openapi.alipaydev.com/gateway.do  
 ```
 
 
@@ -59,7 +59,7 @@
 终端下创建新的git分支，并创建新的子应用。
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git checkout -b feature/payments
 
 cd luffycityapi/luffycityapi/apps
@@ -469,7 +469,7 @@ urlpatterns = [
 提交代码版本：
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 服务端提供生成支付宝支付链接的api接口"
 git push --set-upstream origin feature/payments
@@ -485,7 +485,8 @@ git push --set-upstream origin feature/payments
 <script setup>
 
 // ... 代码省略
-    
+let store = useStore()
+// ... 代码省略
 const commit_order = ()=>{
     // 生成订单
     let token = sessionStorage.token || localStorage.token;
@@ -757,7 +758,7 @@ order.relay_alipay_result(query_string).then(response=>{
 提交代码版本：
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 客户端实现发起支付并转换同步支付结果到服务端"
 git push
@@ -1000,7 +1001,7 @@ urlpatterns = [
 提交代码版本：
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 服务端接收客户端转发的同步支付结果并验证修改订单状态"
 git push
@@ -1013,35 +1014,55 @@ git push
 `user/models.py`，模型代码：
 
 ```python
+from django.db import models
 from django.contrib.auth.models import AbstractUser
+from stdimage import StdImageField
 from django.utils.safestring import mark_safe
-from luffycityapi.utils.models import BaseModel,models
-from luffycityapi.settings import constants
+from model import BaseModel
+from courses.models import Course,CourseChapter,CourseLesson
 
 # Create your models here.
 
+
 class User(AbstractUser):
-    name   = models.CharField(max_length=150, default="", null=True, blank=True, verbose_name='用户昵称')
     mobile = models.CharField(max_length=15, unique=True, verbose_name='手机号')
-    money  = models.DecimalField(max_digits=9, default=0.0, decimal_places=2, verbose_name="钱包余额")
+    money = models.DecimalField(max_digits=9, default=0.0, decimal_places=2, verbose_name="钱包余额")
     credit = models.IntegerField(default=0, verbose_name="积分")
-    avatar = models.ImageField(upload_to="avatar/%Y/", blank=True, null=True, default=constants.DEFAULT_USER_AVATAR, verbose_name="个人头像")
-    study_time = models.IntegerField(default=0, verbose_name="总学习时长")
+    # avatar = models.ImageField(upload_to="avatar/%Y", null=True, default="", verbose_name="个人头像")
+    avatar = StdImageField(variations={
+        'thumb_400x400': (400, 400),  # 'medium': (400, 400),
+        'thumb_50x50': (50, 50, True),  # 'small': (50, 50, True),
+    }, delete_orphans=True, upload_to="avatar/%Y", blank=True, null=True, verbose_name="个人头像")
+
+
+    nickname = models.CharField(max_length=50, default="", null=True, verbose_name="用户昵称")
 
     class Meta:
-        db_table = 'fg_users'
+        db_table = 'lf_users'
         verbose_name = '用户信息'
         verbose_name_plural = verbose_name
 
-    def avatar_image(self):
-        if self.avatar:
-            return mark_safe( f'<img style="border-radius: 100%; max-width: 50px;" src="{self.avatar.url}">' )
-        else:
-            return mark_safe(f'<img style="border-radius: 100%; max-width: 50px;" src="/uploads/{constants.DEFAULT_USER_AVATAR}">')
 
-    avatar_image.short_description = "个人头像"
-    avatar_image.allow_tags = True
-    avatar_image.admin_order_field = "avatar"
+    def avatar_small(self):
+        if self.avatar:
+            return mark_safe(f'<img style="border-radius: 100%;" src="{self.avatar.thumb_50x50.url}">')
+        return ""
+
+
+    avatar_small.short_description = "个人头像(50x50)"
+    avatar_small.allow_tags = True
+    avatar_small.admin_order_field = "avatar"
+
+
+    def avatar_medium(self):
+        if self.avatar:
+            return mark_safe(f'<img style="border-radius: 100%;" src="{self.avatar.thumb_400x400.url}">')
+        return ""
+
+
+    avatar_medium.short_description = "个人头像(400x400)"
+    avatar_medium.allow_tags = True
+    avatar_medium.admin_order_field = "avatar"
 
 class Credit(BaseModel):
     """积分流水"""
@@ -1052,10 +1073,11 @@ class Credit(BaseModel):
     )
     operation = models.SmallIntegerField(choices=opera_choices, default=1, verbose_name="积分操作类型")
     number = models.IntegerField(default=0, verbose_name="积分数量", help_text="如果是扣除积分则需要设置积分为负数，如果消费10积分，则填写-10，<br>如果是添加积分则需要设置积分为正数，如果获得10积分，则填写10。")
-    user = models.ForeignKey(User, related_name='user_credits', on_delete=models.CASCADE, verbose_name="用户")
+    user = models.ForeignKey(User, related_name='user_credits', on_delete=models.CASCADE, db_constraint=False, verbose_name="用户")
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name="备注信息")
+
     class Meta:
-        db_table = 'fg_credit'
+        db_table = 'ly_credit'
         verbose_name = '积分流水'
         verbose_name_plural = verbose_name
 
@@ -1066,8 +1088,6 @@ class Credit(BaseModel):
             oper_text = "减少"
         return "[%s] %s 用户%s %s %s积分" % (self.get_operation_display(),self.created_time.strftime("%Y-%m-%d %H:%M:%S"), self.user.username, oper_text, abs(self.number))
 
-
-from courses.models import Course,CourseChapter,CourseLesson
 class UserCourse(BaseModel):
     """用户的课程"""
     user   = models.ForeignKey(User, related_name='user_courses', on_delete=models.CASCADE,verbose_name="用户", db_constraint=False)
@@ -1080,12 +1100,14 @@ class UserCourse(BaseModel):
         db_table = 'ly_user_course'
         verbose_name = '用户课程购买记录'
         verbose_name_plural = verbose_name
+
+
 ```
 
 数据迁移
 
 ```python
-/home/moluo/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -1370,7 +1392,7 @@ class CartAPIView(APIView):
 提交代码版本：
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 服务端更新用户购买的课程记录以及的订单支付成功后的积分流水记录与优惠券的使用状态记录，最后在购物车中防止用户重复购买商品"
 git push
@@ -1636,7 +1658,7 @@ window.onscroll = ()=>{
 ```
 
 ```vue
-<style>
+<style> <--新增样式 -->
 .loadding{
   width: 100%;
   height: 100%;
@@ -1717,7 +1739,7 @@ const order = reactive({
         }
     })
   },
-  alipay_page_pay(){
+  alipay_page_pay(){       #修改的地方 
     // 获取订单的支付宝支付链接信息
     return http.get(`/payments/alipay/${this.order_number}`)
   },
@@ -1731,7 +1753,7 @@ const order = reactive({
       headers:{
         Authorization: "jwt " + token,
       }
-    })
+     })
   }
 })
 
@@ -2031,7 +2053,7 @@ class AlipayAPIViewSet(ViewSet):
 提交代码版本：
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 客户端实现支付倒计时功能"
 git push
@@ -2340,7 +2362,7 @@ urlpatterns = [
 提交代码版本：
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 服务端接收并处理支付宝异步通知结果"
 git push

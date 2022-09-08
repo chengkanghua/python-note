@@ -1377,7 +1377,7 @@ const order = reactive({
     // ... 中间代码省略
     get_order_status(){
         // 获取订单状态选项
-        return http.get('/orders/pay/status/')
+        return http.get('/orders/pay/choices/')
     },
     get_order_list(token){
         // 获取当前登录用户的订单列表[分页显示]
@@ -1579,7 +1579,7 @@ watch(
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 客户端展示用户中心并显示当前用户的订单列表"
 git push
@@ -1591,7 +1591,7 @@ git push
 
 #### 取消订单
 
-服务端提供取消订单的API接口
+服务端提供取消订单的API接口.   orders/views.py
 
 ```python
 import logging
@@ -2154,7 +2154,7 @@ watch(
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 订单状态切换-取消订单与再次支付"
 git push
@@ -2194,8 +2194,8 @@ from celery import shared_task
 
 logger = logging.getLogger("django")
 
-@shared_task(name="order_cancel")
-def order_cancel(order_id):
+@shared_task(name="order_timeout")
+def order_timeout(order_id):
     print(order_id)
     return True
 ```
@@ -2480,14 +2480,14 @@ class OrderListModelSerializer(serializers.ModelSerializer):
 接下来，我们就可以重启Celery即可。运行celery
 
 ```python
-cd /home/moluo/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi
 celery -A luffycityapi worker -l INFO
 ```
 
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 订单状态切换-订单超时处理"
 git push
@@ -2502,8 +2502,8 @@ git push
 针对celery中的任务执行过程，我们也可以安装一个flower的工具来进行监控。
 
 ```bash
-pip install flower
-cd /home/moluo/Desktop/luffycity/luffycityapi
+pip install flower   # pip install flower==1.1.0 -i https://pypi.douban.com/simple
+cd ~/Desktop/luffycity/luffycityapi
 # 保证celery在启动中
 celery -A luffycityapi worker -l INFO
 # 再启动celery-flower
@@ -2517,7 +2517,7 @@ celery -A luffycityapi flower --port=5555
 Supervisor是用Python开发的一套通用的进程管理程序，能将一个普通的命令行进程变为系统守护进程daemon，并监控进程状态,异常退出时能自动重启。
 
 ```python
-pip install supervisor
+pip install supervisor  #pip install supervisor==4.2.4 -i https://pypi.douban.com/simple 
 # 注意：如果supervisor是安装在虚拟环境的，则每次使用supervisor务必在虚拟环境中进行后面所有的操作
 # conda activate luffycity
 ```
@@ -2529,7 +2529,7 @@ supervisor配置文档：http://supervisord.org/configuration.html
 ```bash
 # 在项目根目录下创建存储supervisor配置目录，在luffycityapi创建scripts目录，已经创建则忽略
 conda activate luffycity
-cd /home/moluo/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi
 mkdir -p scripts && cd scripts
 # 生成初始化supervisor核心配置文件，echo_supervisord_conf是supervisor安装成功以后，自动附带的。
 echo_supervisord_conf > supervisord.conf
@@ -2538,7 +2538,7 @@ echo_supervisord_conf > supervisord.conf
 # 修改如下，表示让supervisor自动加载当前supervisord.conf所在目录下所有ini配置文件
 ```
 
-`supervisord/conf.py`，主要修改文件中的`39, 40,75,76,169,170`行去掉左边注释，其中170修改成`当前目录`。配置代码：
+`supervisord.conf`，主要修改文件中的`39, 40,75,76,169,170`行去掉左边注释，其中170修改成`当前目录`。配置代码：
 
 ```python
 ; Sample supervisor config file.
@@ -2717,7 +2717,7 @@ files = *.ini
 创建`luffycity_celery_worker.ini`文件，启动我们项目worker主进程
 
 ```bash
-cd /home/moluo/Desktop/luffycity/luffycityapi/scripts
+cd ~/Desktop/luffycity/luffycityapi/luffycityapi/scripts/
 touch luffycity_celery_worker.ini
 ```
 
@@ -2746,12 +2746,54 @@ stopwatisecs=60
 # 优先级，值小的优先启动
 priority=990
 
+-------------------------------------------------------------------------------自己的
+[program:luffycity_celery_worker]
+# 启动命令 conda env list
+command=/home/kanghua/.conda/envs/luffycity/bin/celery -A luffycityapi worker -l info -n worker1
+# 项目根目录的绝对路径[manage.py所在目录路径]，通过pwd查看
+directory=/home/kanghua/Desktop/luffycity/luffycityapi
+# 项目虚拟环境
+enviroment=PATH="/home/kanghua/.conda/envs/luffycity/bin",C_FORCE_ROOT="yes"
+# 运行日志绝对路径
+stdout_logfile=/home/kanghua/Desktop/luffycity/luffycityapi/logs/celery.worker.info.log
+# 错误日志绝对路径
+stderr_logfile=/home/kanghua/Desktop/luffycity/luffycityapi/logs/celery.worker.error.log
+# 自动启动，开机自启
+autostart=true
+# 启动当前命令的用户名
+user=kanghua
+# 重启
+autorestart=true
+# 进程启动后跑了几秒钟，才被认定为成功启动，默认1
+startsecs=10
+# 进程结束后60秒才被认定结束
+stopwatisecs=60
+# 优先级，值小的优先启动
+priority=997
 ```
+
+在linux下基于supervisor 启动celery需要以root身份运行，否则在开启过程中会因为没有权限导致失败。
+
+```bash
+# 打开坏境变了的配置文件
+sudo vim /etc/profile
+# 通过快捷键GG跳到文件末尾
+GG
+# 使用快捷键i输入
+export C_FORCE_ROOT="true"
+# 保存退出文件
+:wq
+
+source /etc/profile
+
+```
+
+
 
 创建`luffycity_celery_beat.ini`文件，来触发我们的beat定时计划任务
 
 ```bash
-cd /home/moluo/Desktop/luffycity/luffycityapi/scripts
+cd ~/Desktop/luffycity/luffycityapi/luffycityapi/scripts/
 touch luffycity_celery_beat.ini
 ```
 
@@ -2780,12 +2822,38 @@ stopwatisecs=60
 
 # 优先级，值小的优先启动
 priority=998
+--------------------------------------------------------------------自己的
+[program:luffycity_celery_beat]
+# 启动命令 conda env list
+command=/home/kanghua/.conda/envs/luffycity/bin/celery -A luffycityapi  beat -l info
+# 项目根目录的绝对路径，通过pwd查看
+directory=/home/kanghua/Desktop/luffycity/luffycityapi
+# 项目虚拟环境
+enviroment=PATH="/home/kanghua/.conda/envs/luffycity/bin"
+# 运行日志绝对路径
+stdout_logfile=/home/kanghua/Desktop/luffycity/luffycityapi/logs/celery.beat.info.log
+# 错误日志绝对路径
+stderr_logfile=/home/kanghua/Desktop/luffycity/luffycityapi/logs/celery.beat.error.log
+# 自动启动，开机自启
+autostart=true
+# 重启
+autorestart=true
+
+# 进程启动后跑了几秒钟，才被认定为成功启动，默认1
+startsecs=10
+
+# 进程结束后60秒才被认定结束
+stopwatisecs=60
+
+# 优先级，值小的优先启动
+priority=998
+
 ```
 
 创建`luffycity_celery_flower.ini`文件，来启动我们的celery监控管理工具
 
 ```bash
-cd /home/moluo/Desktop/luffycity/luffycityapi/scripts
+cd ~/Desktop/luffycity/luffycityapi/luffycityapi/scripts/
 touch luffycity_celery_flower.ini
 ```
 
@@ -2814,12 +2882,38 @@ stopwatisecs=60
 
 # 优先级
 priority=999
+--------------------------------------------------------------自己的
+[program:luffycity_celery_flower]
+# 启动命令 conda env list
+command=/home/kanghua/.conda/envs/luffycity/bin/celery -A luffycityapi flower --port=5555
+# 项目根目录的绝对路径，通过pwd查看
+directory=/home/kanghua/Desktop/luffycity/luffycityapi
+# 项目虚拟环境
+enviroment=PATH="/home/kanghua/.conda/envs/luffycity/bin"
+# 输出日志绝对路径
+stdout_logfile=/home/kanghua/Desktop/luffycity/luffycityapi/logs/celery.flower.info.log
+# 错误日志绝对路径
+stderr_logfile=/home/kanghua/Desktop/luffycity/luffycityapi/logs/celery.flower.error.log
+# 自动启动，开机自启
+autostart=true
+# 重启
+autorestart=true
+
+# 进程启动后跑了几秒钟，才被认定为成功启动，默认1
+startsecs=10
+
+# 进程结束后60秒才被认定结束
+stopwatisecs=60
+
+# 优先级
+priority=999
+
 ```
 
 启动`supervisor`，确保此时你在项目路径下
 
 ```bash
-cd ~/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi/luffycityapi/
 supervisord -c scripts/supervisord.conf
 ```
 
@@ -2840,7 +2934,7 @@ supervisord -c scripts/supervisord.conf
 把supervisor注册到ubuntu系统服务中并设置开机自启
 
 ```bash
-cd /home/moluo/Desktop/luffycity/luffycityapi/scripts
+cd ~/Desktop/luffycity/luffycityapi/luffycityapi/scripts
 touch supervisor.service
 ```
 
@@ -2853,7 +2947,7 @@ After=network.target
 
 [Service]
 Type=forking
-ExecStart=/home/moluo/anaconda3/envs/luffycity/bin/supervisord -n -c /home/moluo/Desktop/luffycity/luffycityapi/scripts/supervisord.conf
+ExecStart=/home/kanghua/.conda/envs/luffycity/bin/supervisord -n -c /home/kanghua/Desktop/luffycity/luffycityapi/luffycityapi/scripts/supervisord.conf
 ExecStop=/home/moluo/anaconda3/envs/luffycity/bin/supervisorctl $OPTIONS shutdown
 ExecReload=/home/moluo/anaconda3/envs/luffycity/bin/supervisorctl $OPTIONS reload
 KillMode=process
@@ -2862,18 +2956,37 @@ RestartSec=42s
 
 [Install]
 WantedBy=multi-user.target
+
+-------------------------------------------------------------	自己的
+[Unit]
+Description=supervisor
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/home/kanghua/.conda/envs/luffycity/bin/supervisord -n -c /home/kanghua/Desktop/luffycity/luffycityapi/luffycityapi/scripts/supervisord.conf
+ExecStop=/home/kanghua/.conda/envs/luffycity/bin/supervisorctl $OPTIONS shutdown
+ExecReload=/home/kanghua/.conda/envs/luffycity/bin/supervisorctl $OPTIONS reload
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target          
+
 ```
 
 设置开机自启
 
 ```bash
 # 创建日志文件
-sudo chmod 766 /tmp/supervisord.log
-cd /home/moluo/Desktop/luffycity/luffycityapi/scripts
+sudo chmod 766 /tmp/supervisord.log  # chmod 777 /tmp/supervisord.log
+cd ~/Desktop/luffycity/luffycityapi/luffycityapi/scripts/
 # 赋予权限
 chmod 766 supervisor.service
 # 复制到系统开启服务目录下
 sudo cp supervisor.service /lib/systemd/system/
+ systemctl daemon-reload 
 # 设置允许开机自启
 systemctl enable supervisor.service
 # 判断是否已经设置为开机自启了
@@ -2889,7 +3002,7 @@ systemctl status supervisor.service
 提交代码版本
 
 ```bash
-cd /home/moluo/Desktop/luffycity
+cd ~/Desktop/luffycity
 git add .
 git commit -m "feature: 使用supervisor启动并管理celery相关进程"
 git push

@@ -376,15 +376,150 @@ import course from "../../api/course";
 `router/index.js`，路由，代码：
 
 ```javascript
+import {createRouter,createWebHistory} from 'vue-router';
+import store from "../store";
+
+// 路由列表
+const routes = [
+  {
+    meta:{
+      title:"luffy2.0-站点首页",
+      keepalive:true
+    },
+    path:'/', //url访问地址
+    name:"Home",
+    component: ()=> import("../views/Home.vue")
+  },
+  {
+    meta:{
+      title:"luffy2.0-用户登录",
+      keepalive: true
+    },
+    path:'/login',
+    name:"Login",
+    component:()=>import("../views/Login.vue")
+  },
+  {
+    meta:{
+      title: "luffy2.0-用户注册",
+      keepAlive: true
+    },
+    path: '/register',
+    name: "Register",            // 路由名称
+    component: ()=> import("../views/Register.vue"),         // uri绑定的组件页面
+  },
+  {
+    meta:{
+        title: "luffy2.0-个人中心",
+        keepAlive: true,
+        authorization:true,
+    },
+    path: '/user',
+    name: "User",
+    component: ()=> import("../views/User.vue"),
+    children: [
         {
           meta:{
-            title: "luffy2.0-我的课程",
+            title: "luffy2.0-个人信息",
+            keepAlive: true,
+            authorization: true,
+          },
+          path: '',
+          name: "UserInfo",
+          component: ()=> import("../components/user/Info.vue"),
+        },
+        {
+          meta:{
+            title: "luffy2.0--我的订单",
+            keepAlive: true,
+            authorization: true,
+          },
+          path: 'order',
+          name: "UserOrder",
+          component: ()=> import("../components/user/Order.vue"),
+        },
+        {
+          meta:{
+            title: "luffy2.0-我的课程",   // 新增我的课程
             keepAlive: true
           },
           path: 'course',
           name: "UserCourse",
           component: ()=> import("../components/user/Course.vue"),
         },
+      ]
+  },
+  {
+    meta:{
+        title: "luffy2.0-课程列表",
+        keepAlive: true,
+    },
+    path: '/project',
+    name: "Course",
+    component: ()=> import("../views/Course.vue"),
+  },
+    {
+    meta:{
+        title: "luffy2.0-课程详情",
+        keepAlive: true
+    },
+    path: '/project/:id',     // :id vue的路径参数，代表了课程的ID
+    name: "Info",
+    component: ()=> import("../views/Info.vue"),
+  },
+    {
+      meta:{
+        title: "luffy2.0-购物车",
+        keepAlive: true
+      },
+      path: '/cart',
+      name: "Cart",
+      component: ()=> import("../views/Cart.vue"),
+    },
+    {
+      meta:{
+        title: "确认下单",
+        keepAlive: true
+      },
+      path: '/order',
+      name: "Order",
+      component: ()=> import("../views/Order.vue"),
+    },
+    {
+      meta:{
+        title: "支付成功",
+        keepAlive: true
+      },
+      path: '/alipay',
+      name: "PaySuccess",
+      component: ()=> import("../views/AliPaySuccess.vue"),
+    },
+
+]
+
+// 路由对象实例化
+const router = createRouter({
+  // history, 指定路由的模式
+  history: createWebHistory(),
+  // 路由列表
+  routes,
+});
+
+
+// 导航守卫
+router.beforeEach((to, from, next)=>{
+  document.title=to.meta.title
+  // 登录状态验证
+  if (to.meta.authorization && !store.getters.getUserInfo) {
+    next({"name": "Login"})
+  }else{
+    next()
+  }
+})
+
+
+// 暴露路由对象
+export default router
 ```
 
 `api/course.js`，代码：
@@ -449,6 +584,7 @@ path("type/", views.CourseTypeListAPIView.as_view()),
 `users/views.py`，代码：
 
 ```python
+### 代码省略
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserCourseModelSerializer
@@ -466,7 +602,7 @@ class CourseListAPIView(ListAPIView):
         user = self.request.user
         query = UserCourse.objects.filter(user=user)
         course_type = int(self.request.query_params.get("type", -1))
-        course_type_list = [item[0] for item in Course.course_type]
+        course_type_list = [item[0] for item in Course.COURSE_TYPE]
         if course_type in course_type_list:
             query = query.filter(course__course_type=course_type)
         return query.order_by("-id").all()
@@ -760,6 +896,7 @@ watch(
 提交代码版本
 
 ```bash
+cd ~/Desktop/luffycity/
 git add .
 git commit -m "feature: 个人中心-我的课程功能实现"
 git push 
@@ -803,6 +940,11 @@ userid: fce2712a86
 writetoken: 2f802363-1d15-4278-848d-29a9eda0d320
 readtoken: 5dc202ca-0838-411e-b3ab-1659ae007dad
 secretkey: uqlJtarKuJ
+----------------------------------------------自己的
+userid: 69cd548d43
+writetoken: 0bd760ce-bb97-4f1e-a0c9-c3ed1bec91a5
+readtoken: 04d2e4cd-5991-4aa5-9fb4-45c9cdf4a131
+secretkey: QUyq8AcLJh
 ```
 
 配置视频上传加密。
@@ -815,7 +957,7 @@ secretkey: uqlJtarKuJ
 
 手动把刚刚上面上传的视频的VID填写course_lesson课时记录表里面。
 
-![image-20210812121331997](assets/image-20210812121331997.png)
+![](assets/image-20220907235538777.png)
 
 
 
@@ -833,7 +975,6 @@ web客户端播放加密视频的前端代码：https://help.polyv.net/index.htm
 import time
 import requests
 import hashlib
-
 
 class PolyvPlayer(object):
     def __init__(self, userId, secretkey, tokenUrl):
@@ -905,10 +1046,10 @@ class PolyvPlayer(object):
 ```python
 # 保利威视频加密服务
 POLYV = {
-    "userId": "fce2712a86",
-    "writeToken": "2f802363-1d15-4278-848d-29a9eda0d320",
-    "readToken": "5dc202ca-0838-411e-b3ab-1659ae007dad",
-    "secretkey": "uqlJtarKuJ",
+    "userId": "69cd548d43",
+    "writeToken": "0bd760ce-bb97-4f1e-a0c9-c3ed1bec91a5",
+    "readToken": "04d2e4cd-5991-4aa5-9fb4-45c9cdf4a131",
+    "secretkey": "QUyq8AcLJh",
     "tokenUrl": "https://hls.videocc.net/service/v1/token",
 }
 ```
@@ -919,7 +1060,7 @@ courses/views.py，视图代码:
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
-from luffycityapi.libs.polvy import PolyvPlayer
+from luffycityapi.libs.polyv import PolyvPlayer
 
 class PolyvViewSet(ViewSet):
     """保利威云视频服务相关的API接口"""
@@ -1806,3 +1947,19 @@ watch(
 
 
 
+提交代码版本
+
+```bash
+cd ~/Desktop/luffycity/
+git add .
+git commit -m "feature: 个人中心-视频播放-学习进度结束"
+git push 
+
+git checkout master
+git merge feature/payments
+git push
+```
+
+
+
+## 
