@@ -303,7 +303,8 @@ lsb_release -a  # CentOS： yum install redhat-lsb
 
 ```bash
 # 下载docker-compose的python二进制执行脚本程序
-sudo curl -L "https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "/v2.10.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# https://github.com/docker/compose/releases/download/v2.11.2/docker-compose-linux-x86_64
 # 给当前docker-compose脚本程序增加执行权限
 sudo chmod +x /usr/local/bin/docker-compose
 # 生成一个硬连接，作为全局命令

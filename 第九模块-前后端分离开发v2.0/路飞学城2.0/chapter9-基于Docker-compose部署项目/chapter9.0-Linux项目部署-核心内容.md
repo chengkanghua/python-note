@@ -153,7 +153,7 @@ ab -n 1000 -c 100 -w https://www.luffycity.com/ >> ~/ab.html
 
 
 
-#### 域名影射
+#### 域名映射
 
 ```bash
 114.115.200.1 api.luffycity.dabanyu.com    api服务端
@@ -233,7 +233,7 @@ sudo service docker restart
 安装docker-compose，这种安装方式是基于Linux操作系统的源来决定安装版本的，所以往往版本会比较低。
 
 ```bash
-apt install -y docker-compose
+sudo apt install -y docker-compose
 ```
 
 
@@ -255,7 +255,7 @@ export default {
 }
 ```
 
-src/http/index.js，代码：
+src/utils/http/index.js，代码：
 
 ```javascript
 import axios from "axios"
@@ -271,9 +271,9 @@ const http = axios.create({
 终端下，在前端项目的根目录下，执行以下命令：
 
 ```bash
-/home/moluo/Desktop/luffycity/luffycityweb
+cd ~/Desktop/luffycity/luffycityweb
 yarn upgrade
-rm -rf /home/moluo/Desktop/luffycity/luffycityweb/dist
+rm -rf ~/Desktop/luffycity/luffycityweb/dist
 vite build
 ```
 
@@ -381,7 +381,22 @@ server {
 在远程部署终端启动容器服务
 
 ```bash
+cd /home/luffycity
 docker-compose -f docker-compose.yml up -d
+```
+
+
+
+小问题：
+
+```bash
+# 启动之后访问显示的nginx欢迎页面  原因是 nginx默认的配置文件default.conf 存在
+root@VM-4-16-ubuntu:/home/luffycity# docker exec -it nginx /bin/bash
+root@426cdccbd8c2:/# rm /etc/nginx/conf.d/default.conf
+root@426cdccbd8c2:/# exit
+exit
+
+root@VM-4-16-ubuntu:/home/luffycity# docker-compose -f docker-compose.yml restart
 ```
 
 
@@ -507,7 +522,7 @@ show tables;
 
 ```bash
 cd /home/luffycity
-mkdir conf/redis
+mkdir -p conf/redis
 touch conf/redis/master.conf
 mkdir -p data/redis/master
 vim conf/redis/master.conf
@@ -788,6 +803,122 @@ es索引的生成是要结合django项目的ORM来生成，所以暂时先不用
 修改配置中的IP地址为公网地址，所有的127.0.0.1全部换成公网地址，所有域名替换成真实域名。
 
 所有的第三方接口账号全部换成公司的账号信息。
+
+**修改的地方**
+
+```py
+DEBUG = False
+
+DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    'default': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'dj_db_conn_pool.backends.mysql',
+        'NAME': 'luffycity',
+        'PORT': 3306,
+        'HOST': '121.5.37.237',
+        'USER': 'luffycity',
+        'PASSWORD': 'luffycity',
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # 连接选项配置,mysql8.0以上无需配置
+        },
+        'POOL_OPTIONS': {  # 连接池的配置信息
+            'POOL_SIZE': 10,  # 连接池默认创建的链接对象的数量
+            'MAX_OVERFLOW': 10  # 连接池默认创建的链接对象的最大数量
+        }
+    },
+    'read1': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'dj_db_conn_pool.backends.mysql',
+        'NAME': 'luffycity',
+        'PORT': 3306,
+        'HOST': '121.5.37.237',
+        'USER': 'luffycity',
+        'PASSWORD': 'luffycity',
+        'OPTIONS': {
+            'charset': 'utf8mb4',  # 连接选项配置,mysql8.0以上无需配置
+        },
+        'POOL_OPTIONS': {  # 连接池的配置信息
+            'POOL_SIZE': 10,  # 连接池默认创建的链接对象的数量
+            'MAX_OVERFLOW': 10  # 连接池默认创建的链接对象的最大数量
+        }
+    }
+}
+
+# 自动数据库路由   增加的 
+DATABASE_ROUTERS = ["luffycityapi.db_router.DBRouter"]
+# redis configration
+# 设置redis缓存
+CACHES = {
+    # 默认缓存
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 项目上线时,需要调整这里的路径
+        # "LOCATION": "redis://:密码@IP地址:端口/库编号",
+        "LOCATION": "redis//:123456@121.5.37.237:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+        }
+    },
+    # 提供给admin运营站点的session存储
+    "session": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis//:123456@121.5.37.237:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+        }
+    },
+    # 提供存储短信验证码
+    "sms_code": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis//:123456@121.5.37.237:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+        }
+    },
+    # 提供存储搜索热门关键字
+    "hot_word": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis//:123456@121.5.37.237:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 提供存储购物车课程商品
+    "cart": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis//:123456@121.5.37.237:6379/4",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 提供存储优惠券
+    "coupon": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis//:123456@121.5.37.237:6379/5",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+}
+
+# Celery异步任务队列框架的配置项[注意：django的配置项必须大写，所以这里的所有配置项必须全部大写]
+# 任务队列
+CELERY_BROKER_URL = 'redis//:123456@121.5.37.237:6379/14'
+# 结果队列
+CELERY_RESULT_BACKEND = 'redis//:123456@121.5.37.237:6379/15'
+
+# 首页图标地址
+SIMPLEUI_INDEX = 'http://www.luffycity.chengkanghua.top/'
+```
+
+
 
 settings/pro.py，代码：
 
@@ -1310,7 +1441,7 @@ POLYV = {
 }
 ```
 
-luffycityapi/db_router.py，代码：
+luffycityapi/luffycityapi/db_router.py，代码：
 
 ```python
 import random
@@ -1354,7 +1485,7 @@ STATIC_ROOT = BASE_DIR.parent / 'static'
 在本地终端下luffycityapi根目录下执行收集命令
 
 ```shell
-/home/moluo/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi
 python manage.py collectstatic
 ```
 
@@ -1370,7 +1501,7 @@ uwsgi/gunicorn服务器 同步模式运行项目
 
 uvicorn服务器 异步模式运行项目
 
-先修改luffycityapi/wsgi.py，加载线上的pro配置文件：
+先修改luffycityapi/wsgi.py，加载线上的pro配置文件：(本地测试时候先写成dev)
 
 ```python
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'luffycityapi.settings.pro')
@@ -1379,6 +1510,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'luffycityapi.settings.pro')
 我们目前针对uwsgi服务器的了解还少，所以我们可以先在本地环境中先安装uwsgi模块进行使用，然后成功使用uwsgi启动项目，后面再一并上传到服务器上面重新安装并运行。
 
 ```python
+# 添加-c conda-forge参数即在conda-forge仓库里使用conda安装或者搜索包。
+# 当conda install *某个模块或者包失败时，直接去conda主页里面搜索：https://anaconda.org/
 conda install -c conda-forge uwsgi
 uwsgi --version    # 查看 uwsgi 版本
 ```
@@ -1388,7 +1521,7 @@ uwsgi --version    # 查看 uwsgi 版本
 在项目根目录下创建uwsgi配置文件uwsgi.ini
 
 ```bash
-cd /home/moluo/Desktop/luffycity/luffycityapi
+cd ~/Desktop/luffycity/luffycityapi
 touch uwsgi.ini
 ```
 
@@ -1432,7 +1565,7 @@ uwsgi --ini uwsgi.ini
 uwsgi --stop uwsgi.pid
 ```
 
-访问项目 http://127.0.0.1:8000/nav/header/
+访问项目** http://127.0.0.1:8000/home/nav/header/
 
 ![image-20211021153910264](assets/image-20211021153910264.png)
 
@@ -1484,7 +1617,9 @@ scp /home/moluo/Desktop/luffycity/Miniconda3-py38_4.10.3-Linux-x86_64.sh root@11
 vim /home/luffycity/Dockerfile
 ```
 
-/home/luffycity/Dockerfile，代码：
+/home/luffycity/Dockerfile，代码：  
+
+conda 软件安装搜索地址 [:: Anaconda.org](https://anaconda.org/)
 
 ```dockerfile
 FROM ubuntu:20.04
@@ -1518,6 +1653,23 @@ EXPOSE 8000
 VOLUME /luffycityapi
 ```
 
+问题：  这个dockerfile 在运行时候一直不成功
+
+```
+# 环境 腾讯云。ubuntu 1804.
+# 报错 原因： conda install -y uwsgi -c conda-forge
+Solving environment: ...working... failed with initial frozen solve. Retrying with flexible solve.
+Solving environment: ...working... failed with repodata from current_repodata.json, will retry with next repodata source.
+
+# 试过很多方法一直不成功。 无解。   3天了没解决 头疼
+
+
+```
+
+
+
+
+
 注释版：
 
 ```python
@@ -1544,8 +1696,8 @@ RUN apt-get update \  # 更新源
 ENV PATH /root/miniconda3/bin:$PATH  # 设置环境变量
 
 # 给conda全局base虚拟环境安装pymysql和uwsgi
-RUN conda install pymysql -c conda-forge \
-    && conda install uwsgi -c conda-forge \
+RUN conda install -y pymysql -c conda-forge \
+    && conda install -y uwsgi -c conda-forge \
     # 递归安装requirements.txt中的所有依赖模块
     && pip install -r /requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple \
     # 因为drf-haystack安装以后，会自动帮django-haystack降版本到3.1.0，但是django-haystack没有支持es7版本的类，所以在requirements.txt文件执行完成以后，重新把 django-haystack更新到3.1.1版本，实现兼容
@@ -1563,11 +1715,47 @@ VOLUME /luffycityapi
 
 
 
+在线下载版本
+
+```bash
+FROM ubuntu:20.04
+LABEL maintainer="luffycity.Edu"
+
+ENV PYTHONUNBUFFERED 1
+
+COPY ./sources.list /etc/apt/sources.list
+COPY ./luffycityapi /luffycityapi
+COPY ./luffycityapi/requirements.txt /requirements.txt
+
+RUN apt-get update \
+    && apt-get -y install wget \
+    && wget -P /opt https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh \
+    && mkdir /root/.conda \
+    && bash /opt/Miniconda3-py39_4.12.0-Linux-x86_64.sh -b \
+    && rm -f /opt/Miniconda3-py39_4.12.0-Linux-x86_64.sh
+
+ENV PATH /root/miniconda3/bin:$PATH
+
+RUN conda install -y pymysql -c conda-forge \
+    && conda install -y uwsgi -c conda-forge \
+    && pip install -r /requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && pip install django-haystack==3.1.1 -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && chmod -R 755 /luffycityapi
+
+WORKDIR /luffycityapi
+
+EXPOSE 8000
+
+VOLUME /luffycityapi
+```
+
+
+
 ```bash
 vim /home/luffycity/sources.list
 ```
 
-/home/luffycity/sources.list，代码：
+/home/luffycity/sources.list，代码：这个地方腾讯云就换成系统上腾讯云的地址
 
 ```bash
 deb http://repo.huaweicloud.com/ubuntu/ focal main restricted
@@ -1583,6 +1771,12 @@ deb http://repo.huaweicloud.com/ubuntu focal-security multiverse
 ```
 
 通过docker-compose启动luffycityapi镜像，docker-compose.yml，代码：
+
+```bash
+vim /home/luffycity/docker-compose.yml
+```
+
+
 
 ```yaml
 version: '3.8'
@@ -1637,7 +1831,7 @@ services:
       - ./conf/redis/master.conf:/usr/local/etc/redis/redis.conf
       - ./data/redis/master:/data
 
-  elasticsearch:
+  elasticsearch_1:
     image: elasticsearch:7.16.1
     restart: always
     environment:
@@ -1678,7 +1872,7 @@ services:
     depends_on:
       - mysql_master
       - redis_master
-      - elasticsearch
+      - elasticsearch_1
 
 networks:
   default:
