@@ -361,7 +361,7 @@ web.conf，代码：
 ```bash
 server {
     listen       80;
-    server_name  www.luffycity.dabanyu.com;
+    server_name  luffycity.chengkanghua.top/;
     # client_max_body_size    1000M;
     # root         /opt/dist;
 
@@ -531,7 +531,9 @@ vim conf/redis/master.conf
 conf/redis/master.conf，主库配置文件，代码：
 
 ```bash
+# 连接认证密码
 requirepass 123456
+# 从库连接主库认证密码
 masterauth 123456
 bind 0.0.0.0
 
@@ -1605,6 +1607,8 @@ tar -zxf luffycityapi.tar.gz
 
 ##### 编写Dockerfile定制服务端项目的镜像
 
+————————————————————————————————华丽分割线 以下内容忽略——————————————————————————————
+
 把素材目录下的Miniconda3-py38_4.10.3-Linux-x86_64.sh上传到远程部署服务器，代码操作：
 
 ```bash
@@ -1652,21 +1656,6 @@ EXPOSE 8000
 
 VOLUME /luffycityapi
 ```
-
-问题：  这个dockerfile 在运行时候一直不成功
-
-```
-# 环境 腾讯云。ubuntu 1804.
-# 报错 原因： conda install -y uwsgi -c conda-forge
-Solving environment: ...working... failed with initial frozen solve. Retrying with flexible solve.
-Solving environment: ...working... failed with repodata from current_repodata.json, will retry with next repodata source.
-
-# 试过很多方法一直不成功。 无解。   3天了没解决 头疼
-
-
-```
-
-
 
 
 
@@ -1769,6 +1758,52 @@ deb http://repo.huaweicloud.com/ubuntu focal-security main restricted
 deb http://repo.huaweicloud.com/ubuntu focal-security universe
 deb http://repo.huaweicloud.com/ubuntu focal-security multiverse
 ```
+
+问题：  这个dockerfile 在运行时候一直不成功
+
+```
+# 环境 腾讯云。ubuntu 1804.
+# 报错 原因： conda install -y uwsgi -c conda-forge
+Solving environment: ...working... failed with initial frozen solve. Retrying with flexible solve.
+Solving environment: ...working... failed with repodata from current_repodata.json, will retry with next repodata source.
+
+# 试过很多方法一直不成功。 无解。   3天了没解决 头疼
+
+```
+
+
+
+————————————————————————————————华丽分割线 以上内容忽略——————————————————————————————
+
+##### 编写Dockerfile 定制服务器项目的镜像 第二版本
+
+修改基础镜像解决上面报错问题
+
+> 上面问题解决不了就不解决了， 我上个厕所想了一下， 上面是基于Ubuntu镜像安装conda，安装特别麻烦不就是为了弄一个python环境嘛。
+>
+> 不如直接使用python:3.9的镜像。 这个方法多简单实用。完美搞定
+
+```bash
+FROM python:3.9
+LABEL maintainer="luffycity.Edu"
+
+COPY ./luffycityapi /luffycityapi
+COPY ./luffycityapi/requirements.txt /requirements.txt
+
+RUN pip install --no-cache-dir -r /requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && pip install uwsgi -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    && chmod -R 755 /luffycityapi
+
+WORKDIR /luffycityapi
+
+EXPOSE 8000
+
+VOLUME /luffycityapi
+```
+
+
+
+
 
 通过docker-compose启动luffycityapi镜像，docker-compose.yml，代码：
 
@@ -1878,6 +1913,27 @@ networks:
   default:
 ```
 
+**注意： 这里uwsgi.ini 文件配置都要一起传到服务器上， 配置修改**
+
+> 这里老师视频中没有特别说明。 经过实践，这里容器启动改成了uwsgi --http :8000 --workers 4 --master --enable-threads --module luffycityapi.wsgi
+>
+> 但是 uwsgi.ini 的配置文件还是需要的
+
+```bash
+root@VM-4-16-ubuntu:/home/luffycity/luffycityapi# cat uwsgi.ini
+[uwsgi]
+http=0.0.0.0:8000
+chdir=/luffycity/luffycityapi
+wsgi-file=luffycityapi/wsgi.py
+processes=2
+threads=2
+master=True
+pidfile=uwsgi.pid
+daemonize=uwsgi.log
+```
+
+
+
 启动服务
 
 ```bash
@@ -1888,7 +1944,7 @@ docker-compose -f docker-compose.yml up -d
 docker exec -it api1 python manage.py rebuild_index
 ```
 
-可以看到api已经启动了，但是我们通过浏览器`http://api.luffycity.dabanyu.com:8000`访问发现，访问不了，我们尝试访问到后台运营站点admin，`http://api.luffycity.dabanyu.com:8000/admin/`。
+可以看到api已经启动了，但是我们通过浏览器`http://api.chengkanghua.top:8000`访问发现，访问不了，我们尝试访问到后台运营站点admin，`http://luffycity.chengkanghua.top:8000/admin`。  `http://luffycity.chengkanghua.top:8000/home/nav/header/`
 
 
 
@@ -2010,13 +2066,13 @@ conf/nginx/web.conf，如下：
 
 ```bash
 upstream luffycity {
-    server 114.115.200.1:8000;
+    server 121.5.37.237:8000;
     # server 114.115.200.1:8001;
 }
 
 server {
     listen  80;
-    server_name api.luffycity.dabanyu.com;
+    server_name api.luffycity.chengkanghua.top;
 
     location / {
         include uwsgi_params;
@@ -2026,7 +2082,7 @@ server {
 
 server {
     listen       80;
-    server_name  www.luffycity.dabanyu.com;
+    server_name  luffycity.chengkanghua.top;
     # client_max_body_size    1000M;
     # root         /opt/dist;
 
@@ -2072,14 +2128,14 @@ services:
     volumes:
       - ./luffycityapi/static:/home/luffycityapi/static
       - ./luffycityweb:/home/luffycityweb
-      - ./conf/nginx/web.conf:/etc/nginx/conf.d/nginx.conf
+      - ./conf/nginx/web.conf:/etc/nginx/conf.d/default.conf
     networks:
       - default
 
   mysql_master:
-    image: mysql:8.0.26
+    image: mysql:8.0.30
     restart: always
-    container_name: mysql_master
+    container_name: "mysql_master"
     networks:
       - default
     environment:
@@ -2109,14 +2165,15 @@ services:
       - "6379:6379"
     command:
       ["redis-server", "/usr/local/etc/redis/redis.conf"]
-    container_name: redis_master
+    container_name: "redis_master"
     volumes:
       - ./conf/redis/master.conf:/usr/local/etc/redis/redis.conf
       - ./data/redis/master:/data
 
-  elasticsearch:
+  elasticsearch_1:
     image: elasticsearch:7.16.1
     restart: always
+    container_name: "elasticsearch_1"
     environment:
       - "discovery.type=single-node"
       - "bootstrap.memory_lock=true"
@@ -2150,12 +2207,12 @@ services:
       - ./luffycityapi:/luffycityapi
     command: >
       sh -c "uwsgi --socket :8000 --workers 4 --master --enable-threads --module luffycityapi.wsgi"
-   environment:
+    environment:
       - "DJANGO_SETTINGS_MODULE=luffycityapi.settings.pro"
     depends_on:
-      - mysql
-      - redis
-      - elasticsearch
+      - mysql_master
+      - redis_master
+      - elasticsearch_1
 
 networks:
   default:
@@ -2167,14 +2224,13 @@ networks:
 
 ```bash
 upstream luffycity {
-    server 114.115.200.1:8000;
+    server 121.5.37.237:8000;
     # server 114.115.200.1:8001;
 }
 
-
 server {
     listen  80;
-    server_name api.luffycity.dabanyu.com;
+    server_name api.luffycity.chengkanghua.top;
 
     location / {
         include uwsgi_params;
@@ -2186,11 +2242,9 @@ server {
     }
 }
 
-
-
 server {
     listen       80;
-    server_name  www.luffycity.dabanyu.com;
+    server_name  luffycity.chengkanghua.top;
     # client_max_body_size    1000M;
     # root         /opt/dist;
 
@@ -2256,22 +2310,22 @@ docker-compose -f docker-compose.yml up -d
 修改celery的启动配置文件
 
 ```bash
-vim /home/luffycity/luffycityapi/scripts/luffycity_celery_worker.ini
+vim /home/luffycity/luffycityapi/luffycityapi/scripts/luffycity_celery_worker.ini
 ```
 
 代码：
 
 ````ini
 [program:luffycity_celery_worker]
-# 启动命令 conda env list
-command=/root/miniconda3/bin/celery -A luffycityapi worker -l info -n worker1
+# 启动命令 which celery
+command=/usr/local/bin/celery -A luffycityapi worker -l info -n worker1
 # 以管理员身份执行运行celery
 user=root
 numprocs=1
 # 项目根目录的绝对路径，通过pwd查看
 directory=/luffycityapi
 # 项目虚拟环境
-enviroment=PATH="/root/miniconda3/bin"
+# enviroment=PATH="/usr/local/bin/"
 # 输出日志绝对路径
 stdout_logfile=/luffycityapi/logs/celery.worker.info.log
 # 错误日志绝对路径
@@ -2291,21 +2345,19 @@ priority=999
 ````
 
 ```bash
-vim /home/luffycity/luffycityapi/scripts/luffycity_celery_beat.ini
+vim /home/luffycity/luffycityapi/luffycityapi/scripts/luffycity_celery_beat.ini
 ```
-
-
 
 代码：
 
 ```ini
 [program:luffycity_celery_beat]
-# 启动命令 conda env list
-command=/root/miniconda3/bin/celery -A luffycityapi  beat -l info
+# 启动命令 which celery
+command=/usr/local/bin/celery -A luffycityapi  beat -l info
 # 项目根目录的绝对路径，通过pwd查看
 directory=/luffycityapi
 # 项目虚拟环境
-enviroment=PATH="/root/miniconda3/bin"
+# enviroment=PATH="/usr/local/bin/"
 # 输出日志绝对路径
 stdout_logfile=/luffycityapi/logs/celery.beat.info.log
 # 错误日志绝对路径
@@ -2326,19 +2378,19 @@ priority=998
 ```
 
 ```bash
-vim /home/luffycity/luffycityapi/scripts/luffycity_celery_flower.ini
+vim /home/luffycity/luffycityapi/luffycityapi/scripts/luffycity_celery_flower.ini
 ```
 
 代码：
 
 ```ini
 [program:luffycity_celery_flower]
-# 启动命令 conda env list
-command=/root/miniconda3/bin/celery -A luffycityapi flower --port=5555
+# 启动命令 which celery
+command=/usr/local/bin/celery -A luffycityapi flower --port=5555
 # 项目根目录的绝对路径，通过pwd查看
 directory=/luffycityapi
 # 项目虚拟环境
-enviroment=PATH="/root/miniconda3/bin"
+# enviroment=PATH="/usr/local/bin"
 # 输出日志绝对路径
 stdout_logfile=/luffycityapi/logs/celery.flower.info.log
 # 错误日志绝对路径
@@ -2359,7 +2411,7 @@ priority=990
 ```
 
 ```bash
-vim /home/luffycity/luffycityapi/scripts/supervisor.service
+vim /home/luffycity/luffycityapi/luffycityapi/scripts/supervisor.service
 ```
 
 代码：
@@ -2371,9 +2423,9 @@ After=network.target
 
 [Service]
 Type=forking
-ExecStart=/root/miniconda3/bin/supervisord -n -c /luffycityapi/scripts/supervisord.conf
-ExecStop=/root/miniconda3/bin/supervisorctl $OPTIONS shutdown
-ExecReload=/root/miniconda3/bin/supervisorctl $OPTIONS reload
+ExecStart=/usr/local/bin/supervisord -n -c /luffycityapi/scripts/supervisord.conf
+ExecStop=/usr/local/bin/supervisorctl $OPTIONS shutdown
+ExecReload=/usr/local/bin/supervisorctl $OPTIONS reload
 KillMode=process
 Restart=on-failure
 RestartSec=42s
@@ -2442,7 +2494,7 @@ services:
       - ./conf/redis/master.conf:/usr/local/etc/redis/redis.conf
       - ./data/redis/master:/data
 
-  elasticsearch:
+  elasticsearch_1:
     image: elasticsearch:7.16.1
     restart: always
     environment:
@@ -2472,19 +2524,20 @@ services:
     restart: always
     ports:
       - 8000:8000
+      - 5555:5555
     networks:
       - default
     volumes:
       - ./luffycityapi:/luffycityapi
     command: >
-      sh -c "supervisord -c scripts/supervisord.conf && uwsgi --socket :8000 --workers 4 --master --enable-threads --module luffycityapi.wsgi"
-   environment:
+      sh -c "/usr/local/bin/supervisord -c luffycityapi/scripts/supervisord.conf && uwsgi --socket :8000 --workers 2 --master --enable-threads --module luffycityapi.wsgi"
+    environment:
       - "DJANGO_SETTINGS_MODULE=luffycityapi.settings.pro"
       - "C_FORCE_ROOT=1"
     depends_on:
-      - mysql
-      - redis
-      - elasticsearch
+      - mysql_master
+      - redis_master
+      - elasticsearch_1
 
 networks:
   default:
@@ -2497,5 +2550,14 @@ networks:
 ```bash
 docker-compose -f docker-compose.yml down
 docker-compose -f docker-compose.yml up -d
+```
+
+
+
+注意：
+
+```
+这个部署案例把 5555 3306 6379 9100 9200 端口都暴露在外网了， 真实的线上环境 只把80 443端口提供给用户访问 其他端口都走内网连接
+这里可以都改成内网 localhost  127.0.0.1
 ```
 
