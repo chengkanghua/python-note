@@ -1725,8 +1725,8 @@ RUN apt-get update \
 
 ENV PATH /root/miniconda3/bin:$PATH
 
-RUN conda install -y pymysql -c conda-forge \
-    && conda install -y uwsgi -c conda-forge \
+RUN conda install -y pymysql  \
+    && conda install -y uwsgi  \
     && pip install -r /requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple \
     && pip install django-haystack==3.1.1 -i https://pypi.tuna.tsinghua.edu.cn/simple \
     && chmod -R 755 /luffycityapi
@@ -1915,7 +1915,7 @@ networks:
 
 **注意： 这里uwsgi.ini 文件配置都要一起传到服务器上， 配置修改**
 
-> 这里老师视频中没有特别说明。 经过实践，这里容器启动改成了uwsgi --http :8000 --workers 4 --master --enable-threads --module luffycityapi.wsgi
+> 这里容器启动改成了uwsgi --http :8000 --workers 4 --master --enable-threads --module luffycityapi.wsgi
 >
 > 但是 uwsgi.ini 的配置文件还是需要的
 
@@ -2414,7 +2414,7 @@ priority=990
 vim /home/luffycity/luffycityapi/luffycityapi/scripts/supervisor.service
 ```
 
-代码：
+代码：(不需要)
 
 ```shell
 [Unit]
@@ -2432,6 +2432,7 @@ RestartSec=42s
 
 [Install]
 WantedBy=multi-user.target
+
 ```
 
 记得开启服务端的安全组，开发5555端口。
