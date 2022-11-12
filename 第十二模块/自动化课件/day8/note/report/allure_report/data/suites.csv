@@ -1,5 +1,0 @@
-"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"passed","Sun Apr 26 16:25:21 CST 2020","Sun Apr 26 16:25:21 CST 2020","31","scripts","test_parametrize","","","","post接口",""
-"passed","Sun Apr 26 16:25:20 CST 2020","Sun Apr 26 16:25:21 CST 2020","82","scripts","test_parametrize","","","","百度",""
-"passed","Sun Apr 26 16:25:21 CST 2020","Sun Apr 26 16:25:21 CST 2020","23","scripts","test_parametrize","","","","put接口",""
-"passed","Sun Apr 26 16:25:21 CST 2020","Sun Apr 26 16:25:21 CST 2020","294","scripts","test_parametrize","","","","cnblogs",""

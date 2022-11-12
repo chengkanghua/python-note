@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id='btn'>显示</button>
+    <div class="box" style="width: 200px;height: 200px;background: red;">
+        小马哥
+    </div>
+    <script src="./jquery-3.4.1.js"></script>
+
+    <script>
+        $(function () {
+
+            $('#btn').click(function () {
+                // $('.box').hide(400);
+                // 隐藏  fadeIn() 显示
+                // $('.box').fadeOut(400);
+                // $('.box').slideUp(400);
+                // $('.box').slideDown(400);
+                // $('.box').fadeTo(400,0.3);
+                
+                // $('.box').toggle(400);
+                // $('.box').fadeToggle(400);
+                // $('.box').stop().slideToggle(400);
+                // jquery插件 jquery-color
+
+                // 它既能实现 上面jQuery的动画效果 又能实现自定义动画的效果
+                $('.box').animate({
+                    width:300,
+                    height: 300,
+                    // 颜色  需要jquery的颜色插件配合  百度搜索jquery-color
+                    // background:'green'
+                    "font-size": 40
+                },1000,function() {
+                    
+                })
+
+
+            })
+
+
+
+
+        })
+    </script>
+</body>
+
+</html>

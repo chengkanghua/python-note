@@ -1,9 +1,0 @@
-#coding:gbk
-
-
-s = 'Â··ÉÑ§³Ç'
-
-print(s)
-
-
-
