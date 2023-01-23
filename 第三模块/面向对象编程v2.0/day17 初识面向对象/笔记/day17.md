@@ -792,8 +792,8 @@ public class Test {
        show(obj1)
        show(obj2)
            
-		obj3 = Dog()
-        show(obj3)
+		   obj3 = Dog()
+       show(obj3)
    }  
     
     public static void show(Cat a)  {

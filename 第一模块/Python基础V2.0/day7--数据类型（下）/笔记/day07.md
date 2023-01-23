@@ -863,9 +863,9 @@ for i in stock_dict.keys():
    info = { "age":12,  "status":True, "name":"武沛齐"}
    
    print( info["age"] )  	    # 输出：12
-   print( info["name"] )		# 输出：武沛齐
+   print( info["name"] )		    # 输出：武沛齐
    print( info["status"] )	    # 输出：True
-   print( info["xxxx"] )   	# 报错，通过键为索引去获取之后时，键不存在会报错（以后项目开发时建议使用get方法根据键去获取值）
+   print( info["xxxx"] )   		# 报错，通过键为索引去获取之后时，键不存在会报错（以后项目开发时建议使用get方法根据键去获取值）
    
    value = info.get("xxxxx") # None
    print(value)
