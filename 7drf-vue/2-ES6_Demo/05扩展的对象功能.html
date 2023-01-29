@@ -19,48 +19,50 @@
         //         console.log(this.name);
         //     }
         // }
-        // person.sayName();
+        // person.sayName(); //小马哥
 
         // function fn(x,y) {
         //     return {x,y};
         // }
-        // console.log(fn(10,20));
+        // console.log(fn(10,20));  //Object x: 10 y: 20  [[Prototype]]: Object
 
-    /*     let cart = {
-            wheel:4,
-            set(newVal){
-                if(newVal < this.wheel){
-                    throw new Error('轮子数太少了')
-                }
-                this.wheel = newVal;
-            },
-            get(){
-                return this.wheel;
-            }
-        }
-        // console.log(cart.get());
-        cart.set(6);
-        console.log(cart.get()) */
+
+        // let cart = {
+        //     wheel:4,
+        //     set(newVal){
+        //         if(newVal < this.wheel){
+        //             throw new Error('轮子数太少了')
+        //         }
+        //         this.wheel = newVal;
+        //     },
+        //     get(){
+        //         return this.wheel;
+        //     }
+        // }
+        // console.log(cart.get()); //4
+        // cart.set(6);
+        // console.log(cart.get()) //6
 
         // const obj = {};
         // obj.isShow = true;
         // const name = 'a';
         // obj[name+'bc'] = 123;
-        // console.log(obj);
+        // console.log(obj); //{isShow: true, abc: 123}
         // obj['f'+'bc'] = function () {
         //     console.log(this);
         // }
-        // console.log(obj);
-       /*  const name = 'a';
-        const obj = {
-            isShow:true,
-            [name+'bc']:123,
-            ['f'+name](){
-                console.log(this);
+        // console.log(obj);  //{isShow: true, abc: 123, fbc: ƒ}
+    
+        // const name = 'a';
+        // const obj = {
+        //     isShow:true,
+        //     [name+'bc']:123,
+        //     ['f'+name](){
+        //         console.log(this);
                 
-            }
-        }
-        console.log(obj); */
+        //     }
+        // }
+        // console.log(obj); //{isShow: true, abc: 123, fa: ƒ}
 
         // 对象的方法
 
@@ -74,7 +76,7 @@
         
         // 返回合并之后的新对象
         let newObj = Object.assign({},{a:1},{b:2});
-        console.log(newObj);
+        console.log(newObj); //{a: 1, b: 2}
         
         
         

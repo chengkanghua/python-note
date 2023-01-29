@@ -14,30 +14,31 @@
         // 最大的用途：用来定义对象的私有变量
         const name = Symbol('name');
         const name2 = Symbol('name');
-        console.log(name === name2);
+        console.log(name === name2); //false
 
         let s1 = Symbol('s1');
-        console.log(s1);
+        console.log(s1);  //Symbol(s1)
         let obj = {
             [s1]:'小马哥'
         };
         // obj[s1] = '小马哥';
 
         // 如果用Symbol定义的对象中的变量，取值时一定要用[变量名]
-        console.log(obj[s1]);
-        // console.log(obj.s1);
+        console.log(obj[s1]); //小马哥
+        // console.log(obj.s1); //undefined
 
-        /* for(let key in obj){
-            console.log(key); 
-        } */
-        // console.log(Object.keys(obj));
+        for(let key in obj){
+            console.log(key); //空
+        }
+        console.log(Object.keys(obj)); //[]
         
         // 获取Symbol声明的属性名（作为对象的key）
-        // let s = Object.getOwnPropertySymbols(obj);
-        // console.log(s[0]);
+        let s = Object.getOwnPropertySymbols(obj);
+        console.log(s[0]);  //Symbol(s1)
         
+        // Reflect翻译反射
         let m = Reflect.ownKeys(obj);
-        console.log(m);
+        console.log(m);  //[Symbol(s1)]
         
         
         

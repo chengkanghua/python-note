@@ -20,8 +20,8 @@
         // 2.一旦状态改变，就不会再变，任何时候都可以得到这个结果
 
         
-       /*  let pro = new Promise(function(resolved,rejected) {
-            //执行异步操作
+        /* let pro = new Promise(function(resolved,rejected) {
+            //模拟执行异步操作 得到的结果
             let res = {
                 code: 201,
                 data:{
@@ -37,15 +37,15 @@
                 }
             }, 1000);
         })
-        console.log(pro);
+        console.log(pro); //Promise
         pro.then((val)=>{
             console.log(val);  
         },(err)=>{
-            console.log(err);
+            console.log(err); //失败了
         }); */
        
 
-      /*   function timeOut(ms) {
+        /* function timeOut(ms) {
             return new Promise((resolved,rejected)=>{
                 setTimeout(() => {
                     resolved('hello promise success!!')
@@ -53,11 +53,11 @@
             })
         }
         timeOut(2000).then((val)=>{  // 两秒之后返回
-            console.log(val);
+            console.log(val);        //hello promise success!!
         }) */
 
         // https://free-api.heweather.net/s6/weather/now?location=beijing&key=4693ff5ea653469f8bb0c29638035976
- /*        const getJSON = function (url) {
+        /* const getJSON = function (url) {
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', url);
@@ -124,6 +124,7 @@
          }) */
 
         // 应用：一些游戏类的素材比较多，等待图片、flash、静态资源文件 都加载完成 才进行页面的初始化
+        // 伪代码
         /* let promise1 = new Promise((resolve, reject) => {});
         let promise2 = new Promise((resolve, reject) => {});
         let promise3 = new Promise((resolve, reject) => {});
@@ -138,32 +139,32 @@
 
         // race() 某个异步请求设置超时时间，并且在超时后执行相应的操作
         // 1 请求图片资源
-        function requestImg(imgSrc) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = function () {  //onload 当图像装载完毕时调用的事件句柄。	
-                    resolve(img);  //Promise.resolve(value)方法返回一个以给定值解析后的Promise 对象
-                }
-                img.src = imgSrc;
-            });
-        }
+        // function requestImg(imgSrc) {
+        //     return new Promise((resolve, reject) => {
+        //         const img = new Image();
+        //         img.onload = function () {  //onload 当图像装载完毕时调用的事件句柄。	
+        //             resolve(img);  //Promise.resolve(value)方法返回一个以给定值解析后的Promise 对象
+        //         }
+        //         img.src = imgSrc;
+        //     });
+        // }
 
-        function timeout() {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    reject(new Error('图片请求超时'));
-                }, 3000);
-            })
-        }
-        Promise.race([requestImg('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202102%2F18%2F20210218112720_25189.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1646595131&t=12acaf9c7b1e00ac6a874e1b0945c3af'),
-                    timeout()]).then(data=>{
-            console.log(data);
-            document.body.appendChild(data);
+        // function timeout() {
+        //     return new Promise((resolve, reject) => {
+        //         setTimeout(() => {
+        //             reject(new Error('图片请求超时'));
+        //         }, 3000);
+        //     })
+        // }
+        // Promise.race([requestImg('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202102%2F18%2F20210218112720_25189.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1646595131&t=12acaf9c7b1e00ac6a874e1b0945c3af'),
+        //             timeout()]).then(data=>{
+        //     console.log(data);
+        //     document.body.appendChild(data);
             
-        }).catch(err=>{
-            console.log(err);
+        // }).catch(err=>{
+        //     console.log(err);
             
-        }); 
+        // }); 
 
         /* 
         server.listen(3000).then(()=>{

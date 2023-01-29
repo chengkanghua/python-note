@@ -34,9 +34,10 @@
         // }
         // console.log(add(10));
 
-        // es5写法
-         /* function pick(obj) {
+        // es5写法   //vs code 多行注释快捷键 alt + shift + a
+          /* function pick(obj) {
              let result = Object.create(null);
+             console.log(arguments.length) //4
              for(let i = 1;i < arguments.length;i++){
                  result[arguments[i]] = obj[arguments[i]]
              }
@@ -48,62 +49,64 @@
              year:2019
          }
          let bookData = pick(book,'title','year','author');
-         console.log(bookData); */
+         console.log(bookData);  */ //{title: 'es6的教程', year: 2019, author: '小马哥'}
 
         // 3.剩余参数：由三个点...和一个紧跟着的具名参数指定 ...keys
 
-        // function pick(obj, ...keys) {
-        //     // ...keys 解决了arguments 的问题
-        //     let result = Object.create(null);
-        //     for (let i = 0; i < keys.length; i++) {
-        //         result[keys[i]] = obj[keys[i]];
-        //     }
-        //     return result;
-        // }
+     /*    function pick(obj, ...keys) {
+            // ...keys 解决了arguments 的问题
+            let result = Object.create(null);
+            for (let i = 0; i < keys.length; i++) {
+                result[keys[i]] = obj[keys[i]];
+            }
+            return result;
+        }
 
-        // let book = {
-        //     title: 'es6的教程',
-        //     author: '小马哥',
-        //     year: 2019
-        // }
-        // let bookData = pick(book, 'year', 'author');
-        // console.log(bookData);
+        let book = {
+            title: 'es6的教程',
+            author: '小马哥',
+            year: 2019
+        }
+        let bookData = pick(book, 'year', 'author');
+        console.log(bookData); //{year: 2019, author: '小马哥'}
 
-        // function checkArgs(...args) {
-        //     console.log(args);
-        //     console.log(arguments);
-        // }
-        // checkArgs('a', 'b', 'c');
+        function checkArgs(...args) {
+            console.log(args);   //(3) ['a', 'b', 'c']
+            console.log(arguments); //Arguments(3) ['a', 'b', 'c', callee: (...), Symbol(Symbol.iterator): ƒ]
+        }
+        checkArgs('a', 'b', 'c'); */
 
         // 4.扩展运算符...
         // 剩余运算符：把多个独立的合并到一个数组中
         // 扩展运算法：将一个数组分割，并将各个项作为分离的参数传给函数
-        // const maxNum = Math.max(20,30);
-        // console.log(maxNum);
+/*         const maxNum = Math.max(20,30);
+        console.log(maxNum); //30
 
         // 处理数组中的最大值，使用apply
-        // const arr = [10, 20, 50, 30, 90, 100, 40];
-        // console.log(Math.max.apply(null,arr));
+        const arr = [10, 20, 50, 30, 90, 100, 40];
+        console.log(Math.max.apply(null,arr)); //100
 
         // es6 扩展运算法更方便
-        // console.log(Math.max(...arr));
+        console.log(Math.max(...arr));//100 */
 
 
         //******** es6的箭头函数 ********
         // 使用=>来定义  function(){}等于与 ()=>{}
 
-        /* let add = function (a, b) {
-            return a + b;
-        } */
+        // let add = function (a, b) {
+        //     return a + b;
+        // }
 
         // let add = (a, b) => {
         //     return a + b;
         // }
+
         // let add = (val1, val2) => val1 + val2;
         // console.log(add(10, 20));
 
         // let fn = ()=> 'hello world' + 123;
         // console.log(fn());
+
         /* let getObj = id => {
             return {
                 id: id,
@@ -112,7 +115,7 @@
         } */
         // let getObj = id => ({id:id,name:"小马哥"});
         // let obj = getObj(1);
-        // console.log(obj);
+        // console.log(obj);  //{id: 1, name: '小马哥'}
 
         // let fn = (function() {
         //     return function() {
@@ -121,62 +124,64 @@
         // })();  // 返回了内部函数
         // fn()
 
-
-        /*  let fn = (() => {
-             return () => {
-                 console.log('hello es6 2');
-             }
-         })();
-         fn(); */
+        
+        //  let fn = (() => {
+        //      return () => {
+        //          console.log('hello es6 2');
+        //      }
+        //  })();
+        //  fn();
 
         // 没有this绑定
         // es5中this指向：取决于调用该函数的上下文对象
-        /* let PageHandle = {
-            id: 123,
-            init: function () {
-                document.addEventListener('click',function(event) {
-                    // this.doSomeThings is not a function
-                    // console.log(this);
-                    this.doSomeThings(event.type);
-                })
-            },
-            doSomeThings:function(type){
-                console.log(`事件类型:${type},当前id:${this.id}`);
+        // let PageHandle = {
+        //     id: 123,
+        //     init: function () {
+        //           //文档添加点击事件
+        //         document.addEventListener('click',function(event) {
+        //             // this.doSomeThings is not a function  //点击文档触发
+        //             // console.log(this);
+        //             this.doSomeThings(event.type);
+        //         })
+        //     },
+        //     doSomeThings:function(type){
+        //         console.log(`事件类型:${type},当前id:${this.id}`);
                 
-            }
-        }
-        PageHandle.init(); */
+        //     }
+        // }
+        // PageHandle.init();  
 
         let PageHandle = {
             id: 123,
             init: function () {
                 // 箭头函数没有this指向，箭头函数内部this值只能通过查找作用域链来确定,一旦使用箭头函数，当前就不存在作用域链
+                // 作用域链在init函数 向上找属于PageHandle对象，所以this指向了PageHandle对象
                 document.addEventListener('click', (event) => {
                     // this.doSomeThings is not a function
-                    console.log(this);
+                    console.log('::'+this); //::[object Object]
                     this.doSomeThings(event.type);
                 }, false)
             },
             doSomeThings: function (type) {
-                console.log(`事件类型:${type},当前id:${this.id}`);
+                console.log(`事件类型:${type},当前id:${this.id}`); //事件类型:click,当前id:123
 
             }
         }
-        PageHandle.init();
+        PageHandle.init();  
 
         // 使用箭头函数的注意事项1:使用箭头函数 函数内部没有arguments
         // let getVal = (a, b) => {
-        //     // console.log(arguments); // RefernceError
+        //     console.log(arguments); // ReferenceError: arguments is not defined
         //     return a + b;
         // }
-        // console.log(getVal(1, 3));
+        // console.log(getVal(1, 3)); //4
 
         // 2.箭头函数不能使用new关键字来实例化对象
-        let Person = ()=>{
+        // let Person = ()=>{
             
-        };
-        // function函数 也是一个对象，但是箭头函数不是一个对象，它其实就是一个语法糖
-        console.log(Person);
+        // };
+        // // function函数 也是一个对象，但是箭头函数不是一个对象，它其实就是一个语法糖
+        // console.log(Person); //()=>{   }
         
         // let p = new Person(); //TypeError: Person is not a constructor
         

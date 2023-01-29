@@ -24,7 +24,7 @@
         }
         // 如果async函数中有多个await 那么then函数会等待所有的await指令 运行完的结果 才去执行
         f().then(v => {
-            console.log(v)
+            console.log(v)  //Array(11)
         }).catch(e => console.log(e));
 
         async function f2() {
@@ -36,7 +36,7 @@
             }
             return await Promise.resolve('hello');
         }
-        f2().then(v => console.log(v)).catch(e => console.log(e));
+        f2().then(v => console.log(v)).catch(e => console.log(e));  //hello
 
 
 
@@ -68,11 +68,12 @@
         async function getNowWeather(url) {
             // 发送ajax 获取实况天气
             let res = await getJSON(url);
-            console.log(res);
+            console.log(res);  //object
             // 获取HeWeather6的数据   获取未来3~7天的天气状况
             let arr = await res.HeWeather6;
             return arr[0].now;
         }
+              //https://www.qweather.com/  api失效
         getNowWeather(
                 'https://free-api.heweather.net/s6/weather/now?location=beijing&key=4693ff5ea653469f8bb0c29638035976')
             .then(now => {

@@ -115,7 +115,11 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         console.log(RegExp);
         console.log(window.RegExp);
 
-        // 建议：在默认情况下用const,而只有在你知道变量值需要被修改的情况使用let      
+        // 建议：在默认情况下用const,而只有在你知道变量值需要被修改的情况使用let
+        
+        
+        
+
     </script>
 
 </body>
@@ -203,9 +207,10 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // }
         // console.log(add(10));
 
-        // es5写法
-         /* function pick(obj) {
+        // es5写法   //vs code 多行注释快捷键 alt + shift + a
+          /* function pick(obj) {
              let result = Object.create(null);
+             console.log(arguments.length) //4
              for(let i = 1;i < arguments.length;i++){
                  result[arguments[i]] = obj[arguments[i]]
              }
@@ -217,62 +222,64 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
              year:2019
          }
          let bookData = pick(book,'title','year','author');
-         console.log(bookData); */
+         console.log(bookData);  */ //{title: 'es6的教程', year: 2019, author: '小马哥'}
 
         // 3.剩余参数：由三个点...和一个紧跟着的具名参数指定 ...keys
 
-        // function pick(obj, ...keys) {
-        //     // ...keys 解决了arguments 的问题
-        //     let result = Object.create(null);
-        //     for (let i = 0; i < keys.length; i++) {
-        //         result[keys[i]] = obj[keys[i]];
-        //     }
-        //     return result;
-        // }
+     /*    function pick(obj, ...keys) {
+            // ...keys 解决了arguments 的问题
+            let result = Object.create(null);
+            for (let i = 0; i < keys.length; i++) {
+                result[keys[i]] = obj[keys[i]];
+            }
+            return result;
+        }
 
-        // let book = {
-        //     title: 'es6的教程',
-        //     author: '小马哥',
-        //     year: 2019
-        // }
-        // let bookData = pick(book, 'year', 'author');
-        // console.log(bookData);
+        let book = {
+            title: 'es6的教程',
+            author: '小马哥',
+            year: 2019
+        }
+        let bookData = pick(book, 'year', 'author');
+        console.log(bookData); //{year: 2019, author: '小马哥'}
 
-        // function checkArgs(...args) {
-        //     console.log(args);
-        //     console.log(arguments);
-        // }
-        // checkArgs('a', 'b', 'c');
+        function checkArgs(...args) {
+            console.log(args);   //(3) ['a', 'b', 'c']
+            console.log(arguments); //Arguments(3) ['a', 'b', 'c', callee: (...), Symbol(Symbol.iterator): ƒ]
+        }
+        checkArgs('a', 'b', 'c'); */
 
         // 4.扩展运算符...
         // 剩余运算符：把多个独立的合并到一个数组中
         // 扩展运算法：将一个数组分割，并将各个项作为分离的参数传给函数
-        // const maxNum = Math.max(20,30);
-        // console.log(maxNum);
+/*         const maxNum = Math.max(20,30);
+        console.log(maxNum); //30
 
         // 处理数组中的最大值，使用apply
-        // const arr = [10, 20, 50, 30, 90, 100, 40];
-        // console.log(Math.max.apply(null,arr));
+        const arr = [10, 20, 50, 30, 90, 100, 40];
+        console.log(Math.max.apply(null,arr)); //100
 
         // es6 扩展运算法更方便
-        // console.log(Math.max(...arr));
+        console.log(Math.max(...arr));//100 */
 
 
         //******** es6的箭头函数 ********
         // 使用=>来定义  function(){}等于与 ()=>{}
 
-        /* let add = function (a, b) {
-            return a + b;
-        } */
+        // let add = function (a, b) {
+        //     return a + b;
+        // }
 
         // let add = (a, b) => {
         //     return a + b;
         // }
+
         // let add = (val1, val2) => val1 + val2;
         // console.log(add(10, 20));
 
         // let fn = ()=> 'hello world' + 123;
         // console.log(fn());
+
         /* let getObj = id => {
             return {
                 id: id,
@@ -281,7 +288,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         } */
         // let getObj = id => ({id:id,name:"小马哥"});
         // let obj = getObj(1);
-        // console.log(obj);
+        // console.log(obj);  //{id: 1, name: '小马哥'}
 
         // let fn = (function() {
         //     return function() {
@@ -290,62 +297,64 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // })();  // 返回了内部函数
         // fn()
 
-
-        /*  let fn = (() => {
-             return () => {
-                 console.log('hello es6 2');
-             }
-         })();
-         fn(); */
+        
+        //  let fn = (() => {
+        //      return () => {
+        //          console.log('hello es6 2');
+        //      }
+        //  })();
+        //  fn();
 
         // 没有this绑定
         // es5中this指向：取决于调用该函数的上下文对象
-        /* let PageHandle = {
-            id: 123,
-            init: function () {
-                document.addEventListener('click',function(event) {
-                    // this.doSomeThings is not a function
-                    // console.log(this);
-                    this.doSomeThings(event.type);
-                })
-            },
-            doSomeThings:function(type){
-                console.log(`事件类型:${type},当前id:${this.id}`);
+        // let PageHandle = {
+        //     id: 123,
+        //     init: function () {
+        //           //文档添加点击事件
+        //         document.addEventListener('click',function(event) {
+        //             // this.doSomeThings is not a function  //点击文档触发
+        //             // console.log(this);
+        //             this.doSomeThings(event.type);
+        //         })
+        //     },
+        //     doSomeThings:function(type){
+        //         console.log(`事件类型:${type},当前id:${this.id}`);
                 
-            }
-        }
-        PageHandle.init(); */
+        //     }
+        // }
+        // PageHandle.init();  
 
         let PageHandle = {
             id: 123,
             init: function () {
                 // 箭头函数没有this指向，箭头函数内部this值只能通过查找作用域链来确定,一旦使用箭头函数，当前就不存在作用域链
+                // 作用域链在init函数 向上找属于PageHandle对象，所以this指向了PageHandle对象
                 document.addEventListener('click', (event) => {
                     // this.doSomeThings is not a function
-                    console.log(this);
+                    console.log('::'+this); //::[object Object]
                     this.doSomeThings(event.type);
                 }, false)
             },
             doSomeThings: function (type) {
-                console.log(`事件类型:${type},当前id:${this.id}`);
+                console.log(`事件类型:${type},当前id:${this.id}`); //事件类型:click,当前id:123
 
             }
         }
-        PageHandle.init();
+        PageHandle.init();  
 
         // 使用箭头函数的注意事项1:使用箭头函数 函数内部没有arguments
         // let getVal = (a, b) => {
-        //     // console.log(arguments); // RefernceError
+        //     console.log(arguments); // ReferenceError: arguments is not defined
         //     return a + b;
         // }
-        // console.log(getVal(1, 3));
+        // console.log(getVal(1, 3)); //4
 
         // 2.箭头函数不能使用new关键字来实例化对象
-        let Person = ()=>{
+        // let Person = ()=>{
             
-        };
-        // function函数 也是一个对象，但是箭头函数不是一个对象，它其实就是一个语法糖
-        console.log(Person);
+        // };
+        // // function函数 也是一个对象，但是箭头函数不是一个对象，它其实就是一个语法糖
+        // console.log(Person); //()=>{   }
         
         // let p = new Person(); //TypeError: Person is not a constructor
         
@@ -384,7 +393,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         
         // 完全解构
         let {type,name} = node;
-        console.log(type,name);
+        console.log(type,name);  //iden foo
 
         let obj = {
             a:{
@@ -396,10 +405,10 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
 
         // 不完全解构 可忽略
         // let {a} = obj;
-        // console.log(a);
+        // console.log(a);  //{name: '张三'}
         // 剩余运算符
-        // let {a,...res} = obj;
-        // console.log(a,res);
+        let {a,...res} = obj;
+        console.log(a,res); //{name: '张三'} {b: Array(0), c: 'hello,world'}
 
         // 默认值
         // let {a,b = 30} = {a:20};
@@ -410,10 +419,11 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // let [a,b] = arr;
         // console.log(a,b); // 1 2
         // 可嵌套
-        let [a,[b],c] = [1,[2],3];
-        console.log(a,b,c) // 1 2 3
+        // let [a,[b],c] = [1,[2],3];
+        // console.log(a,b,c) // 1 2 3
 
     </script>
+
 </body>
 
 </html>
@@ -445,48 +455,50 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         //         console.log(this.name);
         //     }
         // }
-        // person.sayName();
+        // person.sayName(); //小马哥
 
         // function fn(x,y) {
         //     return {x,y};
         // }
-        // console.log(fn(10,20));
+        // console.log(fn(10,20));  //Object x: 10 y: 20  [[Prototype]]: Object
 
-    /*     let cart = {
-            wheel:4,
-            set(newVal){
-                if(newVal < this.wheel){
-                    throw new Error('轮子数太少了')
-                }
-                this.wheel = newVal;
-            },
-            get(){
-                return this.wheel;
-            }
-        }
-        // console.log(cart.get());
-        cart.set(6);
-        console.log(cart.get()) */
+
+        // let cart = {
+        //     wheel:4,
+        //     set(newVal){
+        //         if(newVal < this.wheel){
+        //             throw new Error('轮子数太少了')
+        //         }
+        //         this.wheel = newVal;
+        //     },
+        //     get(){
+        //         return this.wheel;
+        //     }
+        // }
+        // console.log(cart.get()); //4
+        // cart.set(6);
+        // console.log(cart.get()) //6
 
         // const obj = {};
         // obj.isShow = true;
         // const name = 'a';
         // obj[name+'bc'] = 123;
-        // console.log(obj);
+        // console.log(obj); //{isShow: true, abc: 123}
         // obj['f'+'bc'] = function () {
         //     console.log(this);
         // }
-        // console.log(obj);
-       /*  const name = 'a';
-        const obj = {
-            isShow:true,
-            [name+'bc']:123,
-            ['f'+name](){
-                console.log(this);
+        // console.log(obj);  //{isShow: true, abc: 123, fbc: ƒ}
+    
+        // const name = 'a';
+        // const obj = {
+        //     isShow:true,
+        //     [name+'bc']:123,
+        //     ['f'+name](){
+        //         console.log(this);
                 
-            }
-        }
-        console.log(obj); */
+        //     }
+        // }
+        // console.log(obj); //{isShow: true, abc: 123, fa: ƒ}
 
         // 对象的方法
 
@@ -500,8 +512,14 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         
         // 返回合并之后的新对象
         let newObj = Object.assign({},{a:1},{b:2});
-        console.log(newObj);
+        console.log(newObj); //{a: 1, b: 2}
+        
+        
+        
 
+        
+        
+        
     </script>
 
 </body>
@@ -528,31 +546,33 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // 最大的用途：用来定义对象的私有变量
         const name = Symbol('name');
         const name2 = Symbol('name');
-        console.log(name === name2);
+        console.log(name === name2); //false
 
         let s1 = Symbol('s1');
-        console.log(s1);
+        console.log(s1);  //Symbol(s1)
         let obj = {
             [s1]:'小马哥'
         };
         // obj[s1] = '小马哥';
 
         // 如果用Symbol定义的对象中的变量，取值时一定要用[变量名]
-        console.log(obj[s1]);
-        // console.log(obj.s1);
+        console.log(obj[s1]); //小马哥
+        // console.log(obj.s1); //undefined
 
-        /* for(let key in obj){
-            console.log(key); 
-        } */
-        // console.log(Object.keys(obj));
+        for(let key in obj){
+            console.log(key); //空
+        }
+        console.log(Object.keys(obj)); //[]
         
         // 获取Symbol声明的属性名（作为对象的key）
-        // let s = Object.getOwnPropertySymbols(obj);
-        // console.log(s[0]);
+        let s = Object.getOwnPropertySymbols(obj);
+        console.log(s[0]);  //Symbol(s1)
         
+        // Reflect翻译反射
         let m = Reflect.ownKeys(obj);
-        console.log(m);
-        
+        console.log(m);  //[Symbol(s1)]
+       
+
     </script>
 
 </body>
@@ -579,7 +599,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
     <script>
         //  集合：表示无重复值的有序列表
         let set = new Set();
-        console.log(set);
+        // console.log(set);  //Set(1)
 
         // 添加元素
         set.add(2);
@@ -589,8 +609,8 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // 删除元素
         set.delete(2);
         // 校验某个值是否在set中
-        console.log(set.has('4'));
-        console.log(set.size);
+        console.log(set.has('4'));  //true
+        console.log(set.size);      //1
 
         /* set.forEach((val,key)=>{
             console.log(val);
@@ -601,7 +621,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         let set2 = new Set([1, 2, 3, 3, 3, 4]);
         // 扩展运算符
         let arr = [...set2]
-        console.log(arr);
+        console.log(arr);  //(4) [1, 2, 3, 4]
 
 
         // 1.set中对象的引用无法被释放
@@ -609,14 +629,14 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // set3.add(obj);
         // // 释放当前的资源
         // obj = null;
-        // console.log(set3);
+        // console.log(set3);  //Set(1) {{…}}
 
         let set4 = new WeakSet(),
             obj = {};
         set4.add(obj);
         // 释放当前的资源
         obj = null;
-        console.log(set4);
+        console.log(set4);  //WeakSet {{…}}
 
         // WeakSet
         // 1.不能传入非对象类型的参数
@@ -627,23 +647,23 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
 
         // Map类型是键值对的有序列表，键和值是任意类型
 
-        /*  let map = new Map();
+         let map = new Map();
          map.set('name','张三');
          map.set('age',20);
-         console.log(map.get('name'));
-         console.log(map);
+         console.log(map.get('name'));  //张三
+         console.log(map);   //Map(2) {'name' => '张三', 'age' => 20}
          map.has('name');//true
          map.delete('name');
          map.clear();
-         console.log(map);
+         console.log(map);  //Map(0) {size: 0}
          map.set(['a',[1,2,3]],'hello');
-         console.log(map); */
+         console.log(map);  //Map(1) {Array(2) => 'hello'}
 
         let m = new Map([
             ['a', 1],
             ['c', 2]
         ]);
-        console.log(m);
+        console.log(m);   //Map(2) {'a' => 1, 'c' => 2}
         
     </script>
 
@@ -682,26 +702,26 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
             // console.log(arr);
             // es6写法
             let arr = Array.from(arguments);
-            console.log(arr);
+            console.log(arr); //(3) [1, 2, 3]
         }
-        // add(1, 2, 3);
+        add(1, 2, 3);
 
         let lis = document.querySelectorAll('li')
-        console.log(lis);
+        console.log(lis); //NodeList(4) [li, li, li, li]
 
-        // console.log(Array.from(lis));
+        console.log(Array.from(lis)); //(4) [li, li, li, li]
         // 扩展运算符 将伪数组转换成真正的数组
-        // console.log([...lis]);
+        console.log([...lis]);  //(4) [li, li, li, li]
 
         // from() 还可以接受第二个参数，用来对每个元素进行处理
 
         let liContents = Array.from(lis, ele => ele.textContent);
-        console.log(liContents);
+        console.log(liContents);   //(4) ['1', '2', '3', '4']
 
         // 2.of() 将任意的数据类型，转换成数组
         console.log(Array.of(3, 11, 20, [1, 2, 3], {
             id: 1
-        }));
+        }));   //(5) [3, 11, 20, Array(3), {…}]
 
 
         // 3.copywithin() 数组内部将制定位置的元素复制到其它的位置，返回当前数组
@@ -711,11 +731,12 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         //  4.find() findIndex()
         // find()找出第一个符合条件的数组成员
         let num = [1, 2, -10, -20, 9, 2].find(n => n < 0)
-        // console.log(num);  // -10
+        console.log(num);  // -10
 
         // findIndex()找出第一个符合条件的数组成员的索引
+        // 条件是值小于0，返回索引号
         let numIndex = [1, 2, -10, -20, 9, 2].findIndex(n => n < 0)
-        //console.log(numIndex); // 2
+        console.log(numIndex); // 2
 
 
         // 5.entries() keys() values() 返回一个遍历器  可以使用for...of循环进行遍历
@@ -723,32 +744,37 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // keys() 对键名遍历
         // values() 对值遍历
         // entries() 对键值对遍历
-        // console.log(['a','b'].keys());
+        console.log(['a','b'].keys());  //Array Iterator {}
 
         for (let index of ['a', 'b'].keys()) {
-            console.log(index);
+            console.log(index);  // 0 1
         }
 
         for (let ele of ['a', 'b'].values()) {
-            console.log(ele);
+            console.log(ele);  // a b
         }
 
         for(let [index,ele] of ['a','b'].entries()){
-            console.log(index,ele); 
+            console.log(index,ele); // 0 'a' 1 'b'
         }
+
         let letter = ['a','b','c'];
         let it = letter.entries();
-        // console.log(it.next().value);  //(2) [0, 'a']
-        // console.log(it.next().value);  //(2) [1, 'b']
-        // console.log(it.next().value);  //(2) [2, 'c']
-        // console.log(it.next().value);  //undefined
+        console.log(it.next().value);  //(2) [0, 'a']
+        console.log(it.next().value);  //(2) [1, 'b']
+        console.log(it.next().value);  //(2) [2, 'c']
+        console.log(it.next().value);  //undefined
 
         // 6.includes() 返回一个布尔值，表示某个数组是否包含给定的值
         console.log([1,2,3].includes(2));   // true
         console.log([1,2,3].includes('4')); // false
 
         // 之前 indexof()
-        console.log([1,2,3].indexOf('2'));  // -1
+        // console.log([1,2,3].indexOf('2'));  // -1
+
+
+        
+        
         
     </script>
 
@@ -812,19 +838,19 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // 1.function后面 函数名之前有个*
         // 2.只能在函数内部使用yield表达式，让函数挂起
 
-       /*  function* func() {
-            console.log('one');
-            yield 2;
-            console.log('two');
-            yield 3;
-            console.log('end');   
-        }
-        // 返回一个遍历器对象 可以调用next()
-        let fn = func();
-        // console.log(o)
-        console.log(fn.next());
-        console.log(fn.next());
-        console.log(fn.next()); */
+        // function* func() {
+        //     console.log('one');
+        //     yield 2;
+        //     console.log('two');
+        //     yield 3;
+        //     console.log('end');   
+        // }
+        // // 返回一个遍历器对象 可以调用next()
+        // let fn = func();
+        // console.log(fn)  // func {<suspended>}
+        // console.log(fn.next()); //{value: 2, done: false}
+        // console.log(fn.next());
+        // console.log(fn.next()); //{value: undefined, done: true}
 
         // 总结：generator函数是分段执行的，yield语句是暂停执行  而next()恢复执行
         
@@ -833,15 +859,15 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
             console.log('start');
             // x 可真的不是yield '2'的返回值，它是next()调用 恢复当前yield()执行传入的实参
             let x = yield '2';
-            console.log('one:'+x);
+            console.log('one:'+x); // one:20
             let y = yield '3';
             console.log('two:'+y);
             return x+y;  
         }
         const fn = add();
         console.log(fn.next()); //{value:'2',done:false}
-        console.log(fn.next(20)); //{value:'3',done:false}
-        console.log(fn.next(30)); //{value:50,done:true}
+        console.log(fn.next(20)); //{value:'3',done:false} // 20赋值给了x
+        console.log(fn.next(30)); //{value:50,done:true}   //30赋值给了y
 
         // 使用场景1：为不具备Interator接口的对象提供了遍历操作
         function* objectEntries(obj) {
@@ -858,13 +884,14 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
             age:18
         }
         // obj[Symbol.iterator] = objectEntries;
-        // console.log(obj);
+        // console.log(obj); //{name: '小马哥', age: 18, Symbol(Symbol.iterator): ƒ}
 
         for(let [key,value] of objectEntries(obj)){
             console.log(`${key}:${value}`);  
         }
+        // name:小马哥
+        // age:18
         
-
     </script>
 </body>
 
@@ -891,7 +918,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
     <script>
 
         // Generator 部署ajax操作，让异步代码同步化
-        // 回调地狱
+        // 回调地狱  参考https://blog.csdn.net/qq_42698326/article/details/111075519
         /* $.ajax({
             url: 'https://free-api.heweather.net/s6/weather/now?location=beijing&key=4693ff5ea653469f8bb0c29638035976',
             method: 'get',
@@ -948,7 +975,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // 数据加载完成...（异步操作）
         // loading关闭掉
 
-    /*     function* load() {
+        function* load() {
             loadUI();
             yield showData();
             hideUI();
@@ -971,7 +998,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         function hideUI() {
             console.log('隐藏loading...页面');
             
-        } */
+        }
         
     </script>
 
@@ -1007,8 +1034,8 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         // 2.一旦状态改变，就不会再变，任何时候都可以得到这个结果
 
         
-       /*  let pro = new Promise(function(resolved,rejected) {
-            //执行异步操作
+        /* let pro = new Promise(function(resolved,rejected) {
+            //模拟执行异步操作 得到的结果
             let res = {
                 code: 201,
                 data:{
@@ -1024,15 +1051,15 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
                 }
             }, 1000);
         })
-        console.log(pro);
+        console.log(pro); //Promise
         pro.then((val)=>{
             console.log(val);  
         },(err)=>{
-            console.log(err);
+            console.log(err); //失败了
         }); */
        
 
-      /*   function timeOut(ms) {
+        /* function timeOut(ms) {
             return new Promise((resolved,rejected)=>{
                 setTimeout(() => {
                     resolved('hello promise success!!')
@@ -1040,11 +1067,11 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
             })
         }
         timeOut(2000).then((val)=>{  // 两秒之后返回
-            console.log(val);
+            console.log(val);        //hello promise success!!
         }) */
 
         // https://free-api.heweather.net/s6/weather/now?location=beijing&key=4693ff5ea653469f8bb0c29638035976
- /*        const getJSON = function (url) {
+        /* const getJSON = function (url) {
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', url);
@@ -1111,6 +1138,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
          }) */
 
         // 应用：一些游戏类的素材比较多，等待图片、flash、静态资源文件 都加载完成 才进行页面的初始化
+        // 伪代码
         /* let promise1 = new Promise((resolve, reject) => {});
         let promise2 = new Promise((resolve, reject) => {});
         let promise3 = new Promise((resolve, reject) => {});
@@ -1125,32 +1153,32 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
 
         // race() 某个异步请求设置超时时间，并且在超时后执行相应的操作
         // 1 请求图片资源
-        function requestImg(imgSrc) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = function () {  //onload 当图像装载完毕时调用的事件句柄。	
-                    resolve(img);  //Promise.resolve(value)方法返回一个以给定值解析后的Promise 对象
-                }
-                img.src = imgSrc;
-            });
-        }
+        // function requestImg(imgSrc) {
+        //     return new Promise((resolve, reject) => {
+        //         const img = new Image();
+        //         img.onload = function () {  //onload 当图像装载完毕时调用的事件句柄。	
+        //             resolve(img);  //Promise.resolve(value)方法返回一个以给定值解析后的Promise 对象
+        //         }
+        //         img.src = imgSrc;
+        //     });
+        // }
 
-        function timeout() {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    reject(new Error('图片请求超时'));
-                }, 3000);
-            })
-        }
-        Promise.race([requestImg('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202102%2F18%2F20210218112720_25189.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1646595131&t=12acaf9c7b1e00ac6a874e1b0945c3af'),
-                    timeout()]).then(data=>{
-            console.log(data);
-            document.body.appendChild(data);
+        // function timeout() {
+        //     return new Promise((resolve, reject) => {
+        //         setTimeout(() => {
+        //             reject(new Error('图片请求超时'));
+        //         }, 3000);
+        //     })
+        // }
+        // Promise.race([requestImg('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202102%2F18%2F20210218112720_25189.thumb.1000_0.jpg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1646595131&t=12acaf9c7b1e00ac6a874e1b0945c3af'),
+        //             timeout()]).then(data=>{
+        //     console.log(data);
+        //     document.body.appendChild(data);
             
-        }).catch(err=>{
-            console.log(err);
+        // }).catch(err=>{
+        //     console.log(err);
             
-        }); 
+        // }); 
 
         /* 
         server.listen(3000).then(()=>{
@@ -1196,7 +1224,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         }
         // 如果async函数中有多个await 那么then函数会等待所有的await指令 运行完的结果 才去执行
         f().then(v => {
-            console.log(v)
+            console.log(v)  //Array(11)
         }).catch(e => console.log(e));
 
         async function f2() {
@@ -1208,7 +1236,7 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
             }
             return await Promise.resolve('hello');
         }
-        f2().then(v => console.log(v)).catch(e => console.log(e));
+        f2().then(v => console.log(v)).catch(e => console.log(e));  //hello
 
 
 
@@ -1240,11 +1268,12 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
         async function getNowWeather(url) {
             // 发送ajax 获取实况天气
             let res = await getJSON(url);
-            console.log(res);
+            console.log(res);  //object
             // 获取HeWeather6的数据   获取未来3~7天的天气状况
             let arr = await res.HeWeather6;
             return arr[0].now;
         }
+              //https://www.qweather.com/  api失效
         getNowWeather(
                 'https://free-api.heweather.net/s6/weather/now?location=beijing&key=4693ff5ea653469f8bb0c29638035976')
             .then(now => {

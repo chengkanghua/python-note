@@ -22,7 +22,7 @@
         
         // 完全解构
         let {type,name} = node;
-        console.log(type,name);
+        console.log(type,name);  //iden foo
 
         let obj = {
             a:{
@@ -34,10 +34,10 @@
 
         // 不完全解构 可忽略
         // let {a} = obj;
-        // console.log(a);
+        // console.log(a);  //{name: '张三'}
         // 剩余运算符
-        // let {a,...res} = obj;
-        // console.log(a,res);
+        let {a,...res} = obj;
+        console.log(a,res); //{name: '张三'} {b: Array(0), c: 'hello,world'}
 
         // 默认值
         // let {a,b = 30} = {a:20};
@@ -48,17 +48,10 @@
         // let [a,b] = arr;
         // console.log(a,b); // 1 2
         // 可嵌套
-        let [a,[b],c] = [1,[2],3];
-        console.log(a,b,c) // 1 2 3
-
-        
-        
-        
-        
-
+        // let [a,[b],c] = [1,[2],3];
+        // console.log(a,b,c) // 1 2 3
 
     </script>
-
 
 </body>
 

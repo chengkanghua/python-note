@@ -12,7 +12,7 @@
     <script>
         //  集合：表示无重复值的有序列表
         let set = new Set();
-        console.log(set);
+        // console.log(set);  //Set(1)
 
         // 添加元素
         set.add(2);
@@ -22,8 +22,8 @@
         // 删除元素
         set.delete(2);
         // 校验某个值是否在set中
-        console.log(set.has('4'));
-        console.log(set.size);
+        console.log(set.has('4'));  //true
+        console.log(set.size);      //1
 
         /* set.forEach((val,key)=>{
             console.log(val);
@@ -34,7 +34,7 @@
         let set2 = new Set([1, 2, 3, 3, 3, 4]);
         // 扩展运算符
         let arr = [...set2]
-        console.log(arr);
+        console.log(arr);  //(4) [1, 2, 3, 4]
 
 
         // 1.set中对象的引用无法被释放
@@ -42,14 +42,14 @@
         // set3.add(obj);
         // // 释放当前的资源
         // obj = null;
-        // console.log(set3);
+        // console.log(set3);  //Set(1) {{…}}
 
         let set4 = new WeakSet(),
             obj = {};
         set4.add(obj);
         // 释放当前的资源
         obj = null;
-        console.log(set4);
+        console.log(set4);  //WeakSet {{…}}
 
         // WeakSet
         // 1.不能传入非对象类型的参数
@@ -60,23 +60,23 @@
 
         // Map类型是键值对的有序列表，键和值是任意类型
 
-        /*  let map = new Map();
+         let map = new Map();
          map.set('name','张三');
          map.set('age',20);
-         console.log(map.get('name'));
-         console.log(map);
+         console.log(map.get('name'));  //张三
+         console.log(map);   //Map(2) {'name' => '张三', 'age' => 20}
          map.has('name');//true
          map.delete('name');
          map.clear();
-         console.log(map);
+         console.log(map);  //Map(0) {size: 0}
          map.set(['a',[1,2,3]],'hello');
-         console.log(map); */
+         console.log(map);  //Map(1) {Array(2) => 'hello'}
 
         let m = new Map([
             ['a', 1],
             ['c', 2]
         ]);
-        console.log(m);
+        console.log(m);   //Map(2) {'a' => 1, 'c' => 2}
         
     </script>
 
