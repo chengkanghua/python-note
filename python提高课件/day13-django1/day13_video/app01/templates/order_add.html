@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>创建订单(Form和ModelForm）</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <select name="policy">
+        {% for item in price_list %}
+            <option value="{{ item.id }}">{{ item.count }} - ¥{{ item.price }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="text" placeholder="请输入视频地址" name="url">
+
+    <input type="submit" value="提交">
+</form>
+
+</body>
+</html>
