@@ -57,3 +57,8 @@ kanghuadeMacBook-Pro:python-note kanghua$ tree -N -L 2
     └── day01 课上代码和笔记
 ```
 
+
+### Infrastructure model
+![Infrastructure main model](.infragenie/infrastructure_main_model.svg)
+
+---
